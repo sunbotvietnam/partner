@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="vi" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Bán Hàng & Hợp Tác Sunbot - Kiro Vietnam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-orange: #ea580c;
+            --brand-orange-light: #fff7ed;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --page-width: 210mm;
+            --page-min-height: 297mm; 
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #94a3b8; 
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .a4-page {
+            width: var(--page-width);
+            min-height: var(--page-min-height);
+            background-color: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            box-sizing: border-box;
+            padding: 24mm; 
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+
+        .page-content {
+            flex: 1 1 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-footer {
+            flex: 0 0 auto;
+            margin-top: auto;
+            padding-top: 12px; 
+            border-top: 1px solid #cbd5e1; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 10;
+            background-color: #ffffff;
+        }
+
+        h1, h2, h3, h4 { color: #0f172a; margin: 0; position: relative; z-index: 10;}
+        p { line-height: 1.75; color: var(--text-muted); font-size: 13.5px; margin: 0 0 16px 0; text-align: left; letter-spacing: -0.01em; position: relative; z-index: 10;}
+        
+        .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; border-bottom: 1px solid #f1f5f9; padding-bottom: 16px; position: relative; z-index: 10;}
+        .section-number { font-size: 32px; font-weight: 900; color: var(--brand-orange); line-height: 1; letter-spacing: -0.05em; }
+        .section-title { font-size: 22px; font-weight: 900; text-transform: uppercase; color: #0f172a; letter-spacing: -0.02em; line-height: 1.2; }
+        .sub-title { font-size: 16px; font-weight: 800; color: #1e293b; margin-top: 36px; margin-bottom: 16px; position: relative; padding-left: 16px; z-index: 10;}
+        .sub-title::before { content: ""; position: absolute; left: 0; top: 3px; bottom: 3px; width: 5px; background-color: var(--brand-orange); border-radius: 2px; }
+        .kicker { font-size: 11px; font-weight: 800; color: var(--brand-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; position: relative; z-index: 10;}
+
+        ul, ol { margin: 0 0 24px 0; padding-left: 0; list-style-type: none; position: relative; z-index: 10;}
+        ul li { font-size: 13.5px; line-height: 1.7; color: var(--text-muted); margin-bottom: 10px; position: relative; padding-left: 24px; }
+        ul li::before { content: ""; position: absolute; left: 4px; top: 9px; width: 6px; height: 6px; background-color: var(--brand-orange); border-radius: 50%; }
+        ol { counter-reset: custom-counter; }
+        ol li { font-size: 13.5px; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px; position: relative; padding-left: 32px; }
+        ol li::before { counter-increment: custom-counter; content: counter(custom-counter) "."; position: absolute; left: 0; top: 0; font-weight: 900; color: var(--brand-orange); font-size: 14px; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 32px; font-size: 13px; position: relative; z-index: 10;}
+        th, td { padding: 16px; text-align: left; line-height: 1.6; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f8fafc; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 0.05em; font-size: 11.5px; border-bottom: 2px solid var(--brand-orange); border-top: 1px solid #e2e8f0; }
+        tr:last-child td { border-bottom: 1px solid #cbd5e1; }
+
+        .box-dark { background-color: #0f172a; color: white; border: none; padding: 32px; border-radius: 16px; margin: 32px 0; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; z-index: 10;}
+        .box-dark p { color: #cbd5e1; }
+
+        .page-watermark { position: absolute; top: 20mm; right: 20mm; font-size: 180px; font-weight: 900; color: #f1f5f9; line-height: 0.8; z-index: 0; user-select: none; pointer-events: none; letter-spacing: -0.05em; }
+
+        /* Bìa Tone màu cam với Radial Gradient chuyên nghiệp (Focus ánh sáng ở góc logo) */
+        .cover-page { 
+            background: radial-gradient(circle at 75% 25%, #fb923c 0%, #ea580c 40%, #9a3412 85%, #7c2d12 100%);
+            color: white; 
+            justify-content: space-between; 
+            padding: 24mm; 
+        }
+        .cover-circle-1 { position: absolute; top: -10%; right: -20%; width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%); border-radius: 50%; z-index: 0; pointer-events: none;}
+        .cover-circle-2 { position: absolute; bottom: 5%; left: -10%; width: 400px; height: 400px; border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; z-index: 0; pointer-events: none;}
+
+        .divider-page { background-color: #ea580c; color: white; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 40mm 24mm; position: relative; }
+        .divider-number { position: absolute; right: -40px; bottom: -60px; font-size: 450px; font-weight: 900; color: rgba(0, 0, 0, 0.08); line-height: 1; pointer-events: none; }
+
+        .toc-link { text-decoration: none; color: inherit; display: block; padding: 6px 0; border-radius: 8px; transition: background-color 0.2s;}
+        .toc-link:hover { background-color: #f8fafc; }
+        .toc-link:hover .toc-number { color: var(--brand-orange); }
+        .toc-link:hover .toc-text { color: var(--brand-orange); }
+
+        .print-btn-container { position: fixed; top: 20px; right: 20px; z-index: 100; }
+
+        @page { size: A4 portrait; margin: 0; }
+        @media print {
+            body { background: none; padding: 0; gap: 0; }
+            .print-btn-container { display: none !important; }
+            .a4-page { box-shadow: none; margin: 0; height: 297mm; page-break-after: always; page-break-inside: avoid; }
+            .a4-page:last-child { page-break-after: auto; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-btn-container no-print">
+        <button onclick="window.print()" class="bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-full font-bold shadow-2xl transition-all flex items-center gap-3 text-sm uppercase tracking-wider cursor-pointer border border-slate-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            In Playbook / Xuất PDF
+        </button>
+    </div>
+
+    <!-- PAGE 01: COVER -->
+    <div class="a4-page cover-page">
+        <div class="cover-circle-1"></div>
+        <div class="cover-circle-2"></div>
+        <div class="page-content flex flex-col justify-between">
+            
+            <!-- LOGO HEADER TRANG BÌA (Logo to hơn, focus ánh sáng) -->
+            <div class="w-full flex justify-end pt-4 relative z-10">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-24 object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.25)]" onerror="this.src='https://placehold.co/300x100/transparent/white?text=SUNBOT+LOGO'"/>
+            </div>
+
+            <div class="w-full mb-20 border-l-4 border-slate-900 pl-8">
+                <div class="bg-slate-900 text-white text-[11px] font-bold tracking-[0.2em] uppercase px-4 py-2 inline-block rounded mb-6 shadow-xl">Tài Liệu Lưu Hành Nội Bộ</div>
+                <h1 class="text-[64px] font-black text-white leading-[1.05] mb-8 uppercase tracking-tight">
+                    CẨM NANG<br>BÁN HÀNG &<br><span class="text-slate-900 drop-shadow-md">HỢP TÁC</span>
+                </h1>
+                <div class="w-[85%]">
+                    <p class="text-[18px] text-white font-medium leading-[1.7] mb-0 drop-shadow-sm">
+                        Playbook tư vấn chiến lược và Chính sách hợp tác dành riêng cho hệ thống Đối tác phân phối.
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full flex justify-between items-end border-t border-white/30 pt-8">
+                <div>
+                    <p class="text-[10px] font-bold text-white/80 uppercase tracking-widest mb-2">Đơn vị phát hành</p>
+                    <p class="text-[13px] font-black text-white tracking-widest uppercase mb-0">Công Ty Cổ Phần Công Nghệ Giáo Dục<br><span class="text-slate-900">Kiro Việt Nam</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-white/80 uppercase tracking-widest mb-2">Tài liệu</p>
+                    <p class="text-[13px] font-black text-white tracking-widest uppercase mb-0">Phiên Bản 2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 02: MỤC LỤC -->
+    <div class="a4-page">
+        <div class="page-watermark">02</div>
+        <div class="page-content">
+            <div class="section-header">
+                <div class="section-title mb-0">Nội dung Tài liệu</div>
+            </div>
+            
+            <div class="mt-12 space-y-8">
+                <a href="#sec-1" class="toc-link">
+                    <div class="flex items-start gap-6 border-b border-slate-100 pb-5 px-2">
+                        <span class="toc-number text-slate-300 font-black text-[28px] leading-none w-10 transition-colors mt-1">01</span>
+                        <div class="w-full pt-1">
+                            <p class="toc-text font-bold text-slate-800 text-[16px] mb-4 transition-colors uppercase tracking-wide">Playbook Bán Hàng Sunbot</p>
+                            <div class="grid grid-cols-1 gap-4 pl-4 border-l-2 border-orange-200">
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Nguyên tắc bán hàng</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Quy trình tư vấn 5 bước</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Kịch bản xử lý phản đối</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Mẹo tâm lý hành vi</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="#sec-2" class="toc-link">
+                    <div class="flex items-start gap-6 border-b border-slate-100 pb-5 px-2">
+                        <span class="toc-number text-slate-300 font-black text-[28px] leading-none w-10 transition-colors mt-1">02</span>
+                        <div class="w-full pt-1">
+                            <p class="toc-text font-bold text-slate-800 text-[16px] mb-4 transition-colors uppercase tracking-wide">Cơ chế Hợp Tác Phân Phối</p>
+                            <div class="grid grid-cols-1 gap-4 pl-4 border-l-2 border-orange-200">
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Phân loại vai trò đối tác & Hoa hồng</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Quy định quản lý Lead & Thanh toán</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Cấu trúc thưởng bổ sung (Bonus)</p>
+                                <p class="text-[14px] text-slate-600 mb-0 font-medium tracking-wide">Khung chế tài & Quy định</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- FOOTER: Tăng kích thước logo (h-6) nhưng vẫn giữ form gọn gàng -->
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>02</span>
+        </div>
+    </div>
+
+    <!-- PAGE 03: PLAYBOOK 1 -->
+    <div class="a4-page" id="sec-1">
+        <div class="page-watermark">01</div>
+        <div class="page-content">
+            <div class="section-header">
+                <div class="section-number">01</div>
+                <div class="section-title mb-0">Playbook Bán Hàng Sunbot</div>
+            </div>
+            
+            <div class="sub-title mt-2">1. Mục tiêu bán hàng cốt lõi</div>
+            <p class="text-[15px] font-medium text-slate-800 mb-10 leading-relaxed">Mục tiêu của đối tác tư vấn không phải là “bán robot" hay thiết bị, mà là: <br><strong class="text-orange-600">Triển khai một chương trình giáo dục hoàn chỉnh</strong>, giúp nhà trường nâng cấp chất lượng đào tạo và tạo ra giá trị rõ ràng phục vụ cho việc tuyển sinh.</p>
+
+            <div class="sub-title">2. Nguyên tắc tư vấn</div>
+            <div class="grid grid-cols-1 gap-8 mt-6">
+                <div class="border border-red-200 bg-red-50 p-8 rounded-2xl flex items-start gap-6 shadow-sm">
+                    <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-black text-red-700 mb-3 uppercase text-[14px] tracking-wider">Không Bán Thiết Bị / Kỹ Thuật</p>
+                        <ul class="mb-0 text-[14.5px] space-y-2">
+                            <li class="text-red-900 before:!bg-red-500 mb-1">Không bắt đầu bằng việc chào bán robot, thiết bị hay số lượng phần cứng.</li>
+                            <li class="text-red-900 before:!bg-red-500 mb-1">Không để khách hàng tự chọn gói một cách cảm tính ("Anh/chị muốn gói nào?").</li>
+                            <li class="text-red-900 before:!bg-red-500 mb-0">Không giải thích quá sâu về cấu trúc/vận hành nội bộ. Giữ ở mức độ "hiểu đủ để đưa ra quyết định".</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border border-green-200 bg-green-50 p-8 rounded-2xl flex items-start gap-6 shadow-sm">
+                    <div class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-black text-green-700 mb-3 uppercase text-[14px] tracking-wider">Dẫn Dắt Bằng Giá Trị Lợi Ích</p>
+                        <ul class="mb-0 text-[14.5px] space-y-2">
+                            <li class="text-green-900 before:!bg-green-500 mb-1">Luôn bắt đầu câu chuyện bằng: Chương trình học, lộ trình phát triển và lợi ích mang lại cho nhà trường/trẻ em.</li>
+                            <li class="text-green-900 before:!bg-green-500 mb-0">Luôn dùng kỹ thuật dẫn dắt: "Phần lớn các trường hiện nay đang triển khai rất hiệu quả với gói Standard...".</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>03</span>
+        </div>
+    </div>
+
+    <!-- PAGE 04: PLAYBOOK 2 -->
+    <div class="a4-page">
+        <div class="page-watermark">01</div>
+        <div class="page-content">
+            <div class="kicker mt-2">Playbook Bán Hàng (Tiếp)</div>
+            
+            <div class="sub-title mt-6 text-[18px]">3. Framework Quy trình Bán hàng 5 Bước (Phần 1)</div>
+            
+            <div class="space-y-8 mt-8 relative pl-4">
+                <div class="absolute left-10 top-10 bottom-10 w-1 bg-slate-200 z-0 rounded"></div>
+
+                <!-- B1 -->
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 flex gap-8 items-center shadow-sm relative z-10 hover:border-slate-300 transition-colors">
+                    <div class="w-14 h-14 rounded-full bg-slate-100 font-black text-slate-400 flex items-center justify-center text-[20px] shrink-0 border-4 border-white shadow-sm">01</div>
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2 text-[16px]">Mở vấn đề <span class="font-normal text-slate-500 text-[13px] ml-2 tracking-wide uppercase">(3-5 phút - Khơi gợi nhu cầu)</span></p>
+                        <p class="text-[14.5px] mb-0 italic text-slate-600 leading-relaxed">"Hiện nay các trường đang rất quan tâm việc đưa STEAM vào giảng dạy, nhưng thường bị mắc kẹt ở 2 vấn đề: Không có một chương trình chuẩn xuyên suốt & Giáo viên không tự triển khai được."</p>
+                    </div>
+                </div>
+                
+                <!-- B2 -->
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 flex gap-8 items-center shadow-sm relative z-10 hover:border-slate-300 transition-colors">
+                    <div class="w-14 h-14 rounded-full bg-slate-100 font-black text-slate-400 flex items-center justify-center text-[20px] shrink-0 border-4 border-white shadow-sm">02</div>
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2 text-[16px]">Giới thiệu giải pháp <span class="font-normal text-slate-500 text-[13px] ml-2 tracking-wide uppercase">(5-7 phút)</span></p>
+                        <p class="text-[14.5px] mb-0 text-slate-600 leading-relaxed">Nhấn mạnh về lộ trình 3 năm dài hạn. <br><span class="italic font-bold text-orange-600">"Điểm khác biệt cực lớn là chương trình này không phụ thuộc vào việc mua nhiều thiết bị đắt tiền, mà phụ thuộc vào phương pháp tổ chức lớp học và hệ thống học liệu được thiết kế sẵn."</span></p>
+                    </div>
+                </div>
+
+                <!-- B3 -->
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 flex gap-8 items-center shadow-sm relative z-10 hover:border-slate-300 transition-colors">
+                    <div class="w-14 h-14 rounded-full bg-slate-100 font-black text-slate-400 flex items-center justify-center text-[20px] shrink-0 border-4 border-white shadow-sm">03</div>
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2 text-[16px]">Mô hình triển khai <span class="font-normal text-slate-500 text-[13px] ml-2 tracking-wide uppercase">(3-5 phút)</span></p>
+                        <p class="text-[14.5px] mb-0 text-slate-600 leading-relaxed">Phân tích tính khả thi: 6-8 lớp, thời lượng 30 phút/tiết, học theo nhóm. <br><span class="italic font-medium text-slate-700">"Mô hình đã được chuẩn hóa đến từng tiết học, nhà trường chỉ cần áp dụng là có thể vận hành trơn tru."</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>04</span>
+        </div>
+    </div>
+
+    <!-- PAGE 05: PLAYBOOK 3 -->
+    <div class="a4-page">
+        <div class="page-watermark">01</div>
+        <div class="page-content">
+            <div class="kicker mt-2">Playbook Bán Hàng (Tiếp)</div>
+            
+            <div class="sub-title mt-6 text-[18px]">Framework Quy trình Bán hàng (Phần 2)</div>
+            
+            <div class="space-y-8 mt-8 relative pl-4">
+                <div class="absolute left-10 top-10 bottom-10 w-1 bg-slate-200 z-0 rounded"></div>
+
+                <!-- B4 -->
+                <div class="bg-orange-50 p-8 rounded-2xl border-2 border-orange-400 shadow-lg flex gap-8 items-center relative z-10 transform scale-[1.02]">
+                    <div class="w-14 h-14 rounded-full bg-orange-500 font-black text-white flex items-center justify-center text-[20px] shrink-0 border-4 border-white shadow-md">04</div>
+                    <div class="w-full">
+                        <p class="font-black text-orange-900 mb-3 text-[16px] uppercase tracking-wide">Giới thiệu gói (Bước Mang Tính Quyết Định)</p>
+                        <p class="text-[14.5px] mb-4 text-orange-900 leading-relaxed"><strong>TUYỆT ĐỐI KHÔNG</strong> trình bày theo thứ tự từ gói Basic đi lên. <strong>Luôn nói về GÓI STANDARD trước tiên.</strong></p>
+                        <div class="bg-white/60 p-4 rounded-xl border border-orange-200">
+                            <p class="text-[13px] font-bold text-orange-800 mb-2 uppercase tracking-wide">Quy tắc Neo Tâm Lý:</p>
+                            <div class="flex gap-4">
+                                <span class="bg-white px-3 py-1.5 rounded-lg font-bold text-orange-600 shadow-sm border border-orange-100">Standard = Mặc định</span> 
+                                <span class="bg-white px-3 py-1.5 rounded-lg text-slate-500 border border-slate-100">Basic = PA thấp</span> 
+                                <span class="bg-white px-3 py-1.5 rounded-lg text-amber-600 border border-amber-100">Premium = PA cao</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B5 -->
+                <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 flex gap-8 items-center shadow-xl relative z-10">
+                    <div class="w-14 h-14 rounded-full bg-slate-700 font-black text-white flex items-center justify-center text-[20px] shrink-0 border-4 border-slate-900">05</div>
+                    <div>
+                        <p class="font-bold text-white mb-3 text-[16px] uppercase tracking-wide">Chốt Sale (Closing)</p>
+                        <p class="text-[14.5px] mb-3 text-slate-300 leading-relaxed">Sử dụng linh hoạt 3 kỹ thuật chốt hợp đồng:</p>
+                        <ul class="text-[13.5px] text-slate-400 mb-0 space-y-1">
+                            <li class="before:!bg-slate-500">Chốt theo số đông (các trường khác đang chọn làm như vậy).</li>
+                            <li class="before:!bg-slate-500">Chốt theo logic (nếu thiếu vắng phần STEAM, lớp học sẽ rất nông và mau chán).</li>
+                            <li class="before:!bg-slate-500">Chốt theo rủi ro (lựa chọn gói thấp ban đầu, sau này nâng cấp sẽ rất tốn kém).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>05</span>
+        </div>
+    </div>
+
+    <!-- PAGE 06: PLAYBOOK 4 -->
+    <div class="a4-page">
+        <div class="page-watermark">01</div>
+        <div class="page-content">
+            <div class="kicker mt-2">Playbook Bán Hàng (Tiếp)</div>
+            
+            <div class="sub-title mt-6 text-[18px]">4. Kịch bản Xử lý Phản đối</div>
+            <div class="space-y-8 mt-8">
+                <div class="pl-6 border-l-4 border-slate-300">
+                    <p class="font-black text-slate-800 mb-2 text-[15px]">Tình huống: Khách hàng chê "Giá cao"</p>
+                    <p class="text-[14px] mb-0 text-slate-600 leading-relaxed">Tuyệt đối không nhượng bộ giảm giá ngay. <br>Cách trả lời: <span class="italic text-orange-600 font-semibold">"Chi phí này thực ra không phải là khoản đầu tư cho thiết bị phần cứng, mà bản chất là chi phí đầu tư cho một hệ thống chương trình học bài bản kéo dài 3 năm liên tục."</span></p>
+                </div>
+                
+                <div class="pl-6 border-l-4 border-slate-300">
+                    <p class="font-black text-slate-800 mb-2 text-[15px]">Tình huống: "Muốn làm gói rẻ hơn"</p>
+                    <p class="text-[14px] mb-0 text-slate-600 leading-relaxed"><span class="italic text-orange-600 font-semibold">"Trường mình hoàn toàn có thể bắt đầu từ gói Basic để thử nghiệm, nhưng theo kinh nghiệm của em, phần lớn các trường sẽ buộc phải chuyển sang gói Standard sau một thời gian ngắn."</span> → Kéo tư duy khách hàng giữ nguyên Standard là đích đến cuối cùng.</p>
+                </div>
+                
+                <div class="pl-6 border-l-4 border-slate-300">
+                    <p class="font-black text-slate-800 mb-2 text-[15px]">Tình huống: "Chỉ muốn mua thiết bị / robot"</p>
+                    <p class="text-[14px] mb-0 text-slate-600 leading-relaxed"><span class="italic text-orange-600 font-semibold">"Giá trị cốt lõi của Sunbot là chương trình giáo dục và giáo án, robot chỉ là công cụ để trẻ tương tác. Mua robot không sẽ không giải quyết được việc giảng dạy."</span> → Kéo sự chú ý về giá trị hệ thống.</p>
+                </div>
+            </div>
+
+            <div class="sub-title mt-12 text-[18px] text-red-600">5. Ranh Giới (Tuyệt đối KHÔNG làm)</div>
+            <div class="bg-red-50 p-8 rounded-2xl border border-red-200 mt-6">
+                <ul class="text-red-900 font-semibold text-[14.5px] space-y-4 mb-0">
+                    <li class="before:!bg-red-500 before:!top-2.5">Tự ý chỉnh sửa báo giá hoặc thay đổi cấu trúc gói.</li>
+                    <li class="before:!bg-red-500 before:!top-2.5">Hứa hẹn các cam kết vận hành nằm ngoài quy định của tài liệu.</li>
+                    <li class="before:!bg-red-500 before:!top-2.5">Tự ý hạ giá, cắt chiết khấu để giành giật chốt deal.</li>
+                    <li class="before:!bg-red-500 before:!top-2.5">Tư duy bán hàng theo kiểu "bán buôn thiết bị điện tử".</li>
+                </ul>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>06</span>
+        </div>
+    </div>
+
+    <!-- PAGE 07: PLAYBOOK 5 -->
+    <div class="a4-page">
+        <div class="page-watermark">01</div>
+        <div class="page-content flex flex-col h-full">
+            <div class="kicker mt-2">Playbook Bán Hàng (Tiếp)</div>
+            
+            <div class="sub-title mt-6 text-[18px]">6. Các Mẹo (Tips) Tâm lý Hành vi</div>
+            <div class="grid grid-cols-1 gap-6 mt-6">
+                <div class="bg-slate-50 p-6 border border-slate-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-[15px] text-slate-800 mb-2 uppercase tracking-wide">Luôn dùng cụm từ "Đang triển khai"</p>
+                    <p class="text-[14px] text-slate-600 mb-0 leading-relaxed">Thay vì nói: "Sản phẩm bên em có chức năng này". <br>Hãy nói: <strong class="text-orange-600">"Hiện tại các trường bên em đang triển khai chức năng này rất hiệu quả..."</strong> (Tạo cảm giác sản phẩm đang sống và hoạt động tốt).</p>
+                </div>
+                
+                <div class="bg-slate-50 p-6 border border-slate-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-[15px] text-slate-800 mb-2 uppercase tracking-wide">Tận dụng Hiệu ứng số đông (FOMO)</p>
+                    <p class="text-[14px] text-slate-600 mb-0 leading-relaxed">Khách hàng trường học rất sợ đi một mình hoặc làm khác số đông. Sử dụng các câu: "Phần lớn trường chọn Standard", "Các trường mầm non cùng quy mô với bên mình đều đang làm theo hướng này..."</p>
+                </div>
+                
+                <div class="bg-slate-50 p-6 border border-slate-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-[15px] text-slate-800 mb-2 uppercase tracking-wide">Hiệu ứng chim mồi (Decoy Effect)</p>
+                    <p class="text-[14px] text-slate-600 mb-0 leading-relaxed">Đặt gói Standard ở vị trí trung tâm. Không dùng sức đẩy Basic, không cố ép Premium. Kỹ thuật này khiến khách hàng tự đánh giá và cảm thấy Standard là một "món hời" hợp lý nhất.</p>
+                </div>
+            </div>
+
+            <div class="sub-title mt-12 text-[18px]">7. Lời Kết Bán Hàng</div>
+            <div class="box-dark shadow-xl bg-[#0f172a] mt-6 p-10 relative overflow-hidden flex-1">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500 mb-6 opacity-90"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+                <p class="italic text-white font-medium text-[18px] leading-relaxed mb-0 relative z-10">
+                    "Người đối tác thành công xuất sắc không phải là người nói nhiều nhất hay dẻo miệng nhất, mà là người:<br><br>
+                    <span class="text-orange-400 font-bold tracking-widest uppercase text-[15px]">• Dẫn dắt đúng logic</span><br>
+                    <span class="text-orange-400 font-bold tracking-widest uppercase text-[15px]">• Giữ vững cấu trúc kịch bản</span><br>
+                    <span class="text-orange-400 font-bold tracking-widest uppercase text-[15px]">• Tuyệt đối không làm lệch định vị</span>"
+                </p>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>07</span>
+        </div>
+    </div>
+
+    <!-- PAGE 08: PARTNER MECHANISM 1 -->
+    <div class="a4-page" id="sec-2">
+        <div class="page-watermark">02</div>
+        <div class="page-content">
+            <div class="section-header">
+                <div class="section-number">02</div>
+                <div class="section-title mb-0">Cơ Chế Hợp Tác<br>Đối Tác Phân Phối</div>
+            </div>
+            
+            <p class="font-medium text-slate-700 text-[14.5px] mb-10 leading-relaxed bg-slate-50 p-6 rounded-xl border border-slate-100"><strong>Mục tiêu cốt lõi:</strong> Mở rộng thị trường, tăng tốc độ tiếp cận các điểm trường mầm non, tối ưu nguồn lực bán hàng toàn hệ thống. Đối tác đóng vai trò cực kỳ quan trọng trong việc kết nối, phát triển khách hàng và đồng hành hỗ trợ triển khai.</p>
+            
+            <div class="sub-title text-[18px]">1. Phân Loại Vai Trò Đối Tác</div>
+            <p class="text-[13.5px] italic text-slate-500 mb-8 pb-4 border-b border-slate-100">Lưu ý: Vai trò sẽ được xác định cứng tại thời điểm đăng ký hợp tác, dựa trên mức độ cam kết và năng lực thực tế của cá nhân/tổ chức.</p>
+            
+            <div class="mb-12">
+                <div class="flex items-center gap-5 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-400 text-[18px]">A</div>
+                    <h4 class="font-black text-slate-800 text-[17px] uppercase tracking-wide m-0">Đối tác Kết nối (Connector)</h4>
+                </div>
+                <p class="text-[14.5px] text-slate-600 mb-4 pl-16 leading-relaxed">Chỉ đơn thuần cung cấp thông tin liên hệ của đầu mối nhà trường. Không tham gia tư vấn chuyên sâu, không chịu trách nhiệm tiến trình chốt hợp đồng. <br><strong>Điều kiện:</strong> Lead hợp lệ (có tên trường, người liên hệ cụ thể và chưa tồn tại trên hệ thống quản lý của Kiro).</p>
+                <div class="ml-16 bg-slate-50 px-6 py-4 rounded-xl border border-slate-200 inline-block shadow-sm">
+                    <span class="font-black text-slate-800 text-[16px] uppercase tracking-wide">Hoa hồng cố định: <span class="text-slate-900 text-[20px]">5%</span></span> <br>
+                    <span class="text-slate-500 text-[12.5px] font-medium mt-1 inline-block">(Được tính trên License Fee, chi trả khi hợp đồng thu đủ 70%)</span>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <div class="flex items-center gap-5 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 text-[18px]">B</div>
+                    <h4 class="font-black text-slate-800 text-[17px] uppercase tracking-wide m-0">Đối tác Bán hàng (Sales Partner)</h4>
+                </div>
+                <p class="text-[14.5px] text-slate-600 mb-6 pl-16 leading-relaxed">Chủ động tiến hành tư vấn, tổ chức demo, theo sát toàn bộ quá trình đến khi ký kết hợp đồng, phối hợp chặt chẽ với Kiro để chốt deal.</p>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>08</span>
+        </div>
+    </div>
+
+    <!-- PAGE 09: PARTNER MECHANISM 2 -->
+    <div class="a4-page">
+        <div class="page-watermark">02</div>
+        <div class="page-content">
+            <div class="kicker mt-2">Cơ chế Hợp tác (Tiếp)</div>
+            
+            <div class="pl-16 mb-12">
+                <p class="font-bold text-[14.5px] mb-4">Bảng tỷ lệ hoa hồng cơ bản (Sales Partner):</p>
+                <table class="border border-slate-200 rounded-2xl overflow-hidden shadow-md !mb-4">
+                    <thead>
+                        <tr>
+                            <th width="45%" class="py-4">Gói triển khai</th>
+                            <th width="30%" class="py-4">Giá trị tham chiếu</th>
+                            <th width="25%" class="py-4">HH cơ bản</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold text-slate-600 py-4 text-[14px]">Basic <span class="text-[10px] text-slate-400 font-normal ml-1 block mt-1 uppercase tracking-widest">(Gói mở cửa)</span></td>
+                            <td class="py-4">~130 triệu</td>
+                            <td class="font-black text-slate-700 text-[18px] py-4">12%</td>
+                        </tr>
+                        <tr class="bg-orange-50/50">
+                            <td class="font-bold text-orange-600 py-4 text-[14px]">Standard <span class="text-[10px] text-orange-400 font-normal ml-1 block mt-1 uppercase tracking-widest">(Chủ lực)</span></td>
+                            <td class="text-orange-900 font-medium py-4">~180 triệu</td>
+                            <td class="font-black text-orange-600 text-[22px] py-4">18%</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-amber-500 py-4 text-[14px]">Premium <span class="text-[10px] text-amber-400 font-normal ml-1 block mt-1 uppercase tracking-widest">(Chiến lược)</span></td>
+                            <td class="text-amber-900 font-medium py-4">~230 triệu</td>
+                            <td class="font-black text-amber-500 text-[22px] py-4">22%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                    <p class="text-[12.5px] text-slate-500 font-medium leading-relaxed italic mb-0">
+                        * Ghi chú: Giá trị tính HH là khoản Phí cấp phép (License Fee).<br>
+                        * Quy định chia sẻ: Nếu trong 1 deal có sự xuất hiện của cả Connector và Sales Partner, Sales Partner sẽ bị trừ 5% để hệ thống chi trả cho Connector.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-12">
+                <div class="flex items-center gap-5 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center font-black text-white text-[18px]">C</div>
+                    <h4 class="font-black text-slate-800 text-[17px] uppercase tracking-wide m-0">Đối tác PT Hệ thống (System Dev)</h4>
+                </div>
+                <p class="text-[14.5px] text-slate-600 mb-0 pl-16 leading-relaxed">Năng lực phát triển từ 3 điểm trường trở lên trong vòng 6 tháng. Quản lý mạng lưới kinh doanh độc lập. Hoa hồng áp dụng cơ chế Master riêng (được quy định chi tiết bằng phụ lục Hợp đồng), cam kết tối thiểu không thấp hơn các mốc của Sales Partner.</p>
+            </div>
+
+            <div class="sub-title border-t border-slate-200 pt-8 text-[18px]">2. Quản lý Lead & Thanh toán</div>
+            <div class="space-y-6 mt-6">
+                <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-slate-800 mb-2 text-[14.5px] uppercase tracking-wide">Quy tắc Đăng ký & Bảo vệ Lead</p>
+                    <p class="text-[14px] text-slate-600 mb-0 leading-relaxed">Nguyên tắc vàng: Đăng ký trước - Ưu tiên trước. Thời hạn hiệu lực của một Lead là 90 ngày (có thể xem xét gia hạn thêm 30 ngày nếu có minh chứng tiến triển rõ ràng). Sunbot cam kết hệ thống bảo vệ lead hợp lệ, tuyệt đối không cho đội sale nội bộ trực tiếp tiếp cận khách hàng của đối tác.</p>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>09</span>
+        </div>
+    </div>
+
+    <!-- PAGE 10: PARTNER MECHANISM 3 -->
+    <div class="a4-page">
+        <div class="page-watermark">02</div>
+        <div class="page-content">
+            <div class="kicker mt-2">Cơ chế Hợp tác (Tiếp)</div>
+            
+            <div class="space-y-6 mt-6 mb-12">
+                <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-slate-800 mb-2 text-[14.5px] uppercase tracking-wide">Quy trình Thanh toán Hoa hồng</p>
+                    <p class="text-[14px] text-slate-600 mb-0 leading-relaxed">Giải ngân hoa hồng thực hiện theo nguyên tắc "Tiến độ thu tiền thực tế" từ nhà trường (không áp dụng chính sách ứng trước hoa hồng trong mọi trường hợp).</p>
+                </div>
+
+                <div class="p-6 bg-red-50 border border-red-200 rounded-2xl shadow-sm">
+                    <p class="font-black text-red-800 mb-2 text-[14.5px] uppercase tracking-wide">Chính sách Thu hồi (Clawback Policy)</p>
+                    <p class="text-[14px] text-red-700 mb-0 leading-relaxed">Hệ thống sẽ tự động thu hồi phần hoa hồng tương ứng với phần tiền chưa thực thu nếu Hợp đồng bị hủy ngang hoặc nhà trường không thực hiện thanh toán đủ các khoản trong vòng 6 tháng đầu kể từ ngày ký.</p>
+                </div>
+            </div>
+
+            <div class="sub-title text-[18px]">3. Cấu Trúc Thưởng Bổ Sung (Bonus)</div>
+            
+            <div class="bg-red-600 text-white p-4 rounded-xl mb-8 text-[13.5px] font-bold shadow-lg text-center tracking-widest uppercase">
+                Tổng thưởng bổ sung (Mix Bonus + Accelerator) KHÔNG VƯỢT QUÁ 10% / DEAL
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 mb-10">
+                <div class="border border-slate-200 rounded-2xl p-8 bg-slate-50 shadow-sm">
+                    <p class="font-black text-[16px] mb-3 text-slate-800 uppercase tracking-wide">Thưởng Cơ Cấu (Mix Bonus)</p>
+                    <p class="text-[13.5px] text-slate-500 mb-6 leading-relaxed">Được đánh giá và tính theo quý (điều kiện cần: đạt tối thiểu 3 HĐ/quý). Mục tiêu: Khuyến khích đối tác tập trung bán chéo, upsell các gói Standard hoặc Premium.</p>
+                    <table class="!mb-0 shadow-sm rounded-xl overflow-hidden border border-slate-200 text-[13.5px]">
+                        <thead><tr><th class="!bg-white w-[70%] py-4">% DT là Standard/Premium</th><th class="!bg-white py-4">Thưởng</th></tr></thead>
+                        <tbody>
+                            <tr><td class="font-medium text-slate-700 py-3">Từ 60% tổng giá trị hợp đồng</td><td class="font-black text-green-600 text-[16px] py-3">+5%</td></tr>
+                            <tr><td class="font-medium text-slate-700 py-3">Từ 70% tổng giá trị hợp đồng</td><td class="font-black text-green-600 text-[16px] py-3">+8%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>10</span>
+        </div>
+    </div>
+
+    <!-- PAGE 11: PARTNER MECHANISM 4 -->
+    <div class="a4-page">
+        <div class="page-watermark">02</div>
+        <div class="page-content flex flex-col h-full">
+            <div class="kicker mt-2">Cơ chế Hợp tác (Tiếp)</div>
+            
+            <div class="border border-slate-200 rounded-2xl p-8 bg-slate-50 shadow-sm mt-6 mb-10">
+                <p class="font-black text-[16px] mb-3 text-slate-800 uppercase tracking-wide">Thưởng Quy Mô (Accelerator)</p>
+                <p class="text-[13.5px] text-slate-500 mb-6 leading-relaxed">Không phụ thuộc vào quý. Áp dụng độc lập ngay trên phí License của từng hợp đồng được ký kết thành công.</p>
+                <table class="!mb-0 shadow-sm rounded-xl overflow-hidden border border-slate-200 text-[13.5px]">
+                    <thead><tr><th class="!bg-white w-[70%] py-4">Quy mô Giá trị hợp đồng</th><th class="!bg-white py-4">Thưởng</th></tr></thead>
+                    <tbody>
+                        <tr><td class="font-medium text-slate-700 py-3">180 triệu - dưới 300 triệu</td><td class="font-black text-blue-600 text-[16px] py-3">+3%</td></tr>
+                        <tr><td class="font-medium text-slate-700 py-3">300 triệu - dưới 500 triệu</td><td class="font-black text-blue-600 text-[16px] py-3">+5%</td></tr>
+                        <tr><td class="font-medium text-slate-700 py-3">Từ 500 triệu trở lên</td><td class="font-black text-blue-600 text-[16px] py-3">+8%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="border-2 border-orange-300 bg-orange-50 p-8 rounded-2xl relative overflow-hidden shadow-md">
+                <div class="absolute -right-4 -top-4 text-[100px] text-orange-200 opacity-50 font-black leading-none">5%</div>
+                <p class="font-black text-[16px] text-orange-900 mb-4 uppercase tracking-wide relative z-10">Thưởng Duy Trì (Retention Bonus) Dài Hạn</p>
+                <p class="text-[14.5px] text-orange-800 mb-0 leading-relaxed relative z-10">Đối tác được hưởng <strong class="text-orange-600 text-[20px] bg-white px-2 rounded ml-1 mr-1">5%</strong> trên giá trị hợp đồng gia hạn hoặc mở rộng nâng cấp thực thu. <br><br><strong>Điều kiện ràng buộc:</strong> Đối tác phải đảm bảo vẫn đang hoạt động (có phát sinh tối thiểu 1 Hợp đồng mới trong vòng 12 tháng gần nhất). Thời hạn tối đa đối tác được hưởng quyền lợi này là: 3 năm / 1 điểm trường.</p>
+            </div>
+
+            <div class="sub-title mt-12 text-[18px]">4. Tổng Hợp Bảng Mức Hưởng Tối Đa</div>
+            <table class="border border-slate-200 rounded-xl overflow-hidden shadow-md mt-6 text-[13.5px]">
+                <thead>
+                    <tr>
+                        <th width="35%" class="py-5">Phân hạng Vai trò</th>
+                        <th width="20%" class="py-5 text-center">HH cơ bản</th>
+                        <th width="20%" class="py-5 text-center">Bonus tối đa</th>
+                        <th width="25%" class="bg-slate-900 text-amber-400 py-5 text-center text-[14px]">Tổng Tối Đa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold text-slate-700 py-5">Đối tác Connector</td>
+                        <td class="font-bold text-slate-800 py-5 text-[16px] text-center">5%</td>
+                        <td class="text-slate-400 text-[12px] py-5 italic text-center">Không áp dụng</td>
+                        <td class="font-black text-slate-800 text-[18px] py-5 text-center bg-slate-50">5%</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold text-slate-700 py-5">Sales Partner - Gói Basic</td>
+                        <td class="font-bold text-slate-800 py-5 text-[16px] text-center">12%</td>
+                        <td class="font-bold text-green-600 py-5 text-[15px] text-center">+10%</td>
+                        <td class="font-black text-slate-800 text-[18px] py-5 text-center bg-slate-50">22%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>11</span>
+        </div>
+    </div>
+
+    <!-- PAGE 12: PARTNER MECHANISM 5 -->
+    <div class="a4-page">
+        <div class="page-watermark">02</div>
+        <div class="page-content flex flex-col h-full">
+            <div class="kicker mt-2">Cơ chế Hợp tác (Tiếp)</div>
+            
+            <table class="border border-slate-200 rounded-xl overflow-hidden shadow-md mt-6 mb-12 text-[13.5px]">
+                <tbody>
+                    <tr class="bg-orange-50/50">
+                        <td width="35%" class="font-black text-orange-600 py-5 pl-4">Sales Partner - Gói Standard</td>
+                        <td width="20%" class="font-black text-orange-600 text-[18px] py-5 text-center">18%</td>
+                        <td width="20%" class="font-bold text-green-600 py-5 text-[15px] text-center">+10%</td>
+                        <td width="25%" class="font-black text-orange-600 text-[22px] py-5 text-center bg-orange-100/50">28%</td>
+                    </tr>
+                    <tr>
+                        <td class="font-black text-amber-600 py-5 pl-4">Sales Partner - Gói Premium</td>
+                        <td class="font-black text-amber-600 text-[18px] py-5 text-center">22%</td>
+                        <td class="font-bold text-green-600 py-5 text-[15px] text-center">+10%</td>
+                        <td class="font-black text-amber-600 text-[22px] py-5 text-center bg-slate-50">32%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title border-t border-slate-200 pt-8 text-[18px]">5. Khung Hỗ Trợ & Chế Tài Quy Định</div>
+            <div class="space-y-8 mt-8">
+                <div class="flex gap-5 items-start">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-black text-[18px] shrink-0 mt-1">1</div>
+                    <div>
+                        <p class="font-black text-slate-800 mb-2 text-[15px] uppercase tracking-wide">Hỗ trợ từ Sunbot</p>
+                        <p class="text-slate-600 mb-0 text-[14.5px] leading-relaxed">Công ty cung cấp toàn bộ tài liệu bán hàng, proposal chuẩn chỉnh. Sẵn sàng hỗ trợ tư vấn các deal quan trọng, chuyên gia từ tổng công ty sẽ đồng hành trực tiếp chốt Hợp đồng cùng đối tác khi có yêu cầu.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-start">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-black text-[18px] shrink-0 mt-1">2</div>
+                    <div>
+                        <p class="font-black text-slate-800 mb-2 text-[15px] uppercase tracking-wide">Lộ trình thăng hạng đối tác</p>
+                        <p class="text-slate-600 mb-0 text-[14.5px] leading-relaxed">
+                            • Đối tác Chuẩn (Ký ≥ 1 HĐ).<br>
+                            • Đối tác Bạc (Ký ≥ 3 HĐ/6 tháng - Được quyền ưu tiên hỗ trợ xử lý deal).<br>
+                            • Đối tác Vàng (Ký ≥ 6 HĐ/6 tháng - Được thỏa thuận một cơ chế Master riêng).
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-start">
+                    <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-black text-[18px] shrink-0 mt-1">!</div>
+                    <div>
+                        <p class="font-black text-red-700 mb-2 text-[15px] uppercase tracking-wide">Xử lý vi phạm nghiêm trọng</p>
+                        <p class="text-red-800 mb-0 text-[14.5px] leading-relaxed">Hệ thống nghiêm cấm các hành vi: Tự ý thay đổi giá niêm yết, tách rời các thành phần gói để bán lẻ, tư vấn và triển khai sai triết lý chương trình, sử dụng tài nguyên (giáo án, học liệu) ngoài phạm vi Hợp đồng. <br><strong class="bg-red-100 px-2 rounded">Chế tài:</strong> Phạt dừng toàn bộ hoa hồng chưa chi trả và thu hồi vĩnh viễn quyền đối tác ngay lập tức.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto text-center border-t border-slate-200 pt-8">
+                <p class="text-[12px] text-slate-400 font-medium mb-2 italic">Tài liệu này có giá trị tham chiếu nội bộ. Mức hoa hồng cụ thể được xác nhận hợp pháp bằng Phụ lục Hợp tác.</p>
+                <p class="text-[12px] text-slate-500 uppercase tracking-widest font-black">Kiro Vietnam Technology JSC &copy; 2026</p>
+            </div>
+        </div>
+        <div class="page-footer">
+            <div class="flex items-center gap-3">
+                <img src="./logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain grayscale opacity-70" onerror="this.style.display='none'"/>
+                <span class="border-l border-slate-300 pl-3">Kiro Vietnam (Nội bộ)</span>
+            </div>
+            <span>12</span>
+        </div>
+    </div>
+
+</body>
+</html>

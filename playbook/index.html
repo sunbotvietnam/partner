@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playbook Bán Hàng | Sunbot Partner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-orange: #ea580c; --bg-slate: #0f172a; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+
+        /* KHẮC PHỤC LỖI LẸM DẤU TIẾNG VIỆT CHO CONTAINER */
+        h1, h2, h3, h4, h5, h6 { line-height: 1.6 !important; padding-top: 0.2em; padding-bottom: 0.2em; overflow: visible; }
+        
+        /* KHẮC PHỤC TRỰC TIẾP LỖI LẸM DẤU CHỮ GRADIENT */
+        .text-gradient-3d { 
+            background: linear-gradient(to bottom, #fdba74, #ea580c); 
+            -webkit-background-clip: text; background-clip: text; 
+            -webkit-text-fill-color: transparent; color: transparent;
+            filter: drop-shadow(0px 2px 2px rgba(234, 88, 12, 0.2)); 
+            display: inline-block; 
+            padding-top: 0.1em; 
+            padding-bottom: 0.1em;
+            line-height: 1.2;
+        }
+        
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid #e2e8f0; border-radius: 1.5rem; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+
+        .btn-3d-orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            box-shadow: 0 6px 15px -3px rgba(234, 88, 12, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            color: white; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; outline: none; border: none;
+        }
+        .btn-3d-orange:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(234, 88, 12, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Navigation Tabs */
+        .tab-btn { position: relative; padding: 16px 24px; font-weight: 700; color: #64748b; transition: all 0.3s; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; outline: none;}
+        .tab-btn:hover { color: #ea580c; }
+        .tab-btn.active { color: #ea580c; border-bottom-color: #ea580c; }
+        
+        .tab-content { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Accordion */
+        .accordion-header { cursor: pointer; transition: all 0.2s; user-select: none; }
+        .accordion-header:hover { background-color: #fff7ed; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-active .accordion-icon { transform: rotate(180deg); }
+        .accordion-active .accordion-content { max-height: 800px; }
+        
+        /* Copy Button Toast */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 999px; font-weight: bold; font-size: 14px; opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1000; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- BẢO MẬT PASSCODE -->
+    <div id="auth-overlay" class="fixed inset-0 z-[100] bg-[#0b1120] flex items-center justify-center p-6">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-orange-600 rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
+        <div class="bg-slate-900/80 backdrop-blur-xl border border-slate-700 p-10 rounded-3xl shadow-2xl w-full max-w-md text-center relative overflow-hidden" style="animation: fadeIn 0.5s ease-out forwards;">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-orange-600 via-amber-500 to-orange-600"></div>
+            <img src="../../assets/img/logo-sunbot.png" alt="Sunbot" class="h-14 mx-auto mb-8 drop-shadow-md" onerror="this.src='https://placehold.co/150x50/transparent/ea580c?text=SUNBOT+LOGO'">
+            <h2 class="text-2xl font-black text-white mb-2 uppercase tracking-widest">Khu Vực Bán Hàng</h2>
+            <p class="text-slate-400 text-[13px] mb-8 leading-relaxed">Tài liệu lưu hành nội bộ. Vui lòng nhập mã bảo mật hệ thống cung cấp để truy cập không gian làm việc.</p>
+            <form id="auth-form" class="space-y-5">
+                <div class="relative">
+                    <input type="password" id="auth-pass" class="w-full px-5 py-4 rounded-xl bg-[#0f172a] border border-slate-600 text-white font-bold tracking-widest focus:outline-none focus:border-orange-500 text-center placeholder:text-slate-600 transition-all" placeholder="Nhập mã bảo mật..." required>
+                    <p id="auth-error" class="text-red-400 text-[12px] font-bold mt-2 hidden text-left px-2">⚠️ Mã bảo mật không chính xác!</p>
+                </div>
+                <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-widest hover:from-orange-500 hover:to-orange-400 transition-colors shadow-[0_10px_20px_-10px_rgba(234,88,12,0.5)] outline-none">Truy Cập Hệ Thống</button>
+            </form>
+            <div class="mt-8 pt-6 border-t border-slate-800">
+                <a href="../index.html" class="text-xs text-slate-500 hover:text-orange-500 transition-colors font-medium">← Quay lại Cổng đối tác</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NỘI DUNG CHÍNH (UI) -->
+    <div id="main-wrapper" class="hidden flex-col min-h-screen w-full">
+        
+        <!-- TOP NAV -->
+        <nav class="fixed w-full z-50 glass-nav shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="flex justify-between items-center h-16 sm:h-20">
+                    <div class="flex items-center gap-6">
+                        <a href="../index.html" class="flex items-center gap-3 sm:gap-4 group outline-none" title="Về Hub Đối Tác">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            </div>
+                            <img src="../../assets/img/logo-sunbot.png" alt="Sunbot Logo" class="h-6 sm:h-8 object-contain drop-shadow-[0_2px_4px_rgba(234,88,12,0.2)]" onerror="this.src='https://placehold.co/120x40/transparent/ea580c?text=SUNBOT'"/>
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-2 bg-red-50 rounded-full px-3 sm:px-4 py-1 sm:py-1.5 border border-red-200">
+                        <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 animate-pulse"></div>
+                        <span class="text-[9px] sm:text-xs font-bold text-red-600 uppercase tracking-widest">Nội Bộ</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- FLOATING BACK BUTTON -->
+        <a href="../index.html" class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 btn-3d-orange px-4 py-3 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2 font-bold shadow-2xl hover:-translate-y-1 transition-transform group outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span class="hidden sm:inline uppercase tracking-wider text-xs">Về Hub</span>
+        </a>
+
+        <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 w-full pt-24 sm:pt-32 pb-24 relative z-20">
+            
+            <div class="text-center mb-8">
+                <div class="inline-block px-4 py-1 bg-orange-100 text-orange-700 font-bold tracking-widest text-[10px] rounded-full mb-4 uppercase">Cẩm Nang Bán Hàng Thực Chiến</div>
+                <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight uppercase mb-3">Playbook <span class="text-gradient-3d">Chốt Sale</span></h1>
+                <p class="text-slate-500 font-medium text-sm md:text-base max-w-2xl mx-auto">Vũ khí tối thượng giúp Đối tác làm chủ cuộc hội thoại, dẫn dắt tâm lý khách hàng và chốt deal hệ thống Sunbot với tư duy của một Chuyên gia Giáo dục.</p>
+            </div>
+
+            <!-- TABS NAVIGATION -->
+            <div class="glass-panel overflow-hidden mb-8 sticky top-[64px] sm:top-[80px] z-40 bg-white/90">
+                <div class="flex overflow-x-auto hide-scrollbar border-b border-slate-200" id="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab('tab-nguyen-tac', this)">1. Tư Duy Sales</button>
+                    <button class="tab-btn" onclick="switchTab('tab-quy-trinh', this)">2. Quy Trình 5 Bước</button>
+                    <button class="tab-btn" onclick="switchTab('tab-xu-ly', this)">3. Xử Lý Phản Đối (Kịch bản)</button>
+                    <button class="tab-btn" onclick="switchTab('tab-meo', this)">4. Đòn Bẩy Tâm Lý</button>
+                </div>
+            </div>
+
+            <!-- TAB 1: NGUYÊN TẮC LÕI & TƯ DUY -->
+            <div id="tab-nguyen-tac" class="tab-content active">
+                <div class="bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-xl mb-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600 rounded-full blur-[80px] opacity-30 pointer-events-none"></div>
+                    <h2 class="text-2xl font-black text-white uppercase tracking-tight mb-2 relative z-10">Bạn Đang Bán Cái Gì?</h2>
+                    <p class="text-slate-300 mb-6 text-[15px] leading-relaxed relative z-10">Hiệu trưởng không thức dậy và nghĩ: <i>"Hôm nay mình phải mua một con robot"</i>. Họ thức dậy với nỗi lo: <i>"Làm sao tuyển sinh cạnh tranh được với trường mầm non đối diện?"</i>, <i>"Làm sao để phụ huynh vui vẻ đóng thêm học phí?"</i>. <strong class="text-orange-400">Bạn không bán robot. Bạn bán giải pháp cho những nỗi đau đó!</strong></p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                        <div class="bg-white/10 p-5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <p class="text-3xl mb-2">🎯</p>
+                            <p class="font-bold text-white mb-1">Bán Vũ Khí Tuyển Sinh</p>
+                            <p class="text-[13px] text-slate-400 leading-relaxed mb-0">Phòng STEAM Lab chuẩn Sunbot chính là thứ khiến Phụ huynh "Wow" ngay lần đầu tham quan trường.</p>
+                        </div>
+                        <div class="bg-white/10 p-5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <p class="text-3xl mb-2">🛡️</p>
+                            <p class="font-bold text-white mb-1">Bán Sự An Tâm</p>
+                            <p class="text-[13px] text-slate-400 leading-relaxed mb-0">Hệ thống giáo án 3 năm đóng gói sẵn giúp Chủ trường không sợ giáo viên nghỉ việc làm đứt gãy chương trình.</p>
+                        </div>
+                        <div class="bg-white/10 p-5 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <p class="text-3xl mb-2">💰</p>
+                            <p class="font-bold text-white mb-1">Bán Cỗ Máy Sinh Lời</p>
+                            <p class="text-[13px] text-slate-400 leading-relaxed mb-0">Thu thêm 50k-100k/học sinh học ngoại khóa STEAM, trường hoàn vốn siêu tốc và sinh lời bền vững.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- DO NOT -->
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center gap-3 mb-4 border-b border-red-100 pb-3">
+                            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0 font-black">✕</div>
+                            <h3 class="font-black text-red-700 uppercase tracking-wider text-sm m-0">Tuyệt Đối Tránh Xa</h3>
+                        </div>
+                        <ul class="space-y-3 text-[14px] text-red-900/80">
+                            <li class="flex items-start gap-2"><span class="text-red-500 mt-0.5">•</span> <strong>Nói quá nhiều về tính năng:</strong> Đừng sa đà phân tích "Robot này có cảm biến gì", "Pin được bao lâu". Phụ huynh không quan tâm, Chủ trường càng không.</li>
+                            <li class="flex items-start gap-2"><span class="text-red-500 mt-0.5">•</span> <strong>Để khách tự "Bơi":</strong> Đừng bao giờ quăng bảng giá 3 gói rồi hỏi "Anh chị chọn gói nào?". Họ sẽ luôn chọn gói rẻ nhất hoặc... không chọn gì cả.</li>
+                            <li class="flex items-start gap-2"><span class="text-red-500 mt-0.5">•</span> <strong>Bán phá giá:</strong> Tự ý cắt máu hoa hồng để chốt deal sẽ làm sập định vị thương hiệu "Giáo dục cao cấp" của hệ thống.</li>
+                        </ul>
+                    </div>
+
+                    <!-- DO -->
+                    <div class="bg-green-50 border border-green-100 rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center gap-3 mb-4 border-b border-green-100 pb-3">
+                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0 font-black">✓</div>
+                            <h3 class="font-black text-green-700 uppercase tracking-wider text-sm m-0">Tư Duy Của Chuyên Gia</h3>
+                        </div>
+                        <ul class="space-y-3 text-[14px] text-green-900/80">
+                            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">•</span> <strong>Hỏi nhiều hơn nói:</strong> Hãy khai thác nỗi đau hiện tại của trường (đối thủ đang làm gì, học sinh có đông không).</li>
+                            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">•</span> <strong>Định vị Mỏ Neo:</strong> Luôn luôn giới thiệu Gói STANDARD (Chuẩn) trước tiên, làm mỏ neo tâm lý vững chắc nhất.</li>
+                            <li class="flex items-start gap-2"><span class="text-green-500 mt-0.5">•</span> <strong>Bán hệ điều hành (OS):</strong> Nhấn mạnh việc Kiro cấp bằng, đào tạo giáo viên và Audit chất lượng định kỳ mới là thứ đắt giá nhất.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: QUY TRÌNH 5 BƯỚC -->
+            <div id="tab-quy-trinh" class="tab-content">
+                <div class="relative">
+                    <!-- Line kết nối -->
+                    <div class="absolute left-6 md:left-10 top-10 bottom-10 w-1 bg-orange-100 rounded"></div>
+
+                    <!-- Bước 1 -->
+                    <div class="relative z-10 pl-16 md:pl-28 mb-10">
+                        <div class="absolute left-0 md:left-4 top-0 w-12 h-12 bg-white border-4 border-orange-200 text-orange-600 font-black text-xl flex items-center justify-center rounded-full shadow-sm">1</div>
+                        <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:border-orange-300 transition-colors group">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Phá Băng & Khơi Gợi Nỗi Đau</h3>
+                                    <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">Mục tiêu: Khiến khách hàng thừa nhận họ đang thiếu STEAM</p>
+                                </div>
+                                <button onclick="copyText('copy-text-1', this)" class="bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-colors outline-none shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    Copy Kịch Bản
+                                </button>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p id="copy-text-1" class="text-[14px] italic text-slate-700 leading-relaxed m-0 font-medium">"Chào anh/chị. Dạo này các trường mầm non đối thủ đua nhau làm lớp học thông minh và STEAM để hút học sinh dữ quá. Nhưng em thấy đa số bị kẹt ở chỗ: Mua thiết bị về thì dễ, nhưng lại không có giáo án chuẩn 3 năm, giáo viên thì loay hoay không biết dạy gì tiếp theo. Không biết trường mình hiện tại đã có giải pháp đóng gói chuyên nghiệp cho mảng này chưa ạ?"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bước 2 -->
+                    <div class="relative z-10 pl-16 md:pl-28 mb-10">
+                        <div class="absolute left-0 md:left-4 top-0 w-12 h-12 bg-white border-4 border-orange-200 text-orange-600 font-black text-xl flex items-center justify-center rounded-full shadow-sm">2</div>
+                        <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:border-orange-300 transition-colors group">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Trình Bày Giải Pháp "OS"</h3>
+                                    <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">Nhấn mạnh Sunbot là Hệ điều hành (Không phải bán thiết bị)</p>
+                                </div>
+                                <button onclick="copyText('copy-text-2', this)" class="bg-slate-100 hover:bg-orange-100 text-slate-500 hover:text-orange-600 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-colors outline-none shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    Copy Kịch Bản
+                                </button>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <p id="copy-text-2" class="text-[14px] italic text-slate-700 leading-relaxed m-0 font-medium">"Đó là lý do Hệ sinh thái Sunbot giải quyết triệt để nỗi lo này. Anh/chị đang không đầu tư vào vài con robot, mà anh chị đang mua một hệ thống vận hành. Sunbot bao gồm lộ trình bài giảng đã được Viện KHGD thẩm định, và đặc biệt là bên em sẽ về tận trường đào tạo, sát hạch cấp chứng nhận cho giáo viên nhà mình."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bước 3 -->
+                    <div class="relative z-10 pl-16 md:pl-28 mb-10">
+                        <div class="absolute left-0 md:left-4 top-0 w-12 h-12 bg-white border-4 border-orange-200 text-orange-600 font-black text-xl flex items-center justify-center rounded-full shadow-sm">3</div>
+                        <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm hover:border-orange-300 transition-colors group">
+                            <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight mb-2">Chứng Minh Tính Thực Tiễn</h3>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">Vẽ ra viễn cảnh dòng tiền và vận hành</p>
+                            <p class="text-[14px] text-slate-600 leading-relaxed mb-0">"Mô hình này bên em đã chuẩn hóa tại hơn 300 trường. Chỉ cần 1 phòng Lab hoặc di chuyển linh hoạt, chia nhóm 3-6 bé chung 1 bộ học cụ trong 35 phút. Trẻ em vui, phụ huynh hài lòng, trường chỉ cần thu thêm 50,000đ - 100,000đ/bé mỗi tháng là dư sức hoàn vốn đầu tư cực nhanh và sinh lời liên tục trong 3 năm tới."</p>
+                        </div>
+                    </div>
+
+                    <!-- Bước 4 (QUAN TRỌNG NHẤT) -->
+                    <div class="relative z-10 pl-16 md:pl-28 mb-10">
+                        <div class="absolute left-0 md:left-4 top-0 w-12 h-12 bg-orange-500 border-4 border-white text-white font-black text-xl flex items-center justify-center rounded-full shadow-md">4</div>
+                        <div class="bg-orange-50 p-6 md:p-8 rounded-2xl border-2 border-orange-400 shadow-md">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="font-black text-orange-900 text-lg uppercase tracking-tight">Tung Báo Giá & Đặt Mỏ Neo</h3>
+                                    <p class="text-[12px] font-bold text-orange-700 uppercase tracking-widest mb-4">Tuyệt đối không giới thiệu gói thấp nhất (Basic) đầu tiên!</p>
+                                </div>
+                                <button onclick="copyText('copy-text-4', this)" class="bg-white hover:bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-colors shadow-sm outline-none border border-orange-200 shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    Copy Kịch Bản
+                                </button>
+                            </div>
+                            <div class="bg-white/80 p-4 rounded-xl border border-orange-200">
+                                <p id="copy-text-4" class="text-[14px] italic text-orange-900 leading-relaxed m-0 font-medium">"Hiện tại, hơn 90% các trường đối tác bên em đang chọn triển khai Gói CHUẨN (STANDARD). Vì gói này tích hợp bài bản cả Lập trình và Khoa học STEAM (dự án tái chế), đảm bảo nội dung đủ sâu để học sinh không nhàm chán suốt 3 năm. <br><br>Nếu trường mình có kinh phí cực dồi dào, muốn làm phòng Lab xịn nhất khu vực thì có gói Premium. Hoặc ngân sách năm nay đang quá eo hẹp thì có thể bắt đầu tạm bằng gói Basic. Nhưng chân thành mà nói, gói Standard là phương án hiệu quả, an toàn và sinh lời tốt nhất."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bước 5 -->
+                    <div class="relative z-10 pl-16 md:pl-28">
+                        <div class="absolute left-0 md:left-4 top-0 w-12 h-12 bg-slate-800 border-4 border-white text-white font-black text-xl flex items-center justify-center rounded-full shadow-sm">5</div>
+                        <div class="bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-xl">
+                            <h3 class="font-black text-white text-lg uppercase tracking-tight mb-2">Chốt Sale (Kỹ Thuật Closing)</h3>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-4">Các đòn bẩy thúc đẩy ra quyết định</p>
+                            <ul class="space-y-3 text-[14px] text-slate-300">
+                                <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">•</span> <strong>Fear Of Missing Out (Sợ bỏ lỡ):</strong> "Trường Mầm non [Tên đối thủ gần đó] cũng vừa chốt lịch đào tạo giáo viên bên em tuần sau rồi chị ạ..."</li>
+                                <li class="flex items-start gap-2"><span class="text-orange-500 mt-0.5">•</span> <strong>Chốt bằng Rủi ro (Kéo về Standard):</strong> "Chọn gói Basic ban đầu tưởng rẻ, nhưng sau 1 học kỳ các bé hết hứng, trường phải nâng cấp lên Standard sẽ rất tốn kém vì phải mua lại lộ trình và đào tạo lại từ đầu. Mình làm chuẩn luôn từ đầu chị ạ."</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 3: KỊCH BẢN XỬ LÝ PHẢN ĐỐI -->
+            <div id="tab-xu-ly" class="tab-content">
+                <div class="text-center mb-8">
+                    <p class="text-slate-500 text-[14.5px] max-w-2xl mx-auto leading-relaxed">Phản đối là tín hiệu khách hàng ĐANG QUAN TÂM nhưng cần người bán dẫn dắt để hợp lý hóa quyết định mua hàng. Hãy bình tĩnh, đồng cảm và "bẻ lái" theo các kịch bản thực chiến dưới đây.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Tình huống 1: Giá cao -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item accordion-active">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-red-100 text-red-600 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 01</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Chi phí gói này cao quá em ạ!"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Khách đang làm phép chia sai: Lấy [200 triệu] chia cho [3 con robot], và thấy quá đắt.</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-1', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-1" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Dạ em rất hiểu góc nhìn của chị. Thoạt nhìn mình sẽ nghĩ đang bỏ ra 200 triệu chỉ để mua vài bộ robot. Nhưng thực chất không phải vậy ạ.<br><br>Khoản tiền này là chi phí đóng gói một HỆ THỐNG GIÁO DỤC XUYÊN SUỐT 3 NĂM. Nó bao gồm toàn bộ hệ thống Giáo án Số độc quyền, Phí chuyên gia đào tạo cấp chứng nhận cho giáo viên của trường, và đặc biệt là chi phí Audit cam kết đồng hành chất lượng trong suốt 36 tháng. Chia nhỏ ra, chi phí bản quyền cho mỗi bé chỉ bằng một bát phở/tháng, nhưng lợi ích thu về từ việc giữ chân phụ huynh và tăng học phí ngoại khóa là con số lớn hơn rất nhiều."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tình huống 2: Chọn Basic -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-amber-100 text-amber-700 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 02</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Chị muốn mua gói rẻ nhất (Basic) làm thử đã"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Khách sợ rủi ro, sợ phụ huynh không chịu học, hoặc đơn giản là muốn tiết kiệm tiền trước mắt.</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-2', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-2" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Vâng, trường mình hoàn toàn có thể bắt đầu từ gói Basic. Nhưng với kinh nghiệm làm cho hàng trăm trường, em khuyên chân thành: Gói Basic thiếu vắng mảng thực hành Khoa học STEAM (làm ra sản phẩm vật lý). Nếu chỉ học điều khiển robot, các bé lúc đầu sẽ rất vui, nhưng sau 2 tháng sẽ bị nhàm chán vì không có sản phẩm cầm về khoe bố mẹ.<br><br>Có vài trường chọn Basic lúc đầu, sau 1 kỳ học sinh nghỉ học môn này, trường lại phải cuống cuồng nâng cấp lên Standard. Lúc đó trường sẽ tốn tiền mua lại phần mềm và trả phí đào tạo giáo viên lại từ đầu. Thà mình đầu tư 1 lần gói Standard, phụ huynh thấy con tự tay làm ra sản phẩm cơ khí, học sinh đam mê suốt 3 năm, thì chị thu tiền ngoại khóa mới dễ dàng ạ."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tình huống 3: Chỉ mua thiết bị -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-blue-100 text-blue-700 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 03</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Chị lên mạng thấy robot rẻ lắm, trường chị tự mua về dạy"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Khách mắc hội chứng DIY (Thích tự làm để tiết kiệm). Đang đánh đồng giải pháp giáo dục với đồ chơi điện tử.</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-3', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-3" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Chị nói chuẩn ạ, nếu chỉ mua phần cứng thì trên thị trường có đầy. Nhưng em chia sẻ thật, Robot chỉ là khối nhựa vô tri nếu không có chương trình. Trường tự mua đồ chơi về, các cô không có giáo án, không được đào tạo phương pháp... thì em đảm bảo chỉ 1 tháng là robot sẽ bị vứt vào kho vì cô không biết phải dạy gì tiếp theo.<br><br>Hệ thống Sunbot đắt giá nhất ở lộ trình chất xám 3 năm. Chị mua Gói triển khai là mua sự NHÀN NHÃ cho Ban Giám Hiệu, mua sự AN TÂM rằng cô giáo nào vào cũng dạy tốt và phụ huynh nào nhìn vào lộ trình của Viện KHGD thẩm định cũng phải gật đầu."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tình huống 4: Đối thủ -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-purple-100 text-purple-700 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 04</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Trường chị đang dùng phần mềm/đồ chơi hãng khác rồi"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Khách đã có tư duy mở, nhưng ngại chi phí đổi mới. TUYỆT ĐỐI không chê bai đối thủ.</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-4', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-4" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Dạ tuyệt vời quá, chứng tỏ trường mình rất tiên phong đổi mới. Thực ra có rất nhiều trường đang dùng [Sản phẩm X] khi kết hợp thêm Sunbot thì tạo thành một hệ sinh thái cực kỳ hoàn hảo.<br><br>Hãng chị đang dùng có thế mạnh về [ví dụ: tiếng Anh/Toán tư duy...], còn Sunbot sẽ lấp đầy khoảng trống về Lập Trình Robot và Khoa học ứng dụng. Phụ huynh bây giờ rất thích các mô hình Coding 'Không màn hình' (No-Screen) an toàn cho mắt của Sunbot. Mình đưa thêm Sunbot vào thành một nhánh mũi nhọn riêng, cam kết phụ huynh sẽ cực kỳ ấn tượng với độ hoành tráng của trường mình ạ."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tình huống 5: Sợ Giáo Viên kém -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-teal-100 text-teal-700 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 05</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Giáo viên trường chị kém công nghệ, sợ không dạy được"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Chủ trường từng nếm trái đắng vì mua phần mềm phức tạp về giáo viên bất mãn không chịu làm.</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-5', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-5" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Chị lo lắng điều này là hoàn toàn chính xác! Nếu mang một công nghệ phức tạp bắt các cô phải code trên máy tính thì 100% sẽ thất bại. Nhưng Sunbot là công nghệ 'Chạm vật lý'.<br><br>Thứ nhất, giáo án điện tử đã có sẵn từng slide, các cô chỉ việc mở tivi lên và click Next. Khối lượng chuẩn bị bài gần như bằng 0. Thứ hai, bản chất Sunbot là các nút bấm di chuyển tiến lùi trên lưng robot, cô giáo mầm non chỉ cần đào tạo 2 buổi là thao tác thuần thục. Khi các cô thấy dạy Sunbot nhàn hơn cả dạy múa hát bình thường mà thu nhập lại tăng, em đảm bảo các cô sẽ rất hào hứng."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tình huống 6: Sợ thu phí -->
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm accordion-item">
+                        <div class="accordion-header bg-slate-50 px-6 py-5 flex justify-between items-center" onclick="toggleAccordion(this)">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-slate-200 text-slate-700 font-black px-3 py-1 rounded text-sm uppercase tracking-wide">Tình huống 06</div>
+                                <h3 class="font-bold text-slate-800 text-[16px] m-0">"Khu chị toàn công nhân/người thu nhập thấp, không thu thêm tiền được"</h3>
+                            </div>
+                            <svg class="accordion-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="p-6 border-t border-slate-100 bg-white">
+                                <p class="text-[14px] text-slate-600 mb-4 font-medium"><strong>💡 Đọc Vị:</strong> Khách tự đặt rào cản tài chính. Cần chuyển góc nhìn từ "Thu thêm tiền ngoại khóa" sang "Đầu tư để giữ học sinh và chống sụt giảm sỉ số".</p>
+                                <div class="bg-orange-50 p-5 rounded-xl border border-orange-100 relative group">
+                                    <button onclick="copyText('copy-obj-6', this)" class="absolute top-4 right-4 bg-white text-orange-600 border border-orange-200 px-3 py-1.5 rounded text-[10px] font-bold shadow-sm hover:bg-orange-100 transition-colors opacity-0 group-hover:opacity-100 outline-none">Copy</button>
+                                    <p class="font-bold text-orange-800 mb-2 text-sm uppercase tracking-wide">🗣️ Kịch bản Bẻ Lái:</p>
+                                    <p id="copy-obj-6" class="text-[14px] italic text-orange-900 leading-relaxed m-0">"Chị đánh giá rất sát thị trường. Nếu đúng khu vực mình nhạy cảm về giá, phương án của em là chị KHÔNG CẦN THU THÊM TIỀN NGOẠI KHÓA. Chị hãy đưa Sunbot thành chương trình CHÍNH KHÓA đặc quyền của trường mình.<br><br>Tính ra chi phí công nghệ cho 1 bé chỉ khoảng 30k-40k/tháng (bằng một cốc trà sữa). Nhưng đổi lại, khi phụ huynh đến tham quan trường, thấy trường có phòng Lab xịn sò, robot lập trình khác bọt hẳn các trường xung quanh, chị sẽ chốt hồ sơ rất nhanh. Trong bối cảnh kinh tế khó khăn, các trường đang sụt giảm sỉ số, việc chị giữ chân được 10-20 học sinh đã thừa sức bù đắp lại chi phí gói Sunbot rồi ạ."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 4: MẸO TÂM LÝ & THỦ THUẬT -->
+            <div id="tab-meo" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- FOMO -->
+                    <div class="bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 text-xl font-black mb-4">1</div>
+                        <h3 class="font-black text-[18px] text-slate-800 mb-2 uppercase tracking-wide">Nguyên tắc "Đang Triển Khai"</h3>
+                        <p class="text-[14.5px] text-slate-600 mb-4 leading-relaxed">Loại bỏ vĩnh viễn từ <span class="line-through text-red-500 mr-1">"Bên em CÓ BÁN..."</span>. Khách hàng giáo dục cực kỳ dị ứng với kiểu Sale bán hàng. Hãy thể hiện mình là Chuyên gia tư vấn hệ thống.</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-orange-500">
+                            <p class="text-[14px] italic text-slate-700 m-0">Thay vào đó hãy nói: "Hiện tại, hệ thống 300 trường bên em <strong>đang triển khai</strong> chức năng này rất hiệu quả..."</p>
+                        </div>
+                    </div>
+
+                    <!-- Hiệu ứng số đông -->
+                    <div class="bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-black mb-4">2</div>
+                        <h3 class="font-black text-[18px] text-slate-800 mb-2 uppercase tracking-wide">Hiệu ứng số đông (FOMO)</h3>
+                        <p class="text-[14.5px] text-slate-600 mb-4 leading-relaxed">Chủ trường rất sợ bị thụt lùi so với trường mầm non trong cùng khu vực. Đừng nói lý thuyết, hãy kể chuyện về đối thủ của họ.</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <p class="text-[14px] italic text-slate-700 m-0">"Hôm qua em vừa qua trường [Tên Trường X cách đó 2km], quy mô cũng giống mình, họ vừa quyết định triển khai gói Standard để hè này hút học sinh mới..."</p>
+                        </div>
+                    </div>
+
+                    <!-- Future Pacing -->
+                    <div class="bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+                        <div class="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600 text-xl font-black mb-4">3</div>
+                        <h3 class="font-black text-[18px] text-slate-800 mb-2 uppercase tracking-wide">Kỹ thuật "Vẽ Viễn Cảnh" (Future Pacing)</h3>
+                        <p class="text-[14.5px] text-slate-600 mb-4 leading-relaxed max-w-3xl">Đừng để khách hàng nghĩ đến tiền. Hãy bắt trí não họ phải tưởng tượng về CẢNH TƯỢNG TỐT ĐẸP sẽ diễn ra sau khi ký hợp đồng với bạn.</p>
+                        <div class="bg-teal-50 p-5 rounded-lg border-l-4 border-teal-500">
+                            <p class="text-[14.5px] italic text-teal-800 m-0 font-medium">"Chị tưởng tượng xem, ngày khai giảng tới, nhà trường mở cửa Phòng STEAM Lab. Phụ huynh bước vào thấy các con đang tự ráp các mô hình tái chế chuyển động được, trên bàn là các robot nhấp nháy đèn. Phụ huynh lấy điện thoại ra quay phim rần rần up lên Facebook. Tự nhiên trường mình được quảng cáo miễn phí khắp khu vực. Đó mới là giá trị vô hình không đong đếm được bằng tiền chị ạ!"</p>
+                        </div>
+                    </div>
+
+                    <!-- Decoy -->
+                    <div class="bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 text-xl font-black mb-4">4</div>
+                        <h3 class="font-black text-[18px] text-slate-800 mb-2 uppercase tracking-wide">Hiệu ứng chim mồi (Decoy Effect)</h3>
+                        <p class="text-[14.5px] text-slate-600 mb-6 leading-relaxed max-w-3xl">Lý do Kiro tung ra 3 gói triển khai là để tận dụng đòn bẩy tâm lý kinh điển này. Con người có xu hướng ghét sự cực đoan. Họ hiếm khi chọn gói Rẻ nhất (vì sợ bị đánh giá thấp/thiếu tính năng) và ngại chọn gói Đắt nhất (sợ rủi ro). <strong>Họ sẽ tự động lao vào gói Ở GIỮA, nếu bạn tạo ra lực đẩy đúng.</strong></p>
+                        
+                        <div class="flex flex-col md:flex-row gap-4 justify-center mt-6">
+                            <div class="bg-slate-100 px-4 py-4 rounded-lg text-center opacity-70 relative">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Gói Nhử Kẻ Tiết Kiệm</p>
+                                <p class="text-lg font-black text-slate-600 m-0">BASIC</p>
+                                <p class="text-[11px] text-slate-500 mt-2">Cho khách thấy sự thiếu thốn (Không có STEAM).</p>
+                            </div>
+                            <div class="bg-orange-100 border-2 border-orange-500 px-8 py-5 rounded-lg text-center transform md:-translate-y-3 shadow-lg relative z-10">
+                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Đích ngắm</div>
+                                <p class="text-[10px] font-bold text-orange-600 uppercase mb-1 tracking-widest">Mục Tiêu Chốt Deal</p>
+                                <p class="text-2xl font-black text-orange-700 m-0">STANDARD</p>
+                                <p class="text-[12px] text-orange-800 mt-2 font-medium">Hoàn hảo nhất, an toàn nhất.</p>
+                            </div>
+                            <div class="bg-slate-100 px-4 py-4 rounded-lg text-center opacity-70">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Gói Neo Giá Nhận Thức</p>
+                                <p class="text-lg font-black text-slate-600 m-0">PREMIUM</p>
+                                <p class="text-[11px] text-slate-500 mt-2">Khiến giá Standard trở nên rất "Hợp Lý".</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="bg-black py-6 border-t border-slate-800 text-center relative z-20 mt-auto">
+            <div class="max-w-7xl mx-auto px-6 flex justify-center items-center gap-3">
+                <img src="../../assets/img/logo-sunbot.png" alt="Sunbot Logo" class="h-5 object-contain grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" onclick="window.location.href='../index.html'" onerror="this.src='https://placehold.co/100x30/transparent/ea580c?text=SUNBOT'"/>
+                <p class="text-slate-600 text-[10px] font-bold uppercase tracking-widest m-0 pl-3 border-l border-slate-800">&copy; 2026 Kiro Vietnam. Internal Use Only.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Đã copy kịch bản! 🚀
+        </div>
+    </div>
+
+    <script>
+        // Authentication Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const CORRECT_PASSCODE = "sunbot2026"; 
+            const authOverlay = document.getElementById('auth-overlay');
+            const mainWrapper = document.getElementById('main-wrapper');
+            const authForm = document.getElementById('auth-form');
+            const authPassInput = document.getElementById('auth-pass');
+            const authError = document.getElementById('auth-error');
+
+            if (sessionStorage.getItem('partner_authenticated') === 'true') {
+                authOverlay.style.display = 'none';
+                mainWrapper.classList.remove('hidden');
+                mainWrapper.classList.add('flex');
+            }
+
+            authForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (authPassInput.value.trim() === CORRECT_PASSCODE) {
+                    sessionStorage.setItem('partner_authenticated', 'true');
+                    authOverlay.style.opacity = '0';
+                    authOverlay.style.transition = 'opacity 0.4s ease';
+                    setTimeout(() => { 
+                        authOverlay.style.display = 'none'; 
+                        mainWrapper.classList.remove('hidden'); 
+                        mainWrapper.classList.add('flex'); 
+                    }, 400);
+                } else {
+                    authError.classList.remove('hidden');
+                    authPassInput.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                    authPassInput.value = '';
+                }
+            });
+
+            authPassInput.addEventListener('input', () => {
+                authError.classList.add('hidden');
+                authPassInput.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+            });
+        });
+
+        // Tabs Logic
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            
+            // Scroll to top of tabs smoothly
+            const nav = document.getElementById('tab-nav');
+            const navPosition = nav.getBoundingClientRect().top + window.pageYOffset - 100;
+            window.scrollTo({ top: navPosition, behavior: 'smooth' });
+        }
+
+        // Accordion Logic
+        function toggleAccordion(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('accordion-active');
+        }
+
+        // Copy Text Logic
+        function copyText(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            // Xóa ngoặc kép ở đầu và cuối nếu có
+            const cleanText = textToCopy.replace(/^["']|["']$/g, '');
+            
+            navigator.clipboard.writeText(cleanText).then(() => {
+                // Đổi trạng thái nút
+                const originalContent = btnElement.innerHTML;
+                btnElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-green-600"><polyline points="20 6 9 17 4 12"></polyline></svg> Đã Copy!';
+                btnElement.classList.replace('text-slate-500', 'text-green-600');
+                btnElement.classList.replace('text-orange-600', 'text-green-600');
+                
+                // Hiện Toast
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    btnElement.innerHTML = originalContent;
+                    btnElement.classList.replace('text-green-600', 'text-orange-600'); // Or whatever the original active color was
+                }, 2500);
+            }).catch(err => {
+                console.error('Không thể copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

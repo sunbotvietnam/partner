@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Giá Thông Minh | Sunbot Partner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-orange: #ea580c; --bg-slate: #0f172a; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+        
+        /* Ẩn cuộn ngang nếu không cần thiết */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+
+        /* Khắc phục lỗi lẹm dấu tiếng Việt */
+        h1, h2, h3, h4, h5, h6 { line-height: 1.45 !important; padding-top: 0.1em; padding-bottom: 0.1em; overflow: visible; }
+        
+        .text-gradient-3d { 
+            background: linear-gradient(to bottom, #fdba74, #ea580c); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            color: transparent;
+            filter: drop-shadow(0px 2px 2px rgba(234, 88, 12, 0.2)); 
+            display: inline-block;
+            padding-top: 0.05em; padding-bottom: 0.05em;
+        }
+        
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+        /* Bảng giá App-like Styles */
+        .table-container { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); border-radius: 16px; background: white; border: 1px solid #e2e8f0; }
+        
+        /* Chỉnh lại Sticky header để không che mất Hạng mục 1 */
+        .sticky-header { position: sticky; top: 80px; z-index: 40; background: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        
+        .col-basic { background: #f8fafc; }
+        .col-standard { background: #fff7ed; border-left: 2px solid #fdba74; border-right: 2px solid #fdba74; position: relative; z-index: 10; }
+        .col-premium { background: #0f172a; color: white; }
+
+        .cat-header { cursor: pointer; transition: background-color 0.2s; user-select: none; }
+        .cat-header:hover { background-color: #f1f5f9; }
+        .cat-icon { transition: transform 0.3s ease; }
+        .cat-collapsed .cat-icon { transform: rotate(-90deg); }
+        
+        .row-detail { transition: all 0.3s ease; overflow: hidden; }
+        .cat-collapsed + .row-group .row-detail { display: none; }
+
+        .cell-pad { padding: 12px 16px; }
+        .border-b-cell { border-bottom: 1px solid #e2e8f0; }
+        .col-premium.border-b-cell { border-bottom: 1px solid #334155; }
+
+        .btn-3d-orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            box-shadow: 0 6px 15px -3px rgba(234, 88, 12, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            color: white; transition: all 0.3s ease;
+        }
+        .btn-3d-orange:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(234, 88, 12, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tùy chọn input mua thêm */
+        .qty-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; color: #475569; cursor: pointer; transition: all 0.2s; outline: none; }
+        .qty-btn:hover { background: #ea580c; color: white; border-color: #ea580c; }
+        .qty-input { width: 40px; text-align: center; border: none; font-weight: bold; color: #ea580c; background: transparent; outline: none; font-size: 14px;}
+
+        /* Giao diện In A4 */
+        .a4-print-page {
+            width: 210mm; min-height: 297mm;
+            background: white; margin: 0 auto; padding: 20mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        @media print {
+            body { background: none; padding: 0; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .a4-print-page { box-shadow: none; margin: 0; padding: 0; width: 100%; min-height: auto; }
+            
+            /* Cân chỉnh bảng in */
+            .print-table { border-collapse: collapse; }
+            .print-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; color: #1e293b !important; }
+            .print-table tr.year-header td { background-color: #ffedd5 !important; -webkit-print-color-adjust: exact; color: #ea580c !important; font-weight: 800; text-transform: uppercase; font-size: 12px; padding-top: 12px; padding-bottom: 12px; }
+            .print-table tr.item-row td { padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+            .print-table tr.subtotal-row td { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; font-weight: bold; border-top: 1px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; }
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- KHUNG TƯƠNG TÁC (MAIN UI) -->
+    <div id="main-ui" class="flex flex-col min-h-screen w-full">
+        <!-- TOP NAV -->
+        <nav class="fixed w-full z-50 glass-nav shadow-sm">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center gap-6">
+                        <!-- Logo trỏ về Hub -->
+                        <a href="../index.html" class="flex items-center gap-4 group outline-none" title="Về Hub">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors shadow-sm hidden sm:flex">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            </div>
+                            <img src="../../assets/img/logo-sunbot.png" alt="Sunbot Logo" class="h-8 object-contain drop-shadow-[0_2px_4px_rgba(234,88,12,0.2)] group-hover:scale-105 transition-transform" onerror="this.src='https://placehold.co/120x40/transparent/ea580c?text=SUNBOT'"/>
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleAll()" id="toggleAllBtn" class="text-xs font-bold text-orange-600 bg-orange-50 px-4 py-2 rounded-full border border-orange-200 hover:bg-orange-100 transition-colors hidden md:block outline-none">
+                            Thu gọn tất cả hạng mục
+                        </button>
+                        <div class="flex items-center gap-2 bg-slate-800 rounded-full px-4 py-1.5 border border-slate-700">
+                            <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-widest hidden sm:inline">Báo Giá Tương Tác</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- NÚT QUAY LẠI CƠ ĐỘNG -->
+        <a href="../index.html" class="fixed bottom-6 right-6 z-50 btn-3d-orange px-4 py-3 sm:px-5 sm:py-3.5 rounded-full flex items-center gap-2 font-bold shadow-2xl hover:-translate-y-1 transition-transform group outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span class="hidden sm:inline uppercase tracking-wider text-xs">Về Hub Đối Tác</span>
+        </a>
+
+        <main class="max-w-[1400px] mx-auto px-4 sm:px-6 w-full pt-32 pb-24 relative z-20">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight uppercase">Bảng Phân Tích <span class="text-gradient-3d">Đầu Tư Chi Tiết</span></h1>
+                <p class="text-slate-500 font-medium text-sm md:text-base">Mô phỏng báo giá áp dụng cho cấu hình tiêu chuẩn: <strong class="text-slate-800">1 Điểm Trường (6 Lớp / ~150 Học sinh)</strong></p>
+            </div>
+
+            <div class="table-container w-full overflow-x-auto">
+                <div class="min-w-[900px]">
+                    <!-- STICKY HEADER (Tên gói & Tổng tiền) -->
+                    <div class="sticky-header grid grid-cols-12 border-b-2 border-slate-200">
+                        <div class="col-span-3 cell-pad flex flex-col justify-end pb-6">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Năm 2026</p>
+                            <h2 class="text-xl font-black text-slate-800">HẠNG MỤC TRIỂN KHAI</h2>
+                        </div>
+                        
+                        <!-- BASIC -->
+                        <div class="col-span-3 cell-pad col-basic text-center border-l border-slate-200 pt-6 pb-6 flex flex-col justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Gói Khởi Đầu</p>
+                                <h3 class="text-2xl font-black text-slate-800 mb-3">BASIC</h3>
+                                <p class="text-xs text-slate-500 mb-1">Tổng mức đầu tư (3 năm)</p>
+                                <p class="text-3xl font-black text-slate-700 mb-4">97.1<span class="text-sm ml-1 text-slate-500">Tr VNĐ</span></p>
+                            </div>
+                            <button onclick="openModal('BASIC')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-2 px-4 rounded-full uppercase tracking-wider transition-colors outline-none">Tạo Báo Giá Động</button>
+                        </div>
+
+                        <!-- STANDARD -->
+                        <div class="col-span-3 cell-pad col-standard text-center pt-6 pb-6 shadow-[0_10px_15px_-3px_rgba(234,88,12,0.1)] flex flex-col justify-between">
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-b-md shadow-sm">Khuyên Dùng</div>
+                            <div>
+                                <p class="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-1 mt-2">Gói Chủ Lực</p>
+                                <h3 class="text-3xl font-black text-orange-600 mb-3">STANDARD</h3>
+                                <p class="text-xs text-orange-700/70 mb-1">Tổng mức đầu tư (3 năm)</p>
+                                <p class="text-4xl font-black text-orange-600 mb-4">194.6<span class="text-base ml-1 text-orange-500/70">Tr VNĐ</span></p>
+                            </div>
+                            <button onclick="openModal('STANDARD')" class="btn-3d-orange text-xs font-bold py-2 px-4 rounded-full uppercase tracking-wider outline-none w-3/4 mx-auto">Tạo Báo Giá Động</button>
+                        </div>
+
+                        <!-- PREMIUM -->
+                        <div class="col-span-3 cell-pad col-premium text-center pt-6 pb-6 relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute -right-6 -top-6 text-white/5 pointer-events-none"><svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg></div>
+                            <div class="relative z-10">
+                                <p class="text-[10px] font-bold text-amber-400/70 uppercase tracking-widest mb-1">Chiến Lược</p>
+                                <h3 class="text-2xl font-black text-amber-400 mb-3">PREMIUM</h3>
+                                <p class="text-xs text-slate-400 mb-1">Tổng mức đầu tư (3 năm)</p>
+                                <p class="text-3xl font-black text-white mb-4">344.3<span class="text-sm ml-1 text-slate-400">Tr VNĐ</span></p>
+                            </div>
+                            <button onclick="openModal('PREMIUM')" class="bg-slate-700 hover:bg-slate-600 text-amber-400 border border-slate-500 text-xs font-bold py-2 px-4 rounded-full uppercase tracking-wider transition-colors outline-none relative z-10 w-3/4 mx-auto">Tạo Báo Giá Động</button>
+                        </div>
+                    </div>
+
+                    <!-- KHOẢNG TRỐNG TRÁNH BỊ ĐÈ HEADER -->
+                    <div class="w-full h-2 bg-white"></div>
+
+                    <!-- ACCORDION 1: HỆ THỐNG HỌC CỤ -->
+                    <div class="cat-section">
+                        <div class="cat-header bg-slate-100/80 border-y border-slate-200 cell-pad flex items-center justify-between" onclick="toggleSection(this)">
+                            <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-3">
+                                <span class="bg-slate-800 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span> 
+                                Hệ thống Học cụ & Thiết bị
+                            </h4>
+                            <svg class="cat-icon w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="row-group">
+                            <!-- Lập trình -->
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Robot Sunbot</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center font-bold">03 Robot</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center font-bold text-orange-700">03 Robot</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">06 Robot</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs">Bản đồ chuẩn</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">02 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center">02 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center">05 bộ</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs">Bộ Chướng ngại vật</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">02 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center">02 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center">05 bộ</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs">Flashcard, Đích, Bản đồ giấy</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">01 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center">01 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center">01 bộ</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs">Android Box (Kết nối TV)</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">01 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center">01 bộ</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center">01 bộ</div>
+                            </div>
+                            <!-- STEAM -->
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Học cụ STEAM Khoa học (Q.1-2-3)</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center font-bold text-orange-700">Đầy đủ 3 Năm</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">Đầy đủ 3 Năm</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACCORDION 2: PHẦN MỀM & BẢN QUYỀN -->
+                    <div class="cat-section">
+                        <div class="cat-header bg-slate-100/80 border-b border-slate-200 cell-pad flex items-center justify-between" onclick="toggleSection(this)">
+                            <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-3">
+                                <span class="bg-slate-800 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span> 
+                                Bản quyền Phần mềm & Nội dung (36 Tháng)
+                            </h4>
+                            <svg class="cat-icon w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="row-group">
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Giáo án Lập trình tư duy</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">Full Level 1-9</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-orange-700 font-medium">Full Level 1-9</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center text-slate-300">Full Level 1-9</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Giáo án STEAM theo dự án</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-orange-700 font-medium">Quyển 1-2-3</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center text-slate-300">Quyển 1-2-3</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs italic text-slate-400 border-r border-slate-200">Bao gồm: Bài giảng số, học liệu mềm cập nhật liên tục</div>
+                                <div class="col-span-9 cell-pad border-b-cell bg-slate-50 text-center text-xs font-medium text-slate-500">Phí duy trì sau năm thứ 3: Chỉ đóng phí gia hạn phần mềm</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACCORDION 3: ĐÀO TẠO & VẬN HÀNH -->
+                    <div class="cat-section">
+                        <div class="cat-header bg-slate-100/80 border-b border-slate-200 cell-pad flex items-center justify-between" onclick="toggleSection(this)">
+                            <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-3">
+                                <span class="bg-slate-800 text-white w-6 h-6 rounded flex items-center justify-center text-xs">3</span> 
+                                Đào tạo & Đảm bảo Chất lượng
+                            </h4>
+                            <svg class="cat-icon w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="row-group">
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Khóa Đào tạo Tập huấn GV</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">1 C.Trình (Coding)</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center font-bold text-orange-700">2 C.Trình (Tích hợp)</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">2 C.Trình (Tích hợp)</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs">Sát hạch & Cấp chứng nhận GV</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">5 GV</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center">10 GV</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center text-slate-300">10 GV</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Gói Đảm bảo Vận hành & Chất lượng</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-green-600 font-bold">12Tr / Năm</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-green-600 font-bold">12Tr / Năm</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center text-green-400 font-bold">12Tr / Năm</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell pl-10 text-xs italic text-slate-400 border-r border-slate-200">Đồng hành chuyên môn, audit định kỳ, fix kỹ thuật.</div>
+                                <div class="col-span-9 cell-pad border-b-cell bg-slate-50 text-center text-xs font-medium text-slate-500">Đây là phí bắt buộc duy trì hàng năm để chương trình được vận hành chuẩn hóa</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACCORDION 4: NHẬN DIỆN & TRUYỀN THÔNG (PREMIUM FOCUS) -->
+                    <div class="cat-section">
+                        <div class="cat-header bg-slate-100/80 border-b border-slate-200 cell-pad flex items-center justify-between" onclick="toggleSection(this)">
+                            <h4 class="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-3">
+                                <span class="bg-slate-800 text-white w-6 h-6 rounded flex items-center justify-center text-xs">4</span> 
+                                Nhận Diện & Nâng Cấp Không Gian
+                            </h4>
+                            <svg class="cat-icon w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="row-group">
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Nhận diện lớp học cơ bản</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center">Có</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center font-medium text-orange-700">Có</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center text-slate-300">Có</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Bộ thi đua khen thưởng & Quà tặng</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">Trọn bộ (3 năm)</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Nội thất phòng Lab chuyên biệt</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">Setup Full Lab</div>
+                            </div>
+                            <div class="grid grid-cols-12 text-sm text-slate-600 hover:bg-slate-50 transition-colors row-detail">
+                                <div class="col-span-3 cell-pad border-b-cell font-semibold">Hỗ trợ Sự kiện & Tuyển sinh</div>
+                                <div class="col-span-3 cell-pad border-b-cell border-l border-slate-200 col-basic text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-standard text-center text-slate-400">-</div>
+                                <div class="col-span-3 cell-pad border-b-cell col-premium text-center font-bold text-amber-400">Có (Đấu trường, Media)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TỔNG KẾT TIẾN ĐỘ ĐẦU TƯ -->
+                    <div class="grid grid-cols-12 border-t-2 border-slate-300">
+                        <div class="col-span-3 cell-pad flex items-center bg-slate-50">
+                            <h4 class="font-black text-slate-800 uppercase tracking-widest text-sm">TIẾN ĐỘ ĐẦU TƯ</h4>
+                        </div>
+                        
+                        <div class="col-span-3 cell-pad col-basic border-l border-slate-200 text-center">
+                            <div class="flex justify-between text-xs mb-2 border-b border-slate-200 pb-1"><span>Năm 1:</span> <span class="font-bold text-slate-700">67.1M</span></div>
+                            <div class="flex justify-between text-xs mb-2 border-b border-slate-200 pb-1"><span>Năm 2:</span> <span>15.0M</span></div>
+                            <div class="flex justify-between text-xs"><span>Năm 3:</span> <span>15.0M</span></div>
+                        </div>
+
+                        <div class="col-span-3 cell-pad col-standard text-center">
+                            <div class="flex justify-between text-xs mb-2 border-b border-orange-200 pb-1"><span>Năm 1:</span> <span class="font-black text-orange-700">98.6M</span></div>
+                            <div class="flex justify-between text-xs mb-2 border-b border-orange-200 pb-1 text-orange-800"><span>Năm 2:</span> <span>48.0M</span></div>
+                            <div class="flex justify-between text-xs text-orange-800"><span>Năm 3:</span> <span>48.0M</span></div>
+                        </div>
+
+                        <div class="col-span-3 cell-pad col-premium text-center">
+                            <div class="flex justify-between text-xs mb-2 border-b border-slate-700 pb-1"><span>Năm 1:</span> <span class="font-black text-amber-400">222.3M</span></div>
+                            <div class="flex justify-between text-xs mb-2 border-b border-slate-700 pb-1 text-slate-300"><span>Năm 2:</span> <span>61.0M</span></div>
+                            <div class="flex justify-between text-xs text-slate-300"><span>Năm 3:</span> <span>61.0M</span></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center text-sm text-slate-500">
+                <p>Chi phí tham chiếu dựa trên quy mô điểm trường trung bình. <strong class="text-orange-600 cursor-pointer hover:underline" onclick="document.querySelector('.btn-3d-orange').click()">Bấm "Tạo Báo Giá Động"</strong> để xuất File PDF báo giá chi tiết, phân bổ theo từng năm cho khách hàng.</p>
+            </div>
+        </main>
+        
+        <footer class="bg-black py-8 border-t border-slate-800 text-center relative z-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <img src="../../assets/img/logo-sunbot.png" alt="Sunbot Logo" class="h-6 object-contain mx-auto mb-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" onclick="window.location.href='../index.html'" onerror="this.src='https://placehold.co/200x60/transparent/ea580c?text=SUNBOT+LOGO'"/>
+                <p class="text-slate-500 text-[11px] font-bold uppercase tracking-widest">&copy; 2026 Kiro Vietnam Education Technology JSC.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MODAL TẠO BÁO GIÁ (CÓ CHỌN SỐ LƯỢNG UPSELL) -->
+    <div id="quote-modal" class="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-slate-50 border-b border-slate-200 p-5 flex justify-between items-center">
+                <div>
+                    <h3 class="font-black text-slate-800 text-lg uppercase tracking-wide">Thiết lập Báo Giá Động</h3>
+                    <p class="text-xs text-slate-500 font-medium" id="modal-package-name">Gói: STANDARD</p>
+                </div>
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition-colors outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1">
+                <form id="generate-quote-form">
+                    <input type="hidden" id="quote-pkg-type" value="">
+                    
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Tên Nhà Trường (Khách hàng)</label>
+                            <input type="text" id="quote-customer" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none" placeholder="VD: Trường Mầm non Hoa Sen..." required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Người lập Báo giá (Sales)</label>
+                            <input type="text" id="quote-sale" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none" placeholder="VD: Nguyễn Văn A..." required>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <label class="block text-xs font-bold text-orange-600 uppercase tracking-wide mb-3">Tùy chọn bán thêm (Upsell Items)</label>
+                        
+                        <div class="space-y-3">
+                            <!-- Tivi -->
+                            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">Tivi, khung tương tác</p>
+                                    <p class="text-[10px] text-slate-500">12.000.000đ / chiếc</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-tv', -1)">-</button>
+                                    <input type="number" id="opt-tv" class="qty-input text-slate-800" value="0" min="0" readonly>
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-tv', 1)">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Robot -->
+                            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">Mua thêm Robot Sunbot lẻ</p>
+                                    <p class="text-[10px] text-slate-500">4.800.000đ / bộ</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-robot', -1)">-</button>
+                                    <input type="number" id="opt-robot" class="qty-input text-slate-800" value="0" min="0" readonly>
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-robot', 1)">+</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Đào tạo GV -->
+                            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">Sát hạch thêm Giáo viên</p>
+                                    <p class="text-[10px] text-slate-500">500.000đ / người</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-train', -1)">-</button>
+                                    <input type="number" id="opt-train" class="qty-input text-slate-800" value="0" min="0" readonly>
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-train', 1)">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Bản đồ / Vật cản -->
+                            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">Bản đồ robot chuẩn</p>
+                                    <p class="text-[10px] text-slate-500">600.000đ / bộ</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-map', -1)">-</button>
+                                    <input type="number" id="opt-map" class="qty-input text-slate-800" value="0" min="0" readonly>
+                                    <button type="button" class="qty-btn" onclick="updateOptQty('opt-map', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="bg-slate-50 border-t border-slate-200 p-5 flex gap-3">
+                <button type="button" onclick="closeModal()" class="flex-1 bg-white border border-slate-300 text-slate-700 font-bold py-3 rounded-xl text-sm hover:bg-slate-50 transition-colors outline-none">Hủy bỏ</button>
+                <button type="button" onclick="generatePreview()" class="flex-1 btn-3d-orange font-bold py-3 rounded-xl text-sm uppercase tracking-wide outline-none shadow-md">Tạo & Xem PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT VIEW AREA (A4) - Ẩn mặc định, chỉ hiện khi ấn Xem Trước -->
+    <div id="print-area" class="hidden flex-col items-center bg-slate-200 min-h-screen py-10 print:py-0 print:bg-white">
+        
+        <!-- Toolbar (Không in ra PDF) -->
+        <div class="no-print fixed top-4 right-4 z-50 flex gap-3">
+            <button onclick="closePreview()" class="bg-white text-slate-700 border border-slate-300 px-6 py-2.5 rounded-full font-bold shadow-lg hover:bg-slate-50 transition-colors text-sm outline-none">Quay lại</button>
+            <button onclick="window.print()" class="bg-orange-600 text-white px-8 py-2.5 rounded-full font-bold shadow-lg hover:bg-orange-700 transition-colors flex items-center gap-2 text-sm outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                In Bản Phân Tích (PDF)
+            </button>
+        </div>
+
+        <!-- Trang A4 (In ra) -->
+        <div class="a4-print-page relative">
+            <!-- Header A4 -->
+            <div class="flex justify-between items-end border-b-2 border-orange-500 pb-4 mb-6">
+                <div>
+                    <p class="text-[12px] font-black text-slate-800 mb-0 tracking-wide">CÔNG TY CỔ PHẦN CÔNG NGHỆ GIÁO DỤC KIRO VIỆT NAM</p>
+                    <p class="text-[10px] text-slate-500 mb-0 font-medium">Địa chỉ: Số 4 Lý Thường Kiệt, phường Cửa Nam, Hà Nội</p>
+                    <p class="text-[10px] text-slate-500 mb-0 font-medium">Hotline: 0866 109 086 | Website: www.sunbot.vn</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[11px] italic text-slate-600 mb-1 font-medium" id="print-date">Hà Nội, ngày ... tháng ... năm ...</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Báo giá dịch vụ</p>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div class="text-center mb-6">
+                <h1 class="text-[22px] font-black text-slate-900 uppercase tracking-tight mb-1">BẢNG PHÂN TÍCH CHI PHÍ ĐẦU TƯ</h1>
+                <p class="text-[14px] font-bold text-orange-600 uppercase tracking-widest" id="print-pkg-name">GÓI TRIỂN KHAI CHUẨN (STANDARD)</p>
+                <p class="text-[11px] text-slate-500 mt-1 font-medium">Chương trình giáo dục Sunbot tại Điểm trường mầm non</p>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-slate-50/50 border border-slate-200 p-3 rounded-lg mb-6 flex flex-col gap-1 text-[11.5px]">
+                <div class="flex"><span class="w-32 font-bold text-slate-700">Kính gửi Quý Trường:</span> <span class="font-black text-slate-900 uppercase" id="print-customer">TRƯỜNG MẦM NON ABC</span></div>
+                <div class="flex"><span class="w-32 font-bold text-slate-700">Người lập báo giá:</span> <span class="font-medium text-slate-800" id="print-sale">Nguyễn Văn A</span></div>
+                <p class="mt-1.5 mb-0 text-[10.5px] text-slate-500 italic">Chúng tôi xin trân trọng gửi tới Quý Nhà trường bảng phân tích chi tiết chi phí đầu tư Hệ thống học tập Sunbot được phân bổ theo lộ trình như sau:</p>
+            </div>
+
+            <!-- Table Báo Giá -->
+            <table class="w-full text-[10.5px] print-table mb-4">
+                <thead>
+                    <tr>
+                        <th class="border border-slate-300 py-2 px-2 text-center w-8">STT</th>
+                        <th class="border border-slate-300 py-2 px-3 text-left">NỘI DUNG HẠNG MỤC</th>
+                        <th class="border border-slate-300 py-2 px-2 text-center w-10">ĐVT</th>
+                        <th class="border border-slate-300 py-2 px-2 text-center w-8">SL</th>
+                        <th class="border border-slate-300 py-2 px-3 text-right w-20">ĐƠN GIÁ</th>
+                        <th class="border border-slate-300 py-2 px-3 text-right w-24">THÀNH TIỀN</th>
+                    </tr>
+                </thead>
+                <tbody id="print-table-body">
+                    <!-- Dữ liệu JS sẽ inject vào đây -->
+                </tbody>
+            </table>
+
+            <!-- Grand Total -->
+            <div class="flex justify-end mb-6">
+                <div class="bg-orange-50 border border-orange-200 px-6 py-3 rounded-lg flex items-center gap-6">
+                    <span class="font-black text-[13px] uppercase text-slate-800">Tổng Đầu Tư (3 Năm):</span>
+                    <span class="font-black text-[18px] text-orange-600" id="print-total-price">194.600.000 VNĐ</span>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="text-[10px] text-slate-600 space-y-1 mb-10 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <p><strong class="text-slate-800 text-[11px] uppercase tracking-wide">Ghi chú & Chính sách:</strong></p>
+                <p>- Giá trên chưa bao gồm thuế VAT và chi phí vận chuyển (nếu có).</p>
+                <p>- <strong>Thanh toán:</strong> Nhà trường thanh toán theo tiến độ của từng năm học. Đơn giá hạng mục từ năm thứ 2 trở đi có thể điều chỉnh theo tình hình thực tế nhưng <strong>không vượt quá 10%</strong> và sẽ được Công ty thông báo trước tối thiểu 3 tháng.</p>
+                <p>- Dịch vụ đào tạo và hỗ trợ trực tiếp không bao gồm chi phí đi lại và lưu trú ngoại tỉnh.</p>
+                <p>- Bản quyền chương trình: Được cấp quyền sử dụng theo điểm trường trong thời hạn 36 tháng.</p>
+                <p>- Gói Đảm bảo Vận hành & Chất lượng: Là hạng mục bắt buộc để duy trì hệ thống ổn định hàng năm.</p>
+                <p class="italic text-slate-400 mt-1">- Báo giá mang tính chất tham chiếu và có hiệu lực trong vòng 30 ngày kể từ ngày phát hành.</p>
+            </div>
+
+            <!-- Signatures -->
+            <div class="flex justify-end text-[12px] px-10">
+                <div class="text-center">
+                    <p class="font-black text-slate-800 mb-16">ĐẠI DIỆN KINH DOANH</p>
+                    <p class="font-bold text-slate-900 text-[14px]" id="print-sign-sale">Nguyễn Văn A</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === LOGIC GIAO DIỆN CHÍNH ===
+        let allExpanded = true;
+        function toggleSection(headerElement) {
+            headerElement.classList.toggle('cat-collapsed');
+        }
+
+        function toggleAll() {
+            const headers = document.querySelectorAll('.cat-header');
+            const btn = document.getElementById('toggleAllBtn');
+            if (allExpanded) {
+                headers.forEach(h => h.classList.add('cat-collapsed'));
+                btn.textContent = "Mở rộng tất cả hạng mục";
+                btn.classList.replace('bg-orange-50', 'bg-slate-100');
+                btn.classList.replace('text-orange-600', 'text-slate-600');
+                btn.classList.replace('border-orange-200', 'border-slate-300');
+            } else {
+                headers.forEach(h => h.classList.remove('cat-collapsed'));
+                btn.textContent = "Thu gọn tất cả hạng mục";
+                btn.classList.replace('bg-slate-100', 'bg-orange-50');
+                btn.classList.replace('text-slate-600', 'text-orange-600');
+                btn.classList.replace('border-slate-300', 'border-orange-200');
+            }
+            allExpanded = !allExpanded;
+        }
+
+        // Tăng giảm số lượng Optional Items
+        function updateOptQty(id, change) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) + change;
+            if (val < 0) val = 0;
+            input.value = val;
+        }
+
+        // === DATABASE BÁO GIÁ ĐƯỢC CHIA THEO TỪNG NĂM CHUẨN XÁC ===
+        const QUOTE_DB = {
+            BASIC: {
+                name: "GÓI KHỞI ĐẦU (BASIC)",
+                years: [
+                    {
+                        title: "ĐẦU TƯ NĂM 1",
+                        items: [
+                            { name: "Robot Sunbot", unit: "Bộ", qty: 3, price: 4800000 },
+                            { name: "Bản đồ robot chuẩn", unit: "Bộ", qty: 2, price: 600000 },
+                            { name: "Bộ Chướng ngại vật Sunbot chuẩn", unit: "Bộ", qty: 2, price: 1500000 },
+                            { name: "Bộ Thẻ flashcard, thẻ đích, bản đồ giấy", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Android Box", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 1: L1-L3)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Khóa Đào tạo GV chuẩn (1 Chương trình)", unit: "Khóa", qty: 1, price: 11000000 },
+                            { name: "Sát hạch giáo viên Sunbot", unit: "Người", qty: 5, price: 500000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 },
+                            { name: "Bộ Nhận diện lớp học chuẩn Sunbot", unit: "Bộ", qty: 1, price: 5000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 2",
+                        items: [
+                            { name: "Quyền sử dụng PM Lập trình (Năm 2: L4-L6)", unit: "Gói", qty: 1, price: 15000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 3",
+                        items: [
+                            { name: "Quyền sử dụng PM Lập trình (Năm 3: L7-L9)", unit: "Gói", qty: 1, price: 15000000 }
+                        ]
+                    }
+                ]
+            },
+            STANDARD: {
+                name: "GÓI CHỦ LỰC KHUYÊN DÙNG (STANDARD)",
+                years: [
+                    {
+                        title: "ĐẦU TƯ NĂM 1",
+                        items: [
+                            { name: "Robot Sunbot", unit: "Bộ", qty: 3, price: 4800000 },
+                            { name: "Bản đồ robot chuẩn", unit: "Bộ", qty: 2, price: 600000 },
+                            { name: "Bộ Chướng ngại vật Sunbot chuẩn", unit: "Bộ", qty: 2, price: 1500000 },
+                            { name: "Bộ Thẻ flashcard, thẻ đích, bản đồ giấy", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Android Box", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Bộ STEAM cùng Sunbot Quyển 1", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 1: L1-L3)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 1)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Khóa Đào tạo GV chuẩn (2 Chương trình)", unit: "Khóa", qty: 1, price: 19000000 },
+                            { name: "Sát hạch giáo viên Sunbot", unit: "Người", qty: 10, price: 500000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 },
+                            { name: "Bộ Nhận diện lớp học chuẩn Sunbot", unit: "Bộ", qty: 1, price: 5000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 2",
+                        items: [
+                            { name: "Bộ STEAM cùng Sunbot Quyển 2", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 2: L4-L6)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 2)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 3",
+                        items: [
+                            { name: "Bộ STEAM cùng Sunbot Quyển 3", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 3: L7-L9)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 3)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 }
+                        ]
+                    }
+                ]
+            },
+            PREMIUM: {
+                name: "GÓI CHIẾN LƯỢC CAO CẤP (PREMIUM)",
+                years: [
+                    {
+                        title: "ĐẦU TƯ NĂM 1",
+                        items: [
+                            { name: "Robot Sunbot", unit: "Bộ", qty: 6, price: 4800000 },
+                            { name: "Bản đồ robot chuẩn", unit: "Bộ", qty: 5, price: 600000 },
+                            { name: "Bộ Chướng ngại vật Sunbot chuẩn", unit: "Bộ", qty: 5, price: 1500000 },
+                            { name: "Bộ Thẻ flashcard, thẻ đích, bản đồ giấy", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Android Box", unit: "Bộ", qty: 1, price: 1500000 },
+                            { name: "Bộ STEAM cùng Sunbot Quyển 1", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 1)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 1)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Khóa Đào tạo GV chuẩn (2 Chương trình)", unit: "Khóa", qty: 1, price: 19000000 },
+                            { name: "Sát hạch giáo viên Sunbot", unit: "Người", qty: 10, price: 500000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 },
+                            { name: "Hỗ trợ Hoạt động Trải nghiệm & Sự kiện", unit: "Lần", qty: 2, price: 5000000 },
+                            { name: "Hỗ trợ Truyền thông & Tuyển sinh", unit: "Lần", qty: 1, price: 3000000 },
+                            { name: "Bộ Nhận diện lớp học chuẩn Sunbot", unit: "Bộ", qty: 1, price: 5000000 },
+                            { name: "Bộ Khen thưởng, thi đua lớp học", unit: "Bộ", qty: 1, price: 30000000 },
+                            { name: "Nội thất mầm non chuẩn phòng Lab Sunbot", unit: "Bộ", qty: 1, price: 60000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 2",
+                        items: [
+                            { name: "Bộ STEAM cùng Sunbot Quyển 2", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 2)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 2)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 },
+                            { name: "Hỗ trợ Hoạt động Trải nghiệm & Sự kiện", unit: "Lần", qty: 2, price: 5000000 },
+                            { name: "Hỗ trợ Truyền thông & Tuyển sinh", unit: "Lần", qty: 1, price: 3000000 }
+                        ]
+                    },
+                    {
+                        title: "ĐẦU TƯ NĂM 3",
+                        items: [
+                            { name: "Bộ STEAM cùng Sunbot Quyển 3", unit: "Bộ", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng PM Lập trình (Năm 3)", unit: "Gói", qty: 1, price: 15000000 },
+                            { name: "Quyền sử dụng Giáo án STEAM (Quyển 3)", unit: "Gói", qty: 1, price: 6000000 },
+                            { name: "Gói Đảm bảo vận hành & Chất lượng", unit: "Năm", qty: 1, price: 12000000 },
+                            { name: "Hỗ trợ Hoạt động Trải nghiệm & Sự kiện", unit: "Lần", qty: 2, price: 5000000 },
+                            { name: "Hỗ trợ Truyền thông & Tuyển sinh", unit: "Lần", qty: 1, price: 3000000 }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        const OPTIONAL_ITEMS = {
+            'opt-tv': { name: "Tivi, khung tương tác", unit: "Chiếc", price: 12000000 },
+            'opt-robot': { name: "Robot Sunbot (Bán lẻ thêm)", unit: "Bộ", price: 4800000 },
+            'opt-train': { name: "Sát hạch giáo viên Sunbot", unit: "Người", price: 500000 },
+            'opt-map': { name: "Bản đồ robot chuẩn", unit: "Bộ", price: 600000 }
+        };
+
+        const formatMoney = (amount) => amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        const getCurrentDateVN = () => {
+            const today = new Date();
+            return `Hà Nội, ngày ${today.getDate().toString().padStart(2, '0')} tháng ${(today.getMonth() + 1).toString().padStart(2, '0')} năm ${today.getFullYear()}`;
+        };
+
+        // Modal Controls
+        function openModal(pkgType) {
+            document.getElementById('quote-pkg-type').value = pkgType;
+            document.getElementById('modal-package-name').textContent = "Gói đang chọn: " + QUOTE_DB[pkgType].name;
+            // Reset quantities
+            document.querySelectorAll('.qty-input').forEach(el => el.value = 0);
+            
+            document.getElementById('quote-modal').classList.remove('hidden');
+            document.getElementById('quote-modal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('quote-modal').classList.add('hidden');
+            document.getElementById('quote-modal').classList.remove('flex');
+        }
+
+        // Tạo Preview & Render Bảng In
+        function generatePreview() {
+            const customerName = document.getElementById('quote-customer').value.trim();
+            const saleName = document.getElementById('quote-sale').value.trim();
+            const pkgType = document.getElementById('quote-pkg-type').value;
+
+            if(!customerName || !saleName) {
+                alert("Vui lòng nhập Tên Trường và Tên Người Báo Giá!");
+                return;
+            }
+
+            // Gán thông tin chung
+            document.getElementById('print-date').textContent = getCurrentDateVN();
+            document.getElementById('print-pkg-name').textContent = QUOTE_DB[pkgType].name;
+            document.getElementById('print-customer').textContent = customerName;
+            document.getElementById('print-sale').textContent = saleName;
+            document.getElementById('print-sign-sale').textContent = saleName;
+
+            // Render Table body
+            const tbody = document.getElementById('print-table-body');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+            let rowCounter = 1;
+
+            // Lặp qua từng Năm
+            QUOTE_DB[pkgType].years.forEach((yearObj) => {
+                // Header Năm
+                const trYear = document.createElement('tr');
+                trYear.className = 'year-header';
+                trYear.innerHTML = `<td colspan="6" class="border border-slate-300 px-3 bg-orange-50 text-orange-700 font-bold uppercase tracking-wider">${yearObj.title}</td>`;
+                tbody.appendChild(trYear);
+
+                let yearTotal = 0;
+
+                // Items trong năm đó
+                yearObj.items.forEach((item) => {
+                    const rowSum = item.qty * item.price;
+                    yearTotal += rowSum;
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'item-row';
+                    tr.innerHTML = `
+                        <td class="border border-slate-300 px-2 text-center text-slate-500">${rowCounter++}</td>
+                        <td class="border border-slate-300 px-3 font-semibold text-slate-700">${item.name}</td>
+                        <td class="border border-slate-300 px-2 text-center text-slate-600">${item.unit}</td>
+                        <td class="border border-slate-300 px-2 text-center font-bold text-slate-700">${item.qty}</td>
+                        <td class="border border-slate-300 px-3 text-right text-slate-600">${formatMoney(item.price)}</td>
+                        <td class="border border-slate-300 px-3 text-right font-bold text-slate-700">${formatMoney(rowSum)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Thêm các hạng mục Optional vào Năm 1
+                if(yearObj.title === "ĐẦU TƯ NĂM 1") {
+                    let hasOpt = false;
+                    ['opt-tv', 'opt-robot', 'opt-train', 'opt-map'].forEach(optId => {
+                        const optQty = parseInt(document.getElementById(optId).value) || 0;
+                        if(optQty > 0) {
+                            hasOpt = true;
+                            const item = OPTIONAL_ITEMS[optId];
+                            const rowSum = optQty * item.price;
+                            yearTotal += rowSum;
+                            
+                            const tr = document.createElement('tr');
+                            tr.className = 'item-row bg-slate-50/50';
+                            tr.innerHTML = `
+                                <td class="border border-slate-300 px-2 text-center text-slate-500">${rowCounter++}</td>
+                                <td class="border border-slate-300 px-3 font-semibold text-orange-700 italic">${item.name} (Mua thêm)</td>
+                                <td class="border border-slate-300 px-2 text-center text-slate-600">${item.unit}</td>
+                                <td class="border border-slate-300 px-2 text-center font-bold text-slate-700">${optQty}</td>
+                                <td class="border border-slate-300 px-3 text-right text-slate-600">${formatMoney(item.price)}</td>
+                                <td class="border border-slate-300 px-3 text-right font-bold text-slate-700">${formatMoney(rowSum)}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        }
+                    });
+                }
+
+                grandTotal += yearTotal;
+
+                // Subtotal của năm
+                const trSub = document.createElement('tr');
+                trSub.className = 'subtotal-row';
+                trSub.innerHTML = `
+                    <td colspan="5" class="border border-slate-300 py-2 px-3 text-right text-[11px] uppercase text-slate-600">Tổng ${yearObj.title.toLowerCase()}:</td>
+                    <td class="border border-slate-300 py-2 px-3 text-right font-black text-slate-800">${formatMoney(yearTotal)}</td>
+                `;
+                tbody.appendChild(trSub);
+            });
+
+            // Set Grand Total
+            document.getElementById('print-total-price').textContent = formatMoney(grandTotal) + " VNĐ";
+
+            // Switch View
+            closeModal();
+            document.getElementById('main-ui').classList.add('hidden');
+            document.getElementById('print-area').classList.remove('hidden');
+            document.getElementById('print-area').classList.add('flex');
+            window.scrollTo(0,0);
+        }
+
+        function closePreview() {
+            document.getElementById('print-area').classList.add('hidden');
+            document.getElementById('print-area').classList.remove('flex');
+            document.getElementById('main-ui').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
