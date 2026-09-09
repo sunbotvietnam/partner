@@ -1,139 +1,133 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sunbot | Máy tính phương án nhà trường</title>
-<meta name="theme-color" content="#f97316" />
+<meta name="theme-color" content="#f97316">
 <style>
-:root{--orange:#f97316;--orange2:#ea580c;--ink:#17212b;--muted:#667085;--line:#e7e9ee;--bg:#f7f8fa;--card:#fff;--good:#0f9f6e;--warn:#c47a00;--bad:#c43d3d;--navy:#18333b}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff7ed 0,#f7f8fa 260px)}
-button,input,select{font:inherit}.wrap{max-width:1180px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 0 22px}.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--orange),var(--orange2));box-shadow:0 8px 22px #f9731633}.brand h1{font-size:19px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:3px 0 0}.pill{font-size:12px;font-weight:700;background:#fff;border:1px solid #fed7aa;color:#9a3412;padding:8px 12px;border-radius:999px}
-.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-bottom:16px}.heroBox,.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 34px rgba(16,24,40,.06)}.heroBox{padding:28px}.heroBox h2{margin:0 0 8px;font-size:32px;letter-spacing:-.7px}.heroBox p{margin:0;color:var(--muted);line-height:1.6}.quick{padding:22px;background:linear-gradient(135deg,#18333b,#244b56);color:white}.quick h3{margin:0 0 12px;font-size:15px}.quick .qrow{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #ffffff1c;font-size:13px}.quick .qrow:first-of-type{border-top:0}.quick b{color:#fed7aa}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{padding:22px}.card h3{margin:0 0 18px;font-size:16px}.sectionLabel{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange2);margin:18px 0 10px}.control{margin:15px 0}.controlHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:7px}.controlHead label{font-size:13px;font-weight:650}.value{font-weight:800;color:var(--navy);white-space:nowrap}.range{width:100%;accent-color:var(--orange)}.sub{font-size:11px;color:var(--muted);margin-top:5px}.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn{border:1px solid var(--line);background:white;border-radius:12px;padding:10px 8px;font-size:12px;font-weight:750;cursor:pointer}.btn.active{background:#fff7ed;border-color:#fb923c;color:#c2410c;box-shadow:inset 0 0 0 1px #fb923c}.input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;outline:none}.input:focus{border-color:#fb923c;box-shadow:0 0 0 3px #ffedd5}
-.results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat{border:1px solid var(--line);background:#fafafa;border-radius:16px;padding:14px}.stat span{display:block;font-size:11px;color:var(--muted);line-height:1.3}.stat strong{display:block;font-size:21px;margin-top:6px;letter-spacing:-.4px}.stat.orange strong{color:var(--orange2)}
-.gauge{padding:17px;border-radius:16px;background:#f8fafc;border:1px solid var(--line);margin:12px 0}.gaugeTop{display:flex;align-items:center;justify-content:space-between;gap:10px}.badge{font-size:11px;font-weight:800;border-radius:999px;padding:6px 9px}.low{color:#0d7660;background:#dff8ef}.ok{color:#8a5700;background:#fff0c2}.high{color:#9b2c2c;background:#fee2e2}.bar{height:9px;background:#e7e9ee;border-radius:999px;overflow:hidden;margin:10px 0}.bar>div{height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);border-radius:999px}.note{font-size:12px;line-height:1.55;color:var(--muted)}
-.compare{width:100%;border-collapse:collapse;margin-top:9px;font-size:12px}.compare th,.compare td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}.compare th:first-child,.compare td:first-child{text-align:left}.compare th{font-size:11px;color:var(--muted);font-weight:700}.benefit{margin-top:14px;padding:14px 15px;background:#fff7ed;border:1px solid #fed7aa;border-radius:15px}.benefit h4{margin:0 0 8px;font-size:13px}.benefit p{margin:0;font-size:12px;line-height:1.55;color:#7c2d12}
-.feeTable{width:100%;border-collapse:collapse;font-size:12px}.feeTable th,.feeTable td{padding:10px 7px;border-bottom:1px solid var(--line)}.feeTable th{text-align:left;color:var(--muted)}.feeTable td:nth-child(n+2){text-align:right}.callout{border-left:4px solid var(--orange);background:#fff7ed;padding:13px 15px;border-radius:10px;margin-top:14px;font-size:12px;line-height:1.55;color:#7c2d12}.foot{font-size:11px;color:var(--muted);text-align:center;padding:24px 0 8px;line-height:1.6}.hide{display:none}
-@media(max-width:900px){.hero,.grid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}.heroBox h2{font-size:27px}.wrap{padding:14px}.top{align-items:flex-start}.pill{display:none}}
-@media(max-width:520px){.results{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr 1fr}.heroBox,.card{padding:17px}.heroBox h2{font-size:24px}}
-@media print{body{background:white}.top,.controlsCard,.foot{display:none}.hero{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.wrap{max-width:none}.card,.heroBox{box-shadow:none;break-inside:avoid}}
+:root{--cam:#f97316;--cam2:#ea580c;--ink:#17212b;--muted:#667085;--line:#e7e9ee;--bg:#f7f8fa;--card:#fff;--green:#0f9f6e;--yellow:#a16207;--red:#b42318;--navy:#17323a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff7ed 0,#f7f8fa 270px)}
+button,input{font:inherit}.wrap{max-width:1180px;margin:auto;padding:20px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 0 20px}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--cam),var(--cam2));box-shadow:0 8px 22px #f9731633}.brand h1{margin:0;font-size:19px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.topActions{display:flex;gap:8px}.softBtn{border:1px solid #fed7aa;background:#fff;color:#9a3412;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:750;cursor:pointer}
+.hero,.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.hero{margin-bottom:16px}.box,.card{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 34px rgba(16,24,40,.06)}.box{padding:27px}.box h2{margin:0 0 8px;font-size:31px;letter-spacing:-.7px}.box p{margin:0;color:var(--muted);line-height:1.6}.quick{background:linear-gradient(135deg,#18333b,#244b56);color:white}.quick h3{margin:0 0 10px;font-size:15px}.q{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #ffffff1c;font-size:13px}.q:first-of-type{border-top:0}.q b{color:#fed7aa;text-align:right}
+.grid{grid-template-columns:1fr 1fr}.card{padding:21px}.card h3{margin:0 0 16px;font-size:16px}.label{font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--cam2);margin:18px 0 9px}.buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.buttons.four{grid-template-columns:repeat(4,1fr)}.btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 7px;font-size:12px;font-weight:760;cursor:pointer;line-height:1.25}.btn.active{background:#fff7ed;border-color:#fb923c;color:#c2410c;box-shadow:inset 0 0 0 1px #fb923c}.control{margin:15px 0}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}.head label{font-size:13px;font-weight:680}.value{font-weight:850;color:var(--navy);white-space:nowrap}.range{width:100%;accent-color:var(--cam)}.sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}.input{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 11px;outline:none}.input:focus{border-color:#fb923c;box-shadow:0 0 0 3px #ffedd5}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{border:1px solid var(--line);background:#fafafa;border-radius:15px;padding:13px}.stat span{font-size:11px;color:var(--muted);display:block;line-height:1.3}.stat strong{font-size:20px;display:block;margin-top:6px;letter-spacing:-.4px}.stat.orange strong{color:var(--cam2)}
+.gauge{margin-top:12px;padding:15px;border:1px solid var(--line);border-radius:15px;background:#f8fafc}.gaugeTop{display:flex;justify-content:space-between;align-items:center;gap:10px}.badge{font-size:11px;font-weight:850;border-radius:999px;padding:6px 9px}.good{background:#dcfce7;color:#166534}.mid{background:#fef3c7;color:#854d0e}.bad{background:#fee2e2;color:#991b1b}.bar{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:10px 0}.bar>div{height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b,#ef4444);border-radius:999px}.note{font-size:12px;color:var(--muted);line-height:1.5}
+.summary{margin-top:13px;border:1px solid #fed7aa;background:#fff7ed;border-radius:16px;padding:15px}.summary h4{margin:0 0 8px;font-size:14px;color:#9a3412}.summary p{margin:0;font-size:12px;line-height:1.55;color:#7c2d12}.rights{margin:10px 0 0;padding-left:18px;font-size:12px;line-height:1.55;color:#7c2d12}.rights li{margin:4px 0}
+.table{width:100%;border-collapse:collapse;font-size:12px;margin-top:7px}.table th,.table td{border-bottom:1px solid var(--line);padding:9px 7px}.table th{text-align:left;color:var(--muted);font-size:11px}.table td:nth-child(n+2),.table th:nth-child(n+2){text-align:right}.talk{margin-top:13px;border-left:4px solid var(--cam);background:#fff7ed;padding:13px 14px;border-radius:10px;font-size:12px;line-height:1.55;color:#7c2d12}.warning{margin-top:12px;background:#fffbea;border:1px solid #fde68a;border-radius:13px;padding:12px;font-size:11px;line-height:1.5;color:#854d0e}.foot{font-size:11px;color:var(--muted);text-align:center;padding:24px 0 8px;line-height:1.55}
+@media(max-width:900px){.hero,.grid{grid-template-columns:1fr}.results{grid-template-columns:1fr 1fr}.buttons.four{grid-template-columns:1fr 1fr}.wrap{padding:13px}.box h2{font-size:26px}.top{align-items:flex-start}.topActions{display:none}}
+@media(max-width:520px){.results{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr 1fr}.box,.card{padding:16px}.box h2{font-size:23px}}
+@media print{body{background:white}.top,.controls,.foot{display:none!important}.hero{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.wrap{max-width:none}.box,.card{box-shadow:none;break-inside:avoid}.summary{background:white}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><div class="mark"></div><div><h1>Sunbot — Máy tính phương án nhà trường</h1><p>Công cụ tư vấn nhanh dành cho Sale • bản thử nghiệm 2026</p></div></div>
-    <div class="pill">Kéo thanh trượt → số liệu đổi ngay</div>
+    <div class="brand"><div class="mark"></div><div><h1>Sunbot — Máy tính phương án nhà trường</h1><p>Dùng khi tư vấn trực tiếp • dữ liệu thử nghiệm 2026</p></div></div>
+    <div class="topActions"><button class="softBtn" onclick="window.print()">In / lưu phương án</button></div>
   </div>
 
   <section class="hero">
-    <div class="heroBox">
-      <h2>Đừng bắt đầu bằng “Sunbot giá bao nhiêu”.</h2>
-      <p>Hãy bắt đầu bằng quy mô trẻ, mức thu, số tiết và số tháng. Máy tính sẽ cho thấy doanh thu chương trình của trường, tỷ trọng phí Sunbot và mức triển khai phù hợp.</p>
-    </div>
-    <div class="heroBox quick">
-      <h3>Sale nhớ 4 bước</h3>
-      <div class="qrow"><span>1. Hỏi</span><b>Số trẻ + mức thu</b></div>
-      <div class="qrow"><span>2. Chọn</span><b>4 / 6 / 8 tiết</b></div>
-      <div class="qrow"><span>3. Chọn</span><b>Trường hay Sunbot đầu tư</b></div>
-      <div class="qrow"><span>4. Cho thấy</span><b>Phí Sunbot / doanh thu</b></div>
-    </div>
+    <div class="box"><h2>Trước khi nói giá, hãy cho trường nhìn thấy bài toán.</h2><p>Nhập số trẻ, mức thu, số tiết và số tháng. Công cụ sẽ cho thấy quy mô doanh thu chương trình, phí Sunbot chiếm bao nhiêu phần trăm và mức triển khai phù hợp.</p></div>
+    <div class="box quick"><h3>Sale chỉ cần nhớ 5 bước</h3><div class="q"><span>1. Hỏi</span><b>Số trẻ</b></div><div class="q"><span>2. Hỏi</span><b>Mức thu / tiết</b></div><div class="q"><span>3. Chọn</span><b>4 / 6 / 8 tiết</b></div><div class="q"><span>4. Chọn</span><b>Ai đầu tư ban đầu</b></div><div class="q"><span>5. Cho thấy</span><b>Phí Sunbot / doanh thu</b></div></div>
   </section>
 
   <div class="grid">
-    <section class="card controlsCard">
-      <h3>1. Nhập phương án của trường</h3>
-      <div class="sectionLabel">Loại trường / mức thu nhanh</div>
+    <section class="card controls">
+      <h3>1. Nhập phương án</h3>
+      <div class="label">Mức thu nhanh</div>
       <div class="buttons" id="marketButtons">
-        <button class="btn" data-fee="15000">Công lập HN<br>15.000đ</button>
-        <button class="btn active" data-fee="27000">Công lập NA<br>27.000đ</button>
-        <button class="btn" data-fee="35000">Tư thục / khác<br>35.000đ</button>
+        <button class="btn" data-fee="15000">15.000đ<br>Cơ bản</button>
+        <button class="btn active" data-fee="27000">27.000đ<br>Chuẩn</button>
+        <button class="btn" data-fee="35000">35.000đ<br>Nâng cao</button>
       </div>
+      <div class="control"><div class="head"><label>Số trẻ tham gia</label><span class="value" id="childrenVal"></span></div><input class="range" id="children" type="range" min="50" max="1000" step="10" value="300"></div>
+      <div class="control"><div class="head"><label>Mức thu / trẻ / tiết</label><span class="value" id="feeVal"></span></div><input class="range" id="fee" type="range" min="10000" max="60000" step="500" value="27000"><div class="sub">Sale phải kiểm tra mức được phép thu theo địa phương và loại trường. Trường tư có thể nhập mức thực tế.</div></div>
+      <div class="control"><div class="head"><label>Số tiết / tháng</label><span class="value" id="lessonsVal"></span></div><input class="range" id="lessons" type="range" min="4" max="8" step="2" value="8"></div>
+      <div class="control"><div class="head"><label>Số tháng triển khai / năm học</label><span class="value" id="monthsVal"></span></div><input class="range" id="months" type="range" min="8" max="12" step="1" value="9"></div>
 
-      <div class="control"><div class="controlHead"><label>Số trẻ tham gia</label><span class="value" id="childrenVal"></span></div><input class="range" id="children" type="range" min="50" max="1000" step="10" value="300"><div class="sub">Có thể kéo từ 50 đến 1.000 trẻ.</div></div>
-      <div class="control"><div class="controlHead"><label>Mức thu / trẻ / tiết</label><span class="value" id="feeVal"></span></div><input class="range" id="fee" type="range" min="10000" max="60000" step="500" value="27000"><div class="sub">Mức pháp lý/thực tế phải được Sale kiểm tra theo địa phương và loại trường.</div></div>
-      <div class="control"><div class="controlHead"><label>Số tiết / tháng</label><span class="value" id="lessonsVal"></span></div><input class="range" id="lessons" type="range" min="4" max="8" step="2" value="8"></div>
-      <div class="control"><div class="controlHead"><label>Số tháng thu trong năm học</label><span class="value" id="monthsVal"></span></div><input class="range" id="months" type="range" min="8" max="12" step="1" value="9"></div>
-
-      <div class="sectionLabel">Phương án đầu tư</div>
+      <div class="label">Phương án đầu tư</div>
       <div class="buttons" id="investmentButtons">
-        <button class="btn active" data-mode="own">Trường tự đầu tư</button>
+        <button class="btn active" data-mode="own">Trường đầu tư</button>
         <button class="btn" data-mode="provide">Sunbot đầu tư</button>
         <button class="btn" data-mode="custom">Cùng đầu tư</button>
       </div>
-      <div class="control" id="customFeeWrap"><div class="controlHead"><label>Phí Sunbot đang đề xuất / năm</label><span class="value" id="sunbotFeeVal"></span></div><input class="range" id="sunbotFee" type="range" min="15000000" max="150000000" step="500000" value="30000000"><div class="sub">Có thể kéo để thử ngay tác động của mức phí khác.</div></div>
-      <div class="control"><label style="font-size:13px;font-weight:650">Chi phí giáo viên & vận hành của trường / năm (không bắt buộc)</label><input id="schoolCost" class="input" type="number" min="0" step="1000000" value="120000000"></div>
-      <div class="control"><label style="font-size:13px;font-weight:650">Phần trường đầu tư ban đầu (nếu có)</label><input id="schoolInvest" class="input" type="number" min="0" step="1000000" value="31700000"></div>
+      <div class="control"><div class="head"><label>Phí Sunbot đang mô phỏng / năm</label><span class="value" id="sunbotFeeVal"></span></div><input class="range" id="sunbotFee" type="range" min="15000000" max="150000000" step="500000" value="30000000"><div class="sub" id="feeHelp">Mức phí tự lấy theo quy mô và phương án hiện hành.</div></div>
+
+      <div class="label">Cấp độ dịch vụ</div>
+      <div class="buttons four" id="serviceButtons">
+        <button class="btn" data-service="basic">Cơ bản</button>
+        <button class="btn active" data-service="standard">Chuẩn</button>
+        <button class="btn" data-service="advanced">Nâng cao</button>
+        <button class="btn" data-service="extended">Mở rộng</button>
+      </div>
+      <div class="sub">Cấp độ giúp Sale giải thích phạm vi quyền lợi; không tự thay đổi bảng giá chính thức.</div>
+
+      <div class="label">Nếu cần tính sâu hơn cho trường</div>
+      <div class="control"><label style="font-size:13px;font-weight:680">Chi phí giáo viên & vận hành của trường / năm</label><input id="schoolCost" class="input" type="number" min="0" step="1000000" value="120000000"></div>
+      <div class="control"><label style="font-size:13px;font-weight:680">Phần trường đầu tư ban đầu</label><input id="schoolInvest" class="input" type="number" min="0" step="1000000" value="31700000"></div>
     </section>
 
     <section class="card">
-      <h3>2. Kết quả để trình bày với nhà trường</h3>
+      <h3>2. Phương án để trình bày với nhà trường</h3>
       <div class="results">
         <div class="stat"><span>Doanh thu chương trình / năm học</span><strong id="annualRevenue"></strong></div>
         <div class="stat orange"><span>Phí Sunbot / năm</span><strong id="feeOut"></strong></div>
         <div class="stat"><span>Phí Sunbot chiếm</span><strong id="feeRatio"></strong></div>
         <div class="stat"><span>Phần còn lại trước chi phí khác</span><strong id="remaining"></strong></div>
       </div>
+      <div class="gauge"><div class="gaugeTop"><b>Chỉ báo mức phí</b><span class="badge" id="ratioBadge"></span></div><div class="bar"><div id="ratioBar"></div></div><div class="note" id="ratioNote"></div></div>
 
-      <div class="gauge">
-        <div class="gaugeTop"><div><b>Tỷ trọng phí Sunbot trong doanh thu chương trình</b></div><span class="badge" id="ratioBadge"></span></div>
-        <div class="bar"><div id="ratioBar"></div></div>
-        <div class="note" id="ratioNote"></div>
-      </div>
+      <div class="summary"><h4 id="serviceTitle"></h4><p id="serviceText"></p><ul class="rights" id="rightsList"></ul></div>
 
-      <div class="benefit">
-        <h4 id="serviceTitle"></h4>
-        <p id="serviceText"></p>
-      </div>
-
-      <div class="sectionLabel">So sánh 4 / 6 / 8 tiết mỗi tháng</div>
-      <table class="compare">
-        <thead><tr><th>Cường độ</th><th>Doanh thu năm học</th><th>Phí Sunbot / doanh thu</th></tr></thead>
-        <tbody id="compareBody"></tbody>
-      </table>
-
-      <div class="callout" id="talkTrack"></div>
+      <div class="label">So sánh 4 / 6 / 8 tiết mỗi tháng</div>
+      <table class="table"><thead><tr><th>Cường độ</th><th>Doanh thu năm học</th><th>Phí Sunbot / doanh thu</th></tr></thead><tbody id="compareBody"></tbody></table>
+      <div class="talk" id="talkTrack"></div>
+      <div class="warning"><b>Lưu ý:</b> chỉ báo tỷ trọng phí chỉ để hỗ trợ đàm phán, không phải quy tắc tự động tăng/giảm giá. Báo giá chính thức vẫn theo chính sách và phê duyệt của Sunbot.</div>
     </section>
   </div>
 
   <section class="card" style="margin-top:16px">
-    <h3>3. Bảng phí triển khai để Sale nhớ nhanh</h3>
-    <table class="feeTable">
-      <thead><tr><th>Quy mô trẻ</th><th>Trường tự đầu tư</th><th>Sunbot đầu tư</th><th>Cách hiểu</th></tr></thead>
-      <tbody>
-        <tr><td>≤150</td><td>24 triệu/năm</td><td>45 triệu/năm</td><td>Trường nhỏ; nếu Sunbot bỏ vốn có thể dùng kỳ 24 tháng.</td></tr>
-        <tr><td>151–300</td><td>30 triệu/năm</td><td>60 triệu/năm</td><td>Kiểm tra thêm mức thu và số tiết trước khi chốt.</td></tr>
-        <tr><td>301–500</td><td>36 triệu/năm</td><td>72 triệu/năm</td><td>Sunbot đầu tư lớn nên ưu tiên kỳ 36 tháng.</td></tr>
-        <tr><td>501–800</td><td>45 triệu/năm</td><td>90 triệu/năm</td><td>Sunbot đầu tư: ưu tiên kỳ 36 tháng.</td></tr>
-        <tr><td>>800</td><td>Phương án riêng</td><td>Phương án riêng</td><td>Admin/CEO duyệt.</td></tr>
-      </tbody>
-    </table>
-    <div class="callout"><b>Lưu ý cho Sale:</b> bảng trên là mức phí hiện hành để tham chiếu. Nếu mức thu thấp, số tiết ít hoặc trường đề nghị thêm nhiều quyền lợi/đầu tư, phải quay lại máy tính. Không tự hứa quà, sự kiện, kit, điều hòa, sàn, nội thất hay giảm giá sâu.</div>
+    <h3>3. Bảng phí triển khai hiện hành — Sale nhớ nhanh</h3>
+    <table class="table"><thead><tr><th>Quy mô</th><th>Trường tự đầu tư</th><th>Sunbot đầu tư</th><th>Cách hiểu</th></tr></thead><tbody>
+      <tr><td>≤150 trẻ</td><td>24 triệu/năm</td><td>45 triệu/năm</td><td>Trường tự đầu tư: theo năm học. Sunbot bỏ vốn nhỏ: xem 24 tháng.</td></tr>
+      <tr><td>151–300</td><td>30 triệu/năm</td><td>60 triệu/năm</td><td>Kiểm tra mức thu, số tiết và phần vốn Sunbot.</td></tr>
+      <tr><td>301–500</td><td>36 triệu/năm</td><td>72 triệu/năm</td><td>Sunbot đầu tư đáng kể: ưu tiên phương án 36 tháng.</td></tr>
+      <tr><td>501–800</td><td>45 triệu/năm</td><td>90 triệu/năm</td><td>Sunbot đầu tư: ưu tiên 36 tháng.</td></tr>
+      <tr><td>&gt;800</td><td>Phương án riêng</td><td>Phương án riêng</td><td>Admin/CEO tính và duyệt.</td></tr>
+    </tbody></table>
+    <div class="talk"><b>Sale không tự hứa thêm:</b> sự kiện lớn, quà vượt gói, kit, điều hòa/sàn/nội thất, giảm giá sâu hoặc thay đổi thời hạn. Mọi ngoại lệ phải được tính và duyệt trước.</div>
   </section>
 
-  <div class="foot">Công cụ hỗ trợ tư vấn, không thay thế báo giá/hợp đồng chính thức. Các ngưỡng đánh giá tỷ trọng phí là chỉ báo nội bộ thử nghiệm, chưa phải chính sách giá cuối cùng.</div>
+  <div class="foot">SUNBOT • Công cụ tư vấn nội bộ — phiên bản đào tạo Sale 09/2026<br>Dữ liệu pháp lý về mức thu cần được kiểm tra theo địa phương trước khi dùng trong đề xuất chính thức.</div>
 </div>
 <script>
-const fmt=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
-const fmtM=n=>{const m=n/1e6;return (Math.round(m*10)/10).toLocaleString('vi-VN')+' triệu';};
+const money=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+const mil=n=>(n/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
 const els={children:document.getElementById('children'),fee:document.getElementById('fee'),lessons:document.getElementById('lessons'),months:document.getElementById('months'),sunbotFee:document.getElementById('sunbotFee'),schoolCost:document.getElementById('schoolCost'),schoolInvest:document.getElementById('schoolInvest')};
-let mode='own';
-function scaleFee(children,mode){if(children<=150)return mode==='own'?24e6:45e6;if(children<=300)return mode==='own'?30e6:60e6;if(children<=500)return mode==='own'?36e6:72e6;if(children<=800)return mode==='own'?45e6:90e6;return null}
-function service(fee){if(fee<20000)return ['Cấp độ Cơ bản','Tập trung vào chương trình, công nghệ, phát triển giáo viên và báo cáo số. Hạn chế các quyền lợi tốn nhiều chi phí như quà lớn hoặc sự kiện quy mô lớn.'];if(fee<30000)return ['Cấp độ Chuẩn','Có thể bố trí hoạt động trải nghiệm tiêu chuẩn, quỹ thưởng trẻ và bộ truyền thông mẫu bên cạnh chương trình và hệ thống chuyên môn.'];if(fee<37500)return ['Cấp độ Nâng cao','Có dư địa tăng trải nghiệm trẻ, hoạt động phụ huynh, quà và hỗ trợ tuyển sinh — nhưng vẫn phải kiểm tra tổng ngân sách.'];return ['Cấp độ Mở rộng','Có thể cấu hình thêm học liệu, kit, sự kiện hoặc dịch vụ bổ sung. Các hạng mục vượt chuẩn phải được tính riêng và duyệt.']}
-function syncAutoFee(){const c=+els.children.value;if(mode==='own'||mode==='provide'){const f=scaleFee(c,mode);if(f){els.sunbotFee.value=f}}}
-function update(){const c=+els.children.value,fee=+els.fee.value,l=+els.lessons.value,m=+els.months.value,sf=+els.sunbotFee.value,sc=+(els.schoolCost.value||0),si=+(els.schoolInvest.value||0);const rev=c*fee*l*m,ratio=rev?sf/rev:0,remain=rev-sf-sc-si;
- document.getElementById('childrenVal').textContent=c.toLocaleString('vi-VN')+' trẻ';document.getElementById('feeVal').textContent=fmt(fee)+'/tiết';document.getElementById('lessonsVal').textContent=l+' tiết';document.getElementById('monthsVal').textContent=m+' tháng';document.getElementById('sunbotFeeVal').textContent=fmtM(sf)+'/năm';
- document.getElementById('annualRevenue').textContent=fmtM(rev);document.getElementById('feeOut').textContent=fmtM(sf);document.getElementById('feeRatio').textContent=(ratio*100).toFixed(1).replace('.',',')+'%';document.getElementById('remaining').textContent=fmtM(remain);
- const badge=document.getElementById('ratioBadge'),note=document.getElementById('ratioNote');badge.className='badge';if(ratio<.07){badge.textContent='Tỷ trọng thấp';badge.classList.add('low');note.textContent='Phí Sunbot dưới khoảng 7% doanh thu chương trình: có dấu hiệu còn dư địa định giá, đặc biệt khi trường yêu cầu mức đồng hành cao.'}else if(ratio<=.15){badge.textContent='Khá cân bằng';badge.classList.add('ok');note.textContent='Khoảng 7–15%: thường dễ giải thích hơn nếu giá trị chương trình, công nghệ và đồng hành được trình bày rõ.'}else{badge.textContent='Cần kiểm tra';badge.classList.add('high');note.textContent='Trên khoảng 15%: phí Sunbot bắt đầu nặng so với nguồn thu. Cần xem lại số tiết, cấp độ dịch vụ, phương án đầu tư hoặc thời hạn.'}document.getElementById('ratioBar').style.width=Math.min(100,ratio/.3*100)+'%';
- const sv=service(fee);document.getElementById('serviceTitle').textContent=sv[0];document.getElementById('serviceText').textContent=sv[1];
- document.getElementById('compareBody').innerHTML=[4,6,8].map(x=>{const r=c*fee*x*m;return `<tr><td>${x} tiết/tháng</td><td>${fmtM(r)}</td><td>${(sf/r*100).toFixed(1).replace('.',',')}%</td></tr>`}).join('');
- document.getElementById('talkTrack').innerHTML=`<b>Cách nói nhanh:</b> Với ${c.toLocaleString('vi-VN')} trẻ, mức thu ${fmt(fee)}/tiết, ${l} tiết/tháng trong ${m} tháng, chương trình tạo khoảng <b>${fmtM(rev)}</b> nguồn thu/năm học. Phí Sunbot hiện là <b>${fmtM(sf)}</b>, tương đương <b>${(ratio*100).toFixed(1).replace('.',',')}%</b> nguồn thu chương trình.`;
+let mode='own',service='standard';
+function scaleFee(c,m){if(c<=150)return m==='own'?24e6:45e6;if(c<=300)return m==='own'?30e6:60e6;if(c<=500)return m==='own'?36e6:72e6;if(c<=800)return m==='own'?45e6:90e6;return null}
+const services={
+ basic:{title:'Cấp độ Cơ bản',text:'Phù hợp khi mức thu thấp hoặc nhà trường muốn vận hành gọn.',rights:['Chương trình và tài nguyên số','Phát triển năng lực giáo viên','Báo cáo số và hỗ trợ chuyên môn','Hoạt động trải nghiệm ở mức tiết kiệm']},
+ standard:{title:'Cấp độ Chuẩn',text:'Cân bằng giữa giá trị giáo dục, đồng hành giáo viên và trải nghiệm trẻ.',rights:['Chương trình + công nghệ + báo cáo số','Gói phát triển năng lực giáo viên','Sunbot Day / trải nghiệm tiêu chuẩn','Quỹ thử thách, phần thưởng trẻ và truyền thông mẫu']},
+ advanced:{title:'Cấp độ Nâng cao',text:'Tăng phần trải nghiệm, phụ huynh và hỗ trợ tuyển sinh; mọi quyền lợi vẫn có định mức.',rights:['Đầy đủ quyền lợi cấp Chuẩn','Tăng hoạt động trải nghiệm và phần thưởng','Tăng hỗ trợ truyền thông / phụ huynh','Có thể bổ sung học liệu theo phương án']},
+ extended:{title:'Cấp độ Mở rộng',text:'Dành cho mức thu cao hoặc trường tư; cấu hình thêm học liệu và hoạt động theo nhu cầu.',rights:['Chương trình và đồng hành đầy đủ','Học liệu / kit bổ sung theo cấu hình','Sự kiện hoặc hoạt động mở rộng tính riêng','Quyền lợi vượt chuẩn phải được duyệt']}
+};
+function autoServiceByFee(f){return f<20000?'basic':f<30000?'standard':f<37500?'advanced':'extended'}
+function activateService(s){service=s;document.querySelectorAll('#serviceButtons .btn').forEach(b=>b.classList.toggle('active',b.dataset.service===s))}
+function autoFee(){if(mode==='own'||mode==='provide'){const f=scaleFee(+els.children.value,mode);if(f)els.sunbotFee.value=f}}
+function update(){const c=+els.children.value,f=+els.fee.value,l=+els.lessons.value,m=+els.months.value,sf=+els.sunbotFee.value,sc=+(els.schoolCost.value||0),si=+(els.schoolInvest.value||0);const rev=c*f*l*m,ratio=rev?sf/rev:0,remain=rev-sf-sc-si;
+ document.getElementById('childrenVal').textContent=c.toLocaleString('vi-VN')+' trẻ';document.getElementById('feeVal').textContent=money(f)+'/tiết';document.getElementById('lessonsVal').textContent=l+' tiết';document.getElementById('monthsVal').textContent=m+' tháng';document.getElementById('sunbotFeeVal').textContent=mil(sf)+'/năm';document.getElementById('annualRevenue').textContent=mil(rev);document.getElementById('feeOut').textContent=mil(sf);document.getElementById('feeRatio').textContent=(ratio*100).toFixed(1).replace('.',',')+'%';document.getElementById('remaining').textContent=mil(remain);
+ const badge=document.getElementById('ratioBadge'),note=document.getElementById('ratioNote');badge.className='badge';if(ratio<.05){badge.textContent='Phí đang nhẹ';badge.classList.add('good');note.textContent='Phí Sunbot dưới 5% doanh thu chương trình. Không nên tự giảm giá; cần kiểm tra xem phạm vi đồng hành có đang được định giá thấp hay không.'}else if(ratio<=.10){badge.textContent='Khá cân bằng';badge.classList.add('good');note.textContent='Khoảng 5–10% doanh thu chương trình: tương đối dễ giải thích nếu giá trị triển khai và đồng hành được trình bày rõ.'}else if(ratio<=.15){badge.textContent='Cần giải thích rõ';badge.classList.add('mid');note.textContent='Khoảng 10–15%: vẫn có thể hợp lý, nhưng Sale phải cho trường thấy rõ giá trị và dòng tiền.'}else{badge.textContent='Phương án đang căng';badge.classList.add('bad');note.textContent='Trên 15%: cần xem lại số tiết, mức thu, thời hạn hoặc phương án đầu tư trước khi trình trường.'}document.getElementById('ratioBar').style.width=Math.min(100,ratio/.25*100)+'%';
+ const sv=services[service];document.getElementById('serviceTitle').textContent=sv.title;document.getElementById('serviceText').textContent=sv.text;document.getElementById('rightsList').innerHTML=sv.rights.map(x=>'<li>'+x+'</li>').join('');
+ document.getElementById('compareBody').innerHTML=[4,6,8].map(x=>{const r=c*f*x*m;return `<tr><td>${x} tiết/tháng</td><td>${mil(r)}</td><td>${r?(sf/r*100).toFixed(1).replace('.',','):'0'}%</td></tr>`}).join('');
+ const inv=mode==='own'?'nhà trường tự đầu tư':mode==='provide'?'Sunbot đầu tư':'hai bên cùng đầu tư';document.getElementById('talkTrack').innerHTML=`<b>Cách nói nhanh:</b> Với ${c.toLocaleString('vi-VN')} trẻ, mức thu ${money(f)}/tiết, ${l} tiết/tháng trong ${m} tháng, chương trình tạo khoảng <b>${mil(rev)}</b> nguồn thu/năm học. Phí triển khai Sunbot hiện là <b>${mil(sf)}</b>, tương đương <b>${(ratio*100).toFixed(1).replace('.',',')}%</b> nguồn thu chương trình; phương án đầu tư là <b>${inv}</b>.`;
 }
-Object.values(els).forEach(e=>e.addEventListener('input',()=>{if(e===els.children)syncAutoFee();update()}));
-document.querySelectorAll('#marketButtons .btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#marketButtons .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');els.fee.value=b.dataset.fee;update()}));
-document.querySelectorAll('#investmentButtons .btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#investmentButtons .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;if(mode==='custom'){document.getElementById('customFeeWrap').querySelector('.sub').textContent='Cùng đầu tư: nhập/kéo mức phí đang muốn thử; báo giá chính thức cần Admin duyệt.'}else{document.getElementById('customFeeWrap').querySelector('.sub').textContent='Mức phí tự lấy theo quy mô và phương án đầu tư hiện hành.';syncAutoFee()}update()}));
-syncAutoFee();update();
+Object.values(els).forEach(e=>e.addEventListener('input',()=>{if(e===els.children)autoFee();update()}));
+document.querySelectorAll('#marketButtons .btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#marketButtons .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');els.fee.value=b.dataset.fee;activateService(autoServiceByFee(+b.dataset.fee));update()}));
+document.querySelectorAll('#investmentButtons .btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#investmentButtons .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;if(mode==='custom'){document.getElementById('feeHelp').textContent='Cùng đầu tư: kéo mức phí để mô phỏng. Báo giá chính thức cần Admin duyệt.'}else{document.getElementById('feeHelp').textContent='Mức phí tự lấy theo quy mô và phương án hiện hành.';autoFee()}update()}));
+document.querySelectorAll('#serviceButtons .btn').forEach(b=>b.addEventListener('click',()=>{activateService(b.dataset.service);update()}));
+autoFee();activateService(autoServiceByFee(+els.fee.value));update();
 </script>
 </body>
 </html>
