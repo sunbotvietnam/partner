@@ -25,15 +25,12 @@
     while((node=walker.nextNode()))nodes.push(node);
     nodes.forEach(n=>{const next=cleanText(n.nodeValue);if(next!==n.nodeValue)n.nodeValue=next});
 
+    // Keep internal IDs unchanged because the pricing overlay uses them for live recalculation.
     const row=document.getElementById('qaSiteRow');
     if(row){
       const first=row.querySelector('td');
       if(first)first.textContent=SITE_FEE_NAME+' (từ điểm thứ 2)';
-      row.id='siteSupportFeeRow';
     }
-
-    const feeOut=document.getElementById('qaSiteOut');
-    if(feeOut)feeOut.id='siteSupportFeeOut';
 
     const note=document.getElementById('multiSitePolicyNote');
     if(note){
