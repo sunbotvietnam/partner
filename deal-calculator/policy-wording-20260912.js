@@ -1,5 +1,5 @@
-// Sunbot Deal Calculator — wording and policy clarity overlay, 12/09/2026
-// Does not alter the approved layout or commercial arithmetic.
+// Sunbot Deal Calculator — wording and policy clarity overlay, 14/09/2026
+// Copy-only layer. Does not alter approved pricing, formulas, IDs, role logic or commercial arithmetic.
 (function(){
   'use strict';
   const SITE_FEE_NAME='Phí đồng hành điểm triển khai bổ sung';
@@ -9,7 +9,19 @@
       .replace(/QA điểm triển khai bổ sung/g,SITE_FEE_NAME)
       .replace(/QA điểm bổ sung/g,SITE_FEE_NAME)
       .replace(/QA điểm/g,'đồng hành điểm')
-      .replace(/\bQA\b/g,'kiểm tra chất lượng')
+      .replace(/\bQA\b/g,'đảm bảo chất lượng')
+      .replace(/Mentoring/gi,'Đồng hành chuyên môn')
+      .replace(/Commercial Snapshot/gi,'Phương án thương mại đã chốt')
+      .replace(/commercial snapshot/gi,'phương án thương mại đã chốt')
+      .replace(/Margin/gi,'Biên lợi nhuận')
+      .replace(/Recovery target/gi,'Mục tiêu thu hồi đầu tư')
+      .replace(/Recovery/gi,'Thu hồi đầu tư')
+      .replace(/Broker fee/gi,'Phí đối tác giới thiệu')
+      .replace(/Dành cho sale/g,'Dành cho kinh doanh')
+      .replace(/Sale đi theo 7 bước/g,'Quy trình tư vấn 7 bước')
+      .replace(/Sale gửi Admin/g,'Kinh doanh gửi quản trị')
+      .replace(/Sale gửi admin/g,'Kinh doanh gửi quản trị')
+      .replace(/Admin/gi,'Quản trị')
       .replace(/multi-school/g,'nhiều trường')
       .replace(/tivi\/máy chiếu hoặc thiết bị hiển thị bài giảng số; điều hòa; bàn ghế, giá kệ và nội thất mầm non;/gi,'tivi/máy chiếu hoặc thiết bị hiển thị bài giảng số; bàn ghế, giá kệ và nội thất mầm non;')
       .replace(/thiết bị hiển thị, điều hòa, bàn ghế, giá kệ, nội thất/gi,'thiết bị hiển thị, bàn ghế, giá kệ, nội thất')
@@ -25,7 +37,17 @@
     while((node=walker.nextNode()))nodes.push(node);
     nodes.forEach(n=>{const next=cleanText(n.nodeValue);if(next!==n.nodeValue)n.nodeValue=next});
 
-    // Keep internal IDs unchanged because the pricing overlay uses them for live recalculation.
+    // School-facing microcopy: wording only, no change to values or calculations.
+    if(document.body.classList.contains('school-view')){
+      const caption=document.getElementById('viewCaption');
+      if(caption)caption.textContent='Phương án triển khai dành cho nhà trường';
+      const heroTitle=document.getElementById('heroTitle');
+      if(heroTitle)heroTitle.textContent='Nhìn rõ quy mô triển khai, nguồn lực và chi phí trước khi quyết định.';
+      const heroText=document.getElementById('heroText');
+      if(heroText)heroText.textContent='Phương án được tính từ số trẻ, số lớp, tần suất học, nhân sự và cấu hình đầu tư thực tế. Nhà trường có thể so sánh các lựa chọn triển khai theo cùng một cách tính minh bạch.';
+    }
+
+    // Keep internal IDs unchanged because pricing and workflow overlays use them for recalculation.
     const row=document.getElementById('qaSiteRow');
     if(row){
       const first=row.querySelector('td');
@@ -41,7 +63,7 @@
     }
   }
 
-  // Keep copied summaries consistent with the interface wording.
+  // Keep copied summaries consistent with the interface wording only.
   if(typeof planText==='function'){
     const oldPlanText=planText;
     planText=function(){return cleanText(oldPlanText())};
