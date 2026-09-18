@@ -194,11 +194,22 @@ function summary(){
   return lines.join('\n');
 }
 
-function schedule(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;render();try{planText=summary}catch(e){}})}
+let settleTimer=0;
+function schedule(){
+  if(!raf)raf=requestAnimationFrame(()=>{raf=0;render();try{planText=summary}catch(e){}});
+  clearTimeout(settleTimer);
+  settleTimer=setTimeout(()=>{render();try{planText=summary}catch(e){}},90);
+}
 document.addEventListener('input',schedule,true);
 document.addEventListener('change',schedule,true);
 document.addEventListener('click',schedule,true);
-const observer=new MutationObserver(schedule);
-observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+// Watch only state-bearing controls. Do not observe rendered result HTML, otherwise
+// render() would trigger its own observer and create a continuous repaint loop.
+const controls=document.querySelector('.controls');
+if(controls){
+  const observer=new MutationObserver(schedule);
+  observer.observe(controls,{subtree:true,attributes:true,attributeFilter:['class','hidden']});
+}
+document.addEventListener('sunbot:deal-change',schedule,true);
 render();try{planText=summary}catch(e){}
 })();
