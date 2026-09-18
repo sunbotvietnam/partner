@@ -17,10 +17,12 @@ function current(){
   if(!s)return null;
   const source=equipmentSource();
   const isNew=(typeof launch==='undefined'?true:launch==='new');
+  const renewalEquipment=(typeof window.SunbotRenewalEquipmentMode==='function'?window.SunbotRenewalEquipmentMode():'existing');
+  const usesExistingEquipment=!isNew&&renewalEquipment!=='add';
   const program=Number(s.pf||0),site=Number(s.site||0),training=isNew?Number(s.training||0):0,assessment=isNew?Number(s.assessment||0):0;
-  const directEquipment=(s.md!=='provide'&&source==='sunbot')?Number(s.schoolInvest||0):0;
-  const externalEquipment=(s.md!=='provide'&&source!=='sunbot')?Number(s.schoolInvest||0):0;
-  const financedCapital=Math.max(0,Number(s.roomValue||0)*Number(s.share||0)+Number(s.extraInvest||0));
+  const directEquipment=usesExistingEquipment?0:((s.md!=='provide'&&source==='sunbot')?Number(s.schoolInvest||0):0);
+  const externalEquipment=usesExistingEquipment?0:((s.md!=='provide'&&source!=='sunbot')?Number(s.schoolInvest||0):0);
+  const financedCapital=usesExistingEquipment?0:Math.max(0,Number(s.roomValue||0)*Number(s.share||0)+Number(s.extraInvest||0));
   const term=[24,36].includes(Number(s.tm))?Number(s.tm):24;
   const equipmentTotal=Math.round(financedCapital*1.30);
   const installmentCount=equipmentTotal>0?term/6:0;
@@ -42,7 +44,7 @@ function current(){
   const teacherCost=Number(s.classes||0)*Number(s.l||0)*Number(s.months||0)*Number(s.tr||0);
   const remain=coreParentRevenue-teacherCost-totalDueCurrent-externalEquipment-Number(s.other||0);
 
-  return {...s,source,program,site,training,assessment,directEquipment,externalEquipment,financedCapital,term,equipmentTotal,installmentCount,installments,currentYearInstallments,equipmentDueCurrent,serviceYearTotal,totalDueCurrent,coreParentRevenue,teacherCost,remain};
+  return {...s,source,isNew,renewalEquipment,usesExistingEquipment,program,site,training,assessment,directEquipment,externalEquipment,financedCapital,term,equipmentTotal,installmentCount,installments,currentYearInstallments,equipmentDueCurrent,serviceYearTotal,totalDueCurrent,coreParentRevenue,teacherCost,remain};
 }
 
 function ensureStructure(){
@@ -73,6 +75,7 @@ function render(){
   ['annualRevenue','schoolLiveRevenue','saleLiveRevenue'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.coreParentRevenue)});
   ['teacherCostOut','schoolLiveTeacher','saleLiveTeacher'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.teacherCost)});
   ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
+  if(a.usesExistingEquipment){const e=$('schoolInvestOut');if(e)e.textContent=F(0);const n=$('cashflowNote');if(n)n.textContent='Gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';}
 
   const sr=$('schoolYearServiceRowsV29');
   if(sr){
@@ -82,7 +85,10 @@ function render(){
 
   const er=$('equipmentPlanRowsV29'),en=$('equipmentPlanNoteV29');
   if(er){
-    if(a.equipmentTotal>0){
+    if(a.usesExistingEquipment){
+      er.innerHTML='<p class="sub"><b>Gia hạn:</b> sử dụng thiết bị hiện hữu; không phát sinh mua mới, vốn mới hoặc nghĩa vụ hoàn trả thiết bị mới trong phương án này.</p>';
+      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng mô-đun, chuyển lựa chọn “Thiết bị khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
+    }else if(a.equipmentTotal>0){
       const installment=a.installments[0]?.amount||0;
       er.innerHTML=`<table class="table"><tbody>
         <tr><td>Vốn thiết bị Sunbot bố trí</td><td><b>${F(a.financedCapital)}</b></td></tr>
@@ -190,7 +196,9 @@ function summary(){
     `3. Cường độ: ${a.l} tiết/lớp/tháng; 1 chương trình; mức thu dự kiến ${MONEY(a.f)}/trẻ/tiết.`,
     `4. Chi phí triển khai năm học: chương trình ${F(a.program)}; đồng hành điểm bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
   );
-  if(a.equipmentTotal>0){
+  if(a.usesExistingEquipment){
+    lines.push('5. Thiết bị: gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới.');
+  }else if(a.equipmentTotal>0){
     lines.push(`5. Thiết bị: Sunbot bố trí vốn ${F(a.financedCapital)}; tổng giá trị hoàn trả ${F(a.equipmentTotal)} trong ${a.term} tháng, thanh toán ${a.installmentCount} kỳ, mỗi kỳ 6 tháng; kỳ đầu khi bàn giao.`);
     lines.push(`6. Các kỳ thiết bị đến hạn trước hết tháng 5: ${a.currentYearInstallments.length} kỳ, tổng ${F(a.equipmentDueCurrent)}.`);
   }else if(a.directEquipment>0)lines.push(`5. Thiết bị: nhà trường mua trực tiếp từ Sunbot ${F(a.directEquipment)}, thanh toán ở kỳ đầu.`);
