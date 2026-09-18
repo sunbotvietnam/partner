@@ -16,7 +16,7 @@ function current(){
   const s=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;
   if(!s)return null;
   const source=equipmentSource();
-  const program=Number(s.pf||0),site=Number(s.site||0),training=Number(s.training||0),assessment=Number(s.assessment||0);
+  const isNew=(typeof launch==='undefined'?true:launch==='new');\n  const program=Number(s.pf||0),site=Number(s.site||0),training=isNew?Number(s.training||0):0,assessment=isNew?Number(s.assessment||0):0;
   const directEquipment=(s.md!=='provide'&&source==='sunbot')?Number(s.schoolInvest||0):0;
   const externalEquipment=(s.md!=='provide'&&source!=='sunbot')?Number(s.schoolInvest||0):0;
   const financedCapital=Math.max(0,Number(s.roomValue||0)*Number(s.share||0)+Number(s.extraInvest||0));
@@ -144,7 +144,7 @@ function render(){
   }
 
   // Hide monthly-recovery wording left by older layers.
-  const capital=$('capitalRecoveryOut');if(capital)capital.textContent=a.equipmentTotal>0?F(a.equipmentDueCurrent):F(0);
+  const capital=$('capitalRecoveryOut');if(capital)capital.textContent=a.equipmentTotal>0?F(a.equipmentDueCurrent):F(0);\n  const capitalRow=$('capitalRecoveryRow');if(capitalRow){const td=capitalRow.querySelector('td');if(td)td.textContent='Kỳ hoàn trả thiết bị đến hạn đến hết tháng 5';}
   document.querySelectorAll('body *').forEach(el=>{
     if(el.children.length)return;
     const t=String(el.textContent||'');
