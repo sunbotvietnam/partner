@@ -50,6 +50,7 @@ function ensureBreakdownBox(){
 }
 
 function renderPayment(){
+  if(window.SunbotPaymentV29)return;
   cleanSupplementWording();
   const a=audited();if(!a)return;
   const totalTargets=['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'];
