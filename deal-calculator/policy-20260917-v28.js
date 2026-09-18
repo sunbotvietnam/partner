@@ -15,7 +15,8 @@ function simplifySupplementaryServices(){
 
   const note=$('supplementPolicyV27');
   if(note){
-    note.innerHTML='<h4>Khuyến nghị để trải nghiệm của trẻ đầy đủ hơn</h4><p>Đây là <b>ngân sách trải nghiệm bổ sung, không bắt buộc</b> và nằm ngoài phí chương trình cốt lõi. Sunbot cung cấp tiêu chuẩn gợi ý cho từng mức; nhà trường có thể tự tổ chức hoặc đặt mua từng hạng mục từ Sunbot, ví dụ kit mang về theo tháng, in chứng nhận cứng, thi đua – khen thưởng, mini-project và sự kiện lớn/nhỏ. Nhà trường chủ động quyết định nguồn thực hiện phù hợp với kế hoạch của mình.</p>';
+    const html='<h4>Khuyến nghị để trải nghiệm của trẻ đầy đủ hơn</h4><p>Đây là <b>ngân sách trải nghiệm bổ sung, không bắt buộc</b> và nằm ngoài phí chương trình cốt lõi. Sunbot cung cấp tiêu chuẩn gợi ý cho từng mức; nhà trường có thể tự tổ chức hoặc đặt mua từng hạng mục từ Sunbot, ví dụ kit mang về theo tháng, in chứng nhận cứng, thi đua – khen thưởng, mini-project và sự kiện lớn/nhỏ. Nhà trường chủ động quyết định nguồn thực hiện phù hợp với kế hoạch của mình.</p>';
+    if(note.innerHTML!==html)note.innerHTML=html;
   }
 
   // Remove any leftover school-facing labels/text from older layers.
