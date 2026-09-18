@@ -71,6 +71,18 @@ function renderAuthoritative(){
   text('schoolLiveRevenue',M(s.parent));text('schoolLiveTeacher',M(s.teacher));
 
   const cv=$('childrenVal');if(cv)cv.textContent=Number(s.c||0).toLocaleString('vi-VN')+' trẻ';
+
+  // Keep every class-count presentation on the same authoritative state.
+  // This prevents the result card from retaining the initial 15-class value
+  // while the input area has already recalculated (e.g. 450 children / 25 = 18).
+  const manualClass=Number($('classCountInput')?.value||0);
+  const authoritativeClasses=Number(s.classes||0) || (manualClass?Math.max(1,Math.round(manualClass)):Math.ceil(Number(s.c||0)/Math.max(1,Number(s.cs||20))));
+  text('classCount',authoritativeClasses+' lớp');
+  const source=$('classCountSource');
+  if(source)source.textContent=manualClass?'Đang dùng số lớp thực tế':'Tự tính '+authoritativeClasses+' lớp';
+  const classNote=$('classCalculationNote');
+  if(classNote&&!manualClass)classNote.textContent=`Ước tính ${Number(s.c||0).toLocaleString('vi-VN')} trẻ ÷ ${Number(s.cs||20)} trẻ/lớp = ${authoritativeClasses} lớp (làm tròn lên).`;
+
   const visible=$('childrenInput');if(visible&&visible.dataset.fastSync==='1'&&!typingChildren&&document.activeElement!==visible)visible.value=String(s.c||'');
 
   // Payment schedule is part of the result panel, so render it in the same frame.
