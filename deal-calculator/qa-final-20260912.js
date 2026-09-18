@@ -37,8 +37,9 @@ function render(){
   text('liveContribution',M(contribution));
   text('liveMargin',(margin*100).toLocaleString('vi-VN',{maximumFractionDigits:1})+'%');
   const summary=document.getElementById('internalSummary');
-  if(summary)summary.textContent=`Trong năm học này, chi phí nội bộ hoạch định khoảng ${M(internalCosts)}; phần đóng góp Sunbot còn lại khoảng ${M(contribution)}, tương đương biên đóng góp ${(margin*100).toLocaleString('vi-VN',{maximumFractionDigits:1})}%, trước chi phí chung và thuế. Phần thu hồi vốn thiết bị chỉ tính đúng ${s.months} tháng triển khai trong năm học.`;
-  const ratio=s.parent?s.receipts/s.parent:0,rb=document.getElementById('ratioBadge'),bar=document.getElementById('ratioBar');
+  if(summary)summary.textContent=`Trong năm học này, chi phí nội bộ hoạch định khoảng ${M(internalCosts)}; phần đóng góp Sunbot còn lại khoảng ${M(contribution)}, tương đương biên đóng góp ${(margin*100).toLocaleString('vi-VN',{maximumFractionDigits:1})}%, trước chi phí chung và thuế. Chỉ số này là góc nhìn hiệu quả kinh tế nội bộ; lịch thu tiền thiết bị được đối soát riêng theo các kỳ 6 tháng.`;
+  const pay=window.SunbotPaymentV29||null;
+  const ratio=pay&&pay.coreParentRevenue?pay.totalDueCurrent/pay.coreParentRevenue:(s.parent?s.receipts/s.parent:0),rb=document.getElementById('ratioBadge'),bar=document.getElementById('ratioBar');
   if(rb){rb.className='badge';if(ratio<=.10){rb.textContent='Dễ giải thích';rb.classList.add('good')}else if(ratio<=.18){rb.textContent='Cần giải thích rõ';rb.classList.add('mid')}else{rb.textContent='Cần xem lại';rb.classList.add('bad')}}
   if(bar)bar.style.width=Math.min(100,ratio/.30*100)+'%';
   text('ratioNote',ratio<=.10?'Tổng khoản Sunbot thu không vượt 10% doanh thu dự kiến.':ratio<=.18?'Khoản Sunbot chiếm 10–18%; sale cần bóc tách phí chương trình, phí đồng hành điểm, đào tạo và phần vốn.':'Trên 18%; cần rà lại mức thu, quy mô lớp, thời hạn thu hồi vốn hoặc phạm vi trước khi trình trường.');
