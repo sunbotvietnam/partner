@@ -86,6 +86,11 @@ assert.equal(renewAdd.usesExistingEquipment,false);
 assert.equal(renewAdd.directEquipment,31_700_000);
 assert.equal(renewAdd.totalDueCurrent,80_300_000);
 
+const renewLargeTeam=calculate({...D,children:300,launch:'renew',trainingTeachers:60,assessmentTeachers:60});
+assert.equal(renewLargeTeam.blocked,false);
+assert.equal(renewLargeTeam.training,0);
+assert.equal(renewLargeTeam.assessment,0);
+
 const oct=calculate({...D,children:450,points:2,lessons:4,start:10});
 assert.equal(oct.months,8);
 assert.equal(oct.site,5_000_000*8/9);
@@ -110,7 +115,7 @@ assert.equal(custom.equipmentTotal,41_210_000);
 let count=0;
 for(const children of [80,150,151,300,301,450,800,801])
 for(const lessons of [4,6,8])
-for(const start of [9,10,12,1,3,5])
+for(const start of [9,10,11,12,1,2,3,4,5])
 for(const mode of ['own','provide','custom'])
 for(const term of [24,36])
 for(const points of [1,2,3])
@@ -129,5 +134,5 @@ for(const renewalEquipment of ['existing','add']){
   assert.equal(r.totalDueCurrent,r.pf+r.site+r.training+r.assessment+r.directEquipment+r.equipmentDueCurrent);
   assert.equal(r.remain,r.revenue-r.teacherCost-r.totalDueCurrent-r.externalEquipment);
 }
-assert.equal(count,20736);
+assert.equal(count,31104);
 console.log('PASS',count,'matrix scenarios + golden cases');
