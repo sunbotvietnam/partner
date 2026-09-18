@@ -35,9 +35,10 @@ function calculate(x){
   const blocked=x.scope!=='same_unit'||x.children>800||training===null;
   if(blocked)return {blocked:true};
 
-  const directEquipment=x.mode!=='provide'&&x.source==='sunbot'?schoolInvest:0;
-  const externalEquipment=x.mode!=='provide'&&x.source!=='sunbot'?schoolInvest:0;
-  const financedCapital=roomValue*share+extraInvest;
+  const usesExistingEquipment=x.launch==='renew'&&(x.renewalEquipment||'existing')!=='add';
+  const directEquipment=usesExistingEquipment?0:(x.mode!=='provide'&&x.source==='sunbot'?schoolInvest:0);
+  const externalEquipment=usesExistingEquipment?0:(x.mode!=='provide'&&x.source!=='sunbot'?schoolInvest:0);
+  const financedCapital=usesExistingEquipment?0:(roomValue*share+extraInvest);
   const equipmentTotal=Math.round(financedCapital*1.30);
   const installmentCount=equipmentTotal?x.term/6:0;
   const installments=[];
@@ -53,13 +54,13 @@ function calculate(x){
   const revenue=x.children*x.fee*x.lessons*months;
   const teacherCost=classes*x.lessons*months*x.teacherRate;
   const remain=revenue-teacherCost-totalDueCurrent-externalEquipment-x.other;
-  return {blocked:false,months,classes,rooms,roomValue,share,schoolInvest,pf,site,training,assessment,
+  return {blocked:false,months,classes,rooms,roomValue,share,schoolInvest,usesExistingEquipment,pf,site,training,assessment,
     directEquipment,externalEquipment,financedCapital,equipmentTotal,installmentCount,installments,
     equipmentDueCurrent,serviceYearTotal,totalDueCurrent,revenue,teacherCost,remain};
 }
 const D={children:300,classSize:25,classCount:0,points:1,fee:25000,lessons:4,start:9,
   teacherRate:120000,trainingTeachers:10,assessmentTeachers:10,launch:'new',
-  mode:'own',share:50,term:24,source:'sunbot',extra:false,extraPct:10,scope:'same_unit',other:0};
+  mode:'own',share:50,term:24,source:'sunbot',extra:false,extraPct:10,scope:'same_unit',other:0,renewalEquipment:'existing'};
 
 const vinh=calculate({...D,children:450,points:2,lessons:8,mode:'provide',term:36});
 assert.equal(vinh.pf,96_700_000);
@@ -75,6 +76,15 @@ assert.equal(vinh.remain,509_306_668);
 const renew=calculate({...D,children:300,launch:'renew'});
 assert.equal(renew.training,0);
 assert.equal(renew.assessment,0);
+assert.equal(renew.usesExistingEquipment,true);
+assert.equal(renew.directEquipment,0);
+assert.equal(renew.externalEquipment,0);
+assert.equal(renew.equipmentTotal,0);
+assert.equal(renew.totalDueCurrent,48_600_000);
+const renewAdd=calculate({...D,children:300,launch:'renew',renewalEquipment:'add'});
+assert.equal(renewAdd.usesExistingEquipment,false);
+assert.equal(renewAdd.directEquipment,31_700_000);
+assert.equal(renewAdd.totalDueCurrent,80_300_000);
 
 const oct=calculate({...D,children:450,points:2,lessons:4,start:10});
 assert.equal(oct.months,8);
@@ -105,17 +115,19 @@ for(const mode of ['own','provide','custom'])
 for(const term of [24,36])
 for(const points of [1,2,3])
 for(const launch of ['new','renew'])
-for(const source of ['sunbot','school']){
-  const r=calculate({...D,children,lessons,start,mode,term,points,launch,source});
+for(const source of ['sunbot','school'])
+for(const renewalEquipment of ['existing','add']){
+  const r=calculate({...D,children,lessons,start,mode,term,points,launch,source,renewalEquipment});
   count++;
   if(children>800){assert.equal(r.blocked,true);continue;}
   assert.equal(r.blocked,false);
   assert.equal(r.rooms,Math.max(children<=300?1:2,points));
   if(launch==='renew'){assert.equal(r.training,0);assert.equal(r.assessment,0);}
+  if(launch==='renew'&&renewalEquipment==='existing'){assert.equal(r.usesExistingEquipment,true);assert.equal(r.directEquipment,0);assert.equal(r.externalEquipment,0);assert.equal(r.equipmentTotal,0);}
   if(mode==='provide'){assert.equal(r.schoolInvest,0);assert.equal(r.directEquipment,0);assert.equal(r.externalEquipment,0);}
   if(mode==='own')assert.equal(r.equipmentTotal,0);
   assert.equal(r.totalDueCurrent,r.pf+r.site+r.training+r.assessment+r.directEquipment+r.equipmentDueCurrent);
   assert.equal(r.remain,r.revenue-r.teacherCost-r.totalDueCurrent-r.externalEquipment);
 }
-assert.equal(count,10368);
+assert.equal(count,20736);
 console.log('PASS',count,'matrix scenarios + golden cases');
