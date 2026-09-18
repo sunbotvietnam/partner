@@ -45,6 +45,6 @@ function render(){
 }
 let timer;function queue(){clearTimeout(timer);timer=setTimeout(render,230)}
 document.addEventListener('input',queue,true);document.addEventListener('change',queue,true);document.addEventListener('click',queue,true);
-const root=document.querySelector('.wrap')||document.body;new MutationObserver(queue).observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','value']});
+const root=document.querySelector('.controls');if(root)new MutationObserver(queue).observe(root,{subtree:true,attributes:true,attributeFilter:['class','hidden','value']});
 setTimeout(render,260);
 })();
