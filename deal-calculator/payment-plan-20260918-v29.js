@@ -155,6 +155,20 @@ function render(){
     }
   });
 
+  // Keep the 4/6/8 comparison on the same authoritative cash logic.
+  const cmp=$('compareBody');
+  if(cmp){
+    cmp.innerHTML=[4,6,8].map(x=>{
+      const programX=typeof feeByScale==='function'?feeByScale(a.c,x,a.months):null;
+      if(programX===null)return `<tr><td>${x} tiết/tháng</td><td>${F(a.c*a.f*x*a.months)}</td><td>${F(a.classes*x*a.months*a.tr)}</td><td>Phương án riêng</td></tr>`;
+      const revenueX=a.c*a.f*x*a.months;
+      const teacherX=a.classes*x*a.months*a.tr;
+      const totalX=programX+a.site+a.training+a.assessment+a.directEquipment+a.equipmentDueCurrent;
+      const remainX=revenueX-teacherX-totalX-a.externalEquipment-a.other;
+      return `<tr><td>${x} tiết/tháng</td><td>${F(revenueX)}</td><td>${F(teacherX)}</td><td>${F(remainX)}</td></tr>`;
+    }).join('');
+  }
+
   // Supplementary experience remains advisory and must not alter revenue/remain.
   const note=$('supplementPolicyV27');
   if(note){
