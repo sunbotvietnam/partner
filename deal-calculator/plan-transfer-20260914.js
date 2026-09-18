@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const VERSION='SBP1';
-const ENGINE_VERSION='2026.09.14';
+const ENGINE_VERSION='2026.09.18-v30';
 const $=id=>document.getElementById(id);
 const N=(id,d=0)=>Number($(id)?.value||d);
 const M=n=>typeof mil==='function'?mil(n):(Number(n||0)/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
@@ -19,6 +19,7 @@ function viewName(){if(document.body.classList.contains('school-view'))return'sc
 function meta(){return{school_name:String($('planSchoolName')?.value||'').trim(),prepared_by:String($('planPreparedBy')?.value||'').trim()};}
 function capture(){
   const current=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;
+  const finalResult=window.SunbotPaymentV29||current;
   return {
     schema:VERSION,engine_version:ENGINE_VERSION,created_at:new Date().toISOString(),view:viewName(),meta:meta(),
     inputs:{
@@ -30,36 +31,18 @@ function capture(){
       contract_scope:activeData('#contractScopeButtons','scope','same_unit'),other_cost:N('otherCost'),
       program_cost_pct:N('programCostPct',20),training_cost_pct:N('trainingCostPct',50),entry_cost_pct:N('entryCostPct',3),renewal_cost_pct:N('renewalCostPct',2),sales_cost_pct:N('salesCostPct',5),relationship_cost_pct:N('relationshipCostPct',3),ops_cost_pct:N('opsCostPct',5)
     },
-    reference:current?{total:current.total,remain:current.remain,program_fee:current.pf,rooms:current.rooms}:null
+    reference:finalResult?{total:finalResult.totalDueCurrent??finalResult.total,remain:finalResult.remain,program_fee:finalResult.program??finalResult.pf,rooms:finalResult.rooms}:null
   };
 }
 function b64(obj){const bytes=new TextEncoder().encode(JSON.stringify(obj));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function unb64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const bin=atob(s),bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes));}
 function token(snapshot){return `SUNBOT PLAN · ${VERSION}-${b64(snapshot)}`;}
 function readable(forSchool){
-  const s=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;if(!s)throw new Error('Máy tính chưa sẵn sàng.');
-  const x=capture(),m=x.meta,i=x.inputs,name=m.school_name||'Trường đang xây dựng phương án',by=m.prepared_by||'Chưa ghi';
-  if(s.blocked)return [`PHƯƠNG ÁN TRIỂN KHAI SUNBOT – ${name}`,`Người lập/phụ trách: ${by}`,`Trạng thái: ${s.blockedReason}`].join('\n');
-  const invest=i.investment_mode==='own'?`Nhà trường đầu tư ${s.rooms} mô-đun tiêu chuẩn, tổng ${M(s.schoolInvest)}.`:i.investment_mode==='provide'?`Sunbot đầu tư ${s.rooms} mô-đun tiêu chuẩn, tổng giá trị ${M(s.roomValue)}; phần vốn được phân bổ trong ${s.tm} tháng.`:`Hai bên cùng đầu tư ${s.rooms} mô-đun; Sunbot góp ${Math.round(s.share*100)}% vốn thiết bị, nhà trường thanh toán ban đầu ${M(s.schoolInvest)}.`;
-  const lines=[
-    `PHƯƠNG ÁN TRIỂN KHAI SUNBOT – ${name}`,
-    `Người lập/phụ trách: ${by}`,
-    '',
-    `1. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${s.points} điểm triển khai; ${s.rooms} mô-đun tiêu chuẩn.`,
-    `2. Thời gian: bắt đầu ${(MONTH[s.start]||'').toLowerCase()}, còn ${s.months} tháng đến hết tháng 5.`,
-    `3. Cường độ: ${s.l} tiết/lớp/tháng/chương trình; ${s.p} chương trình; mức thu dự kiến ${MONEY(s.f)}/trẻ/tiết.`,
-    `4. Phí chương trình trong năm học này: ${M(s.pf)}.`,
-    `5. Phí đồng hành điểm triển khai bổ sung: ${M(s.site)} trong năm học này.`,
-    `6. Đào tạo: ${s.trainTeachers} giáo viên, ${M(s.training)}; sát hạch: ${s.assessTeachers} giáo viên × ${s.p} chương trình, ${M(s.assessment)}.`,
-    `7. Thiết bị: ${invest}`,
-    `8. Thu hồi vốn thiết bị trong năm học này: ${M(s.recovery)}${s.recoveryMonthly>0?`, khoảng ${M(s.recoveryMonthly)}/tháng`:''}.`,
-    `9. Tổng nhà trường thanh toán Sunbot trong năm học này: ${M(s.total)}.`,
-    `10. Nguồn còn lại dự kiến của nhà trường sau các khoản đang tính: ${M(s.remain)}.`,
-    `11. Lịch thanh toán dự kiến:`
-  ];
-  (s.rows||[]).forEach(r=>lines.push(`   - Kỳ ${r.i}, ${r.label} (${r.n} tháng): ${M(r.total)}.`));
-  if(!forSchool)lines.push('',`Phiên bản máy tính: ${ENGINE_VERSION}. Bản nội bộ này có mã khôi phục để Admin/Sale nạp lại đầy đủ các biến đầu vào.`);
-  return lines.join('\n');
+  if(typeof planText!=='function')throw new Error('Máy tính chưa sẵn sàng.');
+  const text=String(planText()||'').trim();
+  if(!text)throw new Error('Máy tính chưa tạo được phương án.');
+  if(forSchool)return text;
+  return text+'\n\nPhiên bản máy tính: '+ENGINE_VERSION+'. Bản nội bộ này có mã khôi phục để Admin/Sale nạp lại đầy đủ các biến đầu vào.';
 }
 async function copyText(text,msg){try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}toast(msg);}
 function clickData(group,attr,value){const b=[...document.querySelectorAll(`${group} .btn`)].find(x=>String(x.dataset[attr])===String(value));if(b&&!b.disabled)b.click();}
