@@ -148,6 +148,7 @@ function fastApply(snapshot){
   try{if(typeof update==='function')update()}catch(e){}
   try{if(typeof refreshClassPresentation==='function')refreshClassPresentation()}catch(e){}
   try{if(typeof window.SunbotDealFastRefresh==='function')window.SunbotDealFastRefresh()}catch(e){}
+  try{document.dispatchEvent(new CustomEvent('sunbot:deal-change'))}catch(e){}
   scheduleUi();
 }
 
