@@ -1,0 +1,43 @@
+// Sunbot Deal Calculator — authoritative recalculation + summary integrity, 12/09/2026
+(function(){
+'use strict';
+const ANNUAL_SITE=5000000, MOD=31700000;
+const MONTHS_LEFT={9:9,10:8,11:7,12:6,1:5,2:4,3:3,4:2,5:1};
+const MONTH_NAME={9:'Tháng 9',10:'Tháng 10',11:'Tháng 11',12:'Tháng 12',1:'Tháng 1',2:'Tháng 2',3:'Tháng 3',4:'Tháng 4',5:'Tháng 5'};
+const N=(id,d=0)=>Number(document.getElementById(id)?.value||d);
+const M=n=>typeof mil==='function'?mil(n):(n/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
+const MONEY=n=>typeof money==='function'?money(n):new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+const scope=()=>document.querySelector('#contractScopeButtons .btn.active')?.dataset.scope||'same_unit';
+function trainingFee(t,p){t=Math.max(0,Math.round(t||0));if(!t)return 0;if(t>50)return null;const blocks=Math.ceil(Math.max(t-20,0)/10);return p===2?19000000+blocks*7000000:11000000+blocks*4000000}
+function chunks(n){return ({9:[2,2,2,3],8:[2,2,2,2],7:[2,2,3],6:[2,2,2],5:[3,2],4:[2,2],3:[3],2:[2],1:[1]})[n]||[n]}
+function nextMonth(m){return m===12?1:m+1}
+function periodLabel(start,n){let end=start;for(let i=1;i<n;i++)end=nextMonth(end);return n===1?MONTH_NAME[start]:`${MONTH_NAME[start]}–${String(MONTH_NAME[end]).replace('Tháng ','')}`}
+function current(){
+  const start=Number(document.getElementById('startMonth')?.value||9), months=MONTHS_LEFT[start]||9;
+  const c=N('children'),cs=N('classSize',20),f=N('fee'),l=N('lessons',4),tr=N('teacherRate'),points=N('campusCount',1);
+  const p=typeof programs==='undefined'?1:Number(programs)||1, md=typeof mode==='undefined'?'own':mode, ln=typeof launch==='undefined'?'new':launch, tm=typeof term==='undefined'?24:Number(term)||24, sv=typeof service==='undefined'?0:Number(service)||0;
+  const manual=N('classCountInput'), classes=manual?Math.max(1,Math.round(manual)):Math.ceil(c/cs);
+  const trainTeachers=N('trainingTeacherCount'), assessTeachers=N('teacherCount');
+  const rooms=typeof roomCount==='function'?roomCount(c):Math.max(c<=300?1:c<=800?2:3,points), roomValue=rooms*MOD;
+  const share=md==='own'?0:md==='provide'?1:N('capitalShare',50)/100;
+  const schoolInvest=roomValue*(1-share), equipmentSale=md!=='provide'?schoolInvest:0;
+  const extraInvest=md!=='own'&&typeof extra!=='undefined'&&extra?roomValue*N('extraPct',10)/100:0;
+  const pf=typeof feeByScale==='function'?feeByScale(c,l,months):null;
+  const training=ln==='new'?trainingFee(trainTeachers,p):0, assessment=ln==='new'?assessTeachers*500000*p:0;
+  const site=scope()==='same_unit'?Math.max(points-1,0)*ANNUAL_SITE*months/9:0;
+  const serviceMonthly=typeof servicePlans!=='undefined'&&servicePlans[sv]?c*servicePlans[sv].sunbotFeeMonthly:0, serviceFee=serviceMonthly*months;
+  const recoveryMonthly=(roomValue*share+extraInvest)*1.3/tm, recovery=recoveryMonthly*months;
+  const parent=c*f*l*months*p+c*sv*1000*months, teacher=classes*l*months*tr*p, other=N('otherCost');
+  const blockedReason=scope()==='multi_school'?'Nhiều trường độc lập cần báo giá riêng từng trường hoặc hợp đồng nhiều trường do CEO duyệt.':c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
+  const blocked=Boolean(blockedReason);
+  const receipts=blocked?null:pf+training+assessment+site+recovery+serviceFee;
+  const total=blocked?null:receipts+equipmentSale;
+  const remain=blocked?null:parent-teacher-receipts-schoolInvest-other;
+  const rows=[];let cur=start;
+  if(!blocked){const pm=pf/months, sm=site/months;chunks(months).forEach((n,i)=>{const program=pm*n,sitePart=sm*n,servicePart=serviceMonthly*n,recoveryPart=recoveryMonthly*n,once=i===0?training+assessment+equipmentSale:0,totalRow=program+sitePart+servicePart+recoveryPart+once;rows.push({i:i+1,n,label:periodLabel(cur,n),program,site:sitePart,service:servicePart,recovery:recoveryPart,once,total:totalRow});for(let k=0;k<n;k++)cur=nextMonth(cur)})}
+  return {start,months,c,cs,f,l,tr,points,p,md,ln,tm,sv,classes,trainTeachers,assessTeachers,rooms,roomValue,share,schoolInvest,equipmentSale,extraInvest,pf,training,assessment,site,serviceMonthly,serviceFee,recoveryMonthly,recovery,parent,teacher,other,blocked,blockedReason,receipts,total,remain,rows,remainingRecoveryMonths:share>0||extraInvest>0?Math.max(tm-months,0):0};
+}
+
+window.SunbotDealCurrent=current;
+window.SunbotDealStateVersion='2026.09.19-v35';
+})();
