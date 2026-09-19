@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const MONTH={1:'Tháng 1',2:'Tháng 2',3:'Tháng 3',4:'Tháng 4',5:'Tháng 5',6:'Tháng 6',7:'Tháng 7',8:'Tháng 8',9:'Tháng 9',10:'Tháng 10',11:'Tháng 11',12:'Tháng 12'};
 const F=n=>(Number(n||0)/1e6).toLocaleString('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:2})+' triệu';
 const MONEY=n=>new Intl.NumberFormat('vi-VN').format(Math.round(Number(n||0)))+'đ';
-let raf=0;
+let raf=0,lastPayBodyHTML='';
 
 function equipmentSource(){return document.querySelector('#equipmentSourceButtons .btn.active')?.dataset.source||'sunbot'}
 function nextMonth(m,steps=1){let x=m;for(let i=0;i<steps;i++)x=x===12?1:x+1;return x}
@@ -146,7 +146,7 @@ function render(){
 
   const intro=$('payIntro'),body=$('payBody'),after=$('payAfter');
   if(intro)intro.textContent=`Từ ${MONTH[a.start].toLowerCase()} đến hết tháng 5 có ${rows.length} kỳ thanh toán vận hành. Thiết bị được thu theo kỳ 6 tháng; kỳ thiết bị đến hạn được gộp vào kỳ thanh toán gần tương ứng để giảm số lần xử lý.`;
-  if(body)body.innerHTML=rows.map(r=>{
+  if(body){body.innerHTML=rows.map(r=>{
     const d=[`Chương trình ${F(r.program)}`];
     if(r.site)d.push(`Đồng hành điểm ${F(r.site)}`);
     if(r.training)d.push(`Đào tạo ${F(r.training)}`);
@@ -154,7 +154,7 @@ function render(){
     if(r.direct)d.push(`Thiết bị mua trực tiếp ${F(r.direct)}`);
     if(r.equipmentInst)d.push(`${r.equipmentDue.map(x=>`Thiết bị đến hạn ${MONTH[x.month]} ${F(x.amount)}`).join(' · ')}`);
     return `<tr><td>Kỳ ${r.i}</td><td>${r.label} (${r.n} tháng)</td><td><b>${F(r.total)}</b><div class="sub">${d.join(' · ')}</div></td></tr>`;
-  }).join('');
+  }).join('');lastPayBodyHTML=body.innerHTML;}
 
   const paidEquipment=a.equipmentDueCurrent;
   const outstanding=Math.max(0,a.equipmentTotal-paidEquipment);
@@ -258,5 +258,13 @@ if(controls){
   observer.observe(controls,{subtree:true,attributes:true,attributeFilter:['class','hidden']});
 }
 document.addEventListener('sunbot:deal-change',schedule,true);
+// Self-healing guard: if any unexpected code mutates the payment table after V35
+// rendered it, restore the V35 schedule immediately.
+const payBody=$('payBody');
+if(payBody){
+  new MutationObserver(()=>{
+    if(lastPayBodyHTML&&payBody.innerHTML!==lastPayBodyHTML)schedule();
+  }).observe(payBody,{subtree:true,childList:true,characterData:true});
+}
 render();try{planText=summary}catch(e){}
 })();
