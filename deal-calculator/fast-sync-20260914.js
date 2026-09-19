@@ -50,25 +50,28 @@ function renderAuthoritative(){
   if(typeof get!=='function')return;
   let s;try{s=get();}catch(e){return;}
 
-  // Critical outputs: these must never wait for a tab switch or delayed overlay.
+  // Ordinary labels can still be refreshed here. Once V29 exists, all payment/cash
+  // outputs belong exclusively to V29 so a later click cannot restore the legacy schedule.
+  const hasV29=Boolean(window.SunbotPaymentV29);
   text('monthsVal',s.months+' tháng');
   const months=$('months');if(months)months.value=String(s.months);
   text('programFeeOut',s.blocked?'Phương án riêng':M(s.pf));
   text('trainingOut',s.training===null?'Phương án riêng':M(s.training));
   text('assessmentOut',M(s.assessment));
   text('qaSiteOut',s.blocked&&String(s.blockedReason||'').includes('Nhiều trường')?'Không áp dụng':M(s.site));
-  text('capitalRecoveryOut',M(s.recovery));
-  text('equipmentSaleOut',M(s.equipmentSale));
-
-  if(s.blocked){
-    ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'].forEach(id=>text(id,'Phương án riêng'));
-    ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>text(id,'Chưa kết luận'));
-  }else{
-    ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'].forEach(id=>text(id,M(s.total)));
-    ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>text(id,M(s.remain)));
+  if(!hasV29){
+    text('capitalRecoveryOut',M(s.recovery));
+    text('equipmentSaleOut',M(s.equipmentSale));
+    if(s.blocked){
+      ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'].forEach(id=>text(id,'Phương án riêng'));
+      ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>text(id,'Chưa kết luận'));
+    }else{
+      ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'].forEach(id=>text(id,M(s.total)));
+      ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>text(id,M(s.remain)));
+    }
+    text('saleLiveRevenue',M(s.parent));text('saleLiveTeacher',M(s.teacher));
+    text('schoolLiveRevenue',M(s.parent));text('schoolLiveTeacher',M(s.teacher));
   }
-  text('saleLiveRevenue',M(s.parent));text('saleLiveTeacher',M(s.teacher));
-  text('schoolLiveRevenue',M(s.parent));text('schoolLiveTeacher',M(s.teacher));
 
   const cv=$('childrenVal');if(cv)cv.textContent=Number(s.c||0).toLocaleString('vi-VN')+' trẻ';
 
@@ -85,11 +88,14 @@ function renderAuthoritative(){
 
   const visible=$('childrenInput');if(visible&&visible.dataset.fastSync==='1'&&!typingChildren&&document.activeElement!==visible)visible.value=String(s.c||'');
 
-  // Payment schedule is part of the result panel, so render it in the same frame.
-  const intro=$('payIntro'),body=$('payBody'),after=$('payAfter');
-  if(intro)intro.textContent=s.blocked?'Cần lập phương án riêng trước khi sinh lịch thanh toán.':`Bắt đầu ${(MONTH_NAME[s.start]||'').toLowerCase()}, còn ${s.months} tháng đến hết tháng 5 → ${(s.rows||[]).length} kỳ. Đào tạo và sát hạch thu ở kỳ đầu.`;
-  if(body)body.innerHTML=s.blocked?'<tr><td colspan="3">Phương án riêng</td></tr>':(s.rows||[]).map(r=>`<tr><td>Kỳ ${r.i}</td><td>${r.label} (${r.n} tháng)</td><td><b>${M(r.total)}</b><div class="sub">Chương trình ${M(r.program)}${r.site?` · Đồng hành điểm ${M(r.site)}`:''}${r.service?` · Dịch vụ ${M(r.service)}`:''}${r.recovery?` · Thu hồi vốn ${M(r.recovery)}`:''}${r.once?` · Khởi tạo/thiết bị ${M(r.once)}`:''}</div></td></tr>`).join('');
-  if(after)after.textContent=s.blocked?'':s.recoveryMonthly>0?`Sau hết tháng 5, khoản vốn thiết bị còn tiếp tục ${s.remainingRecoveryMonths} tháng theo kỳ hạn ${s.tm} tháng kể từ lúc bàn giao, khoảng ${M(s.recoveryMonthly)}/tháng. Nghĩa vụ thu hồi vốn không kết thúc theo năm học.`:'Nhà trường đầu tư phần thiết bị của mình ngay từ đầu; không phát sinh thu hồi vốn thiết bị của Sunbot.';
+  // Legacy schedule is only a startup fallback. After V29 initializes, never touch
+  // payment rows again; V29 owns schedule, due dates, totals and reconciliation.
+  if(!hasV29){
+    const intro=$('payIntro'),body=$('payBody'),after=$('payAfter');
+    if(intro)intro.textContent=s.blocked?'Cần lập phương án riêng trước khi sinh lịch thanh toán.':`Bắt đầu ${(MONTH_NAME[s.start]||'').toLowerCase()}, còn ${s.months} tháng đến hết tháng 5 → ${(s.rows||[]).length} kỳ. Đào tạo và sát hạch thu ở kỳ đầu.`;
+    if(body)body.innerHTML=s.blocked?'<tr><td colspan="3">Phương án riêng</td></tr>':(s.rows||[]).map(r=>`<tr><td>Kỳ ${r.i}</td><td>${r.label} (${r.n} tháng)</td><td><b>${M(r.total)}</b><div class="sub">Chương trình ${M(r.program)}${r.site?` · Đồng hành điểm ${M(r.site)}`:''}${r.service?` · Dịch vụ ${M(r.service)}`:''}${r.recovery?` · Thu hồi vốn ${M(r.recovery)}`:''}${r.once?` · Khởi tạo/thiết bị ${M(r.once)}`:''}</div></td></tr>`).join('');
+    if(after)after.textContent=s.blocked?'':s.recoveryMonthly>0?`Sau hết tháng 5, khoản vốn thiết bị còn tiếp tục ${s.remainingRecoveryMonths} tháng theo kỳ hạn ${s.tm} tháng kể từ lúc bàn giao, khoảng ${M(s.recoveryMonthly)}/tháng. Nghĩa vụ thu hồi vốn không kết thúc theo năm học.`:'Nhà trường đầu tư phần thiết bị của mình ngay từ đầu; không phát sinh thu hồi vốn thiết bị của Sunbot.';
+  }
 }
 
 function schedule(){
