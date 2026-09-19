@@ -97,7 +97,7 @@ function render(){
         <tr><td>Lịch thanh toán</td><td><b>${a.installmentCount} kỳ · 6 tháng/kỳ</b></td></tr>
         <tr><td>Giá trị mỗi kỳ</td><td><b>${F(installment)}</b></td></tr>
       </tbody></table>`;
-      if(en)en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau 6 tháng. Đây là lịch thu tiền, còn ${a.term} tháng là kỳ hạn tính của phương án. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;
+      if(en){const due=a.installments.map(x=>`${MONTH[x.month]}: ${F(x.amount)}`).join(' · ');en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau đúng 6 tháng. Lịch thiết bị: ${due}. Kỳ hạn tính ${a.term} tháng. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;}
     }else if(a.directEquipment>0){
       er.innerHTML=`<table class="table"><tbody><tr><td>Thiết bị nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
       if(en)en.textContent='Không phát sinh nghĩa vụ hoàn trả thiết bị sau khi khoản mua trực tiếp đã được thanh toán.';
@@ -112,9 +112,10 @@ function render(){
   parts.forEach((n,i)=>{
     const program=pm*n,site=sm*n;
     const training=i===0?a.training:0,assessment=i===0?a.assessment:0,direct=i===0?a.directEquipment:0;
-    const equipmentInst=a.currentYearInstallments.filter(x=>x.offset>=offset&&x.offset<offset+n).reduce((sum,x)=>sum+x.amount,0);
+    const equipmentDue=a.currentYearInstallments.filter(x=>x.offset>=offset&&x.offset<offset+n);
+    const equipmentInst=equipmentDue.reduce((sum,x)=>sum+x.amount,0);
     const total=program+site+training+assessment+direct+equipmentInst;
-    rows.push({i:i+1,n,label:periodLabel(cur,n),program,site,training,assessment,direct,equipmentInst,total});
+    rows.push({i:i+1,n,label:periodLabel(cur,n),program,site,training,assessment,direct,equipmentInst,equipmentDue,total});
     cur=nextMonth(cur,n);offset+=n;
   });
   const scheduleSum=rows.reduce((sum,r)=>sum+r.total,0);
@@ -128,7 +129,7 @@ function render(){
     if(r.training)d.push(`Đào tạo ${F(r.training)}`);
     if(r.assessment)d.push(`Sát hạch ${F(r.assessment)}`);
     if(r.direct)d.push(`Thiết bị mua trực tiếp ${F(r.direct)}`);
-    if(r.equipmentInst)d.push(`Kỳ hoàn trả thiết bị ${F(r.equipmentInst)}`);
+    if(r.equipmentInst)d.push(`${r.equipmentDue.map(x=>`Thiết bị đến hạn ${MONTH[x.month]} ${F(x.amount)}`).join(' · ')}`);
     return `<tr><td>Kỳ ${r.i}</td><td>${r.label} (${r.n} tháng)</td><td><b>${F(r.total)}</b><div class="sub">${d.join(' · ')}</div></td></tr>`;
   }).join('');
 
@@ -200,7 +201,7 @@ function summary(){
     lines.push('5. Thiết bị: gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới.');
   }else if(a.equipmentTotal>0){
     lines.push(`5. Thiết bị: Sunbot bố trí vốn ${F(a.financedCapital)}; tổng giá trị hoàn trả ${F(a.equipmentTotal)} trong ${a.term} tháng, thanh toán ${a.installmentCount} kỳ, mỗi kỳ 6 tháng; kỳ đầu khi bàn giao.`);
-    lines.push(`6. Các kỳ thiết bị đến hạn trước hết tháng 5: ${a.currentYearInstallments.length} kỳ, tổng ${F(a.equipmentDueCurrent)}.`);
+    lines.push(`6. Các kỳ thiết bị đến hạn trước hết tháng 5: ${a.currentYearInstallments.map(x=>`${MONTH[x.month]} ${F(x.amount)}`).join('; ')}. Tổng ${F(a.equipmentDueCurrent)}.`);
   }else if(a.directEquipment>0)lines.push(`5. Thiết bị: nhà trường mua trực tiếp từ Sunbot ${F(a.directEquipment)}, thanh toán ở kỳ đầu.`);
   else lines.push('5. Thiết bị: nhà trường tự trang bị; không tính vào khoản thanh toán Sunbot.');
   lines.push(
