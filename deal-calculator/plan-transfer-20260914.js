@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const VERSION='SBP1';
-const ENGINE_VERSION='2026.09.19-v35';
+const ENGINE_VERSION='2026.09.19-v36';
 const $=id=>document.getElementById(id);
 const N=(id,d=0)=>Number($(id)?.value||d);
 const M=n=>typeof mil==='function'?mil(n):(Number(n||0)/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
