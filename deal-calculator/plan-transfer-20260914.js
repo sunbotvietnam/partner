@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const VERSION='SBP1';
-const ENGINE_VERSION='2026.09.18-v31';
+const ENGINE_VERSION='2026.09.19-v35';
 const $=id=>document.getElementById(id);
 const N=(id,d=0)=>Number($(id)?.value||d);
 const M=n=>typeof mil==='function'?mil(n):(Number(n||0)/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
@@ -19,7 +19,7 @@ function viewName(){if(document.body.classList.contains('school-view'))return'sc
 function meta(){return{school_name:String($('planSchoolName')?.value||'').trim(),prepared_by:String($('planPreparedBy')?.value||'').trim()};}
 function capture(){
   const current=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;
-  const finalResult=window.SunbotPaymentV29||current;
+  const finalResult=window.SunbotPaymentEngineV35||window.SunbotPaymentV29||current;
   return {
     schema:VERSION,engine_version:ENGINE_VERSION,created_at:new Date().toISOString(),view:viewName(),meta:meta(),
     inputs:{
