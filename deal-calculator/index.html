@@ -1,1 +1,80 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sunbot | Máy tính phương án nhà trường</title></head><body><script>(async function(){try{const r=await fetch('./base.html?v=20260919-v36');if(!r.ok)throw new Error('Không tải được bản ổn định');let html=await r.text();html=html.replace('</body>','<script src="./policy-20260912.js?v=20260912-1"><\/script><script src="./policy-wording-20260912.js?v=20260914-1"><\/script><script src="./ux-cleanup-20260912.js?v=20260912-4"><\/script><script src="./deal-state-v35.js?v=20260919-v36"><\/script><script src="./qa-final-20260912.js?v=20260919-v36"><\/script><script src="./workflow-20260912.js?v=20260912-8"><\/script><script src="./workspace-role-20260912.js?v=20260912-1"><\/script><script src="./fast-sync-20260914.js?v=20260919-v36"><\/script><script src="./renewal-equipment-20260918.js?v=20260919-v36"><\/script><script src="./plan-transfer-20260914.js?v=20260919-v36"><\/script><script src="./plan-import-success-20260914.js?v=20260914-2"><\/script><script src="./policy-20260917-v27.js?v=20260919-v36"><\/script><script src="./policy-20260917-v28.js?v=20260918-v30"><\/script><script src="./payment-engine-v35.js?v=20260919-v36"><\/script></body>');document.open();document.write(html);document.close()}catch(e){document.body.innerHTML='<div style="font-family:system-ui;padding:32px">Không tải được máy tính Sunbot. Vui lòng tải lại trang.</div>';console.error(e)}})();</script></body></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sunbot | Máy tính phương án nhà trường</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f7f5;color:#1f2937}
+  .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:min(420px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:30px;box-shadow:0 12px 36px rgba(0,0,0,.08)}
+  .brand{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#f97316;margin-bottom:10px}
+  h1{font-size:24px;line-height:1.25;margin:0 0 8px}
+  p{font-size:14px;line-height:1.55;color:#6b7280;margin:0 0 20px}
+  label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+  input{width:100%;height:46px;border:1px solid #d1d5db;border-radius:10px;padding:0 13px;font-size:16px;outline:none}
+  input:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+  button{width:100%;height:46px;margin-top:12px;border:0;border-radius:10px;background:#f97316;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+  button:hover{filter:brightness(.96)}
+  .error{min-height:20px;margin-top:10px;color:#b91c1c;font-size:13px}
+</style>
+</head>
+<body>
+<div class="gate">
+  <main class="card">
+    <div class="brand">Sunbot Partner</div>
+    <h1>Máy tính phương án nhà trường</h1>
+    <p>Khu vực nội bộ. Vui lòng nhập mật khẩu để tiếp tục.</p>
+    <form id="accessForm">
+      <label for="password">Mật khẩu truy cập</label>
+      <input id="password" type="password" autocomplete="current-password" autofocus required>
+      <button type="submit">Truy cập</button>
+      <div class="error" id="error" role="alert"></div>
+    </form>
+  </main>
+</div>
+<script>
+(async function(){
+  const ACCESS_HASH='a85915208da941a3635074db3af9d3eb78d741b0f32525cf922c73db087e466d';
+  const SESSION_KEY='sunbot-deal-calculator-access-v1';
+
+  async function sha256(value){
+    const data=new TextEncoder().encode(value);
+    const digest=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function loadCalculator(){
+    try{
+      const r=await fetch('./base.html?v=20260919-v36');
+      if(!r.ok) throw new Error('Không tải được bản ổn định');
+      let html=await r.text();
+      html=html.replace('</body>','<script src="./policy-20260912.js?v=20260912-1"><\\/script><script src="./policy-wording-20260912.js?v=20260914-1"><\\/script><script src="./ux-cleanup-20260912.js?v=20260912-4"><\\/script><script src="./deal-state-v35.js?v=20260919-v36"><\\/script><script src="./qa-final-20260912.js?v=20260919-v36"><\\/script><script src="./workflow-20260912.js?v=20260912-8"><\\/script><script src="./workspace-role-20260912.js?v=20260912-1"><\\/script><script src="./fast-sync-20260914.js?v=20260919-v36"><\\/script><script src="./renewal-equipment-20260918.js?v=20260919-v36"><\\/script><script src="./plan-transfer-20260914.js?v=20260919-v36"><\\/script><script src="./plan-import-success-20260914.js?v=20260914-2"><\\/script><script src="./policy-20260917-v27.js?v=20260919-v36"><\\/script><script src="./policy-20260917-v28.js?v=20260918-v30"><\\/script><script src="./payment-engine-v35.js?v=20260919-v36"><\\/script></body>');
+      document.open();document.write(html);document.close();
+    }catch(e){
+      document.body.innerHTML='<div style="font-family:system-ui;padding:32px">Không tải được máy tính Sunbot. Vui lòng tải lại trang.</div>';
+      console.error(e);
+    }
+  }
+
+  if(sessionStorage.getItem(SESSION_KEY)==='granted'){loadCalculator();return;}
+
+  document.getElementById('accessForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    const input=document.getElementById('password');
+    const error=document.getElementById('error');
+    const hash=await sha256(input.value);
+    if(hash===ACCESS_HASH){
+      sessionStorage.setItem(SESSION_KEY,'granted');
+      await loadCalculator();
+    }else{
+      error.textContent='Mật khẩu không đúng.';
+      input.value='';
+      input.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
