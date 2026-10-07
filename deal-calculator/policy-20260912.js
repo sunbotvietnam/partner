@@ -10,12 +10,12 @@
   function nval(id,fallback=0){const e=document.getElementById(id);return e?Number(e.value||fallback):fallback}
   function text(id,value){const e=document.getElementById(id);if(e)e.textContent=value}
 
-  function trainingFee(teachers,programCount){
+  function trainingFee(teachers){
     teachers=Math.max(0,Math.round(Number(teachers)||0));
     if(teachers===0)return 0;
     if(teachers>50)return null;
     const extraBlocks=Math.ceil(Math.max(teachers-20,0)/10);
-    return programCount===2 ? 19000000+extraBlocks*7000000 : 11000000+extraBlocks*4000000;
+    return 11000000+extraBlocks*4000000;
   }
 
   function addControls(){
@@ -58,10 +58,8 @@
       table.insertAdjacentElement('afterend',d);
     }
 
-    // Theo chính sách đã chốt, chỉ vốn thiết bị mới đi vào cơ chế thu hồi vốn 24/36 tháng.
+    // Theo chính sách đã chốt, đào tạo và sát hạch luôn thanh toán khi khởi tạo.
     if(typeof rolloutFunding!=='undefined')rolloutFunding='upfront';
-      const sub=rf.nextElementSibling;if(sub&&sub.classList.contains('sub'))sub.textContent='Đào tạo và sát hạch thu trực tiếp theo quy mô giáo viên; không đưa vào phần vốn thiết bị thu hồi 24/36 tháng.';
-    }
   }
 
   function policyState(){
