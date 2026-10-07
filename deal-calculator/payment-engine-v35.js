@@ -100,7 +100,15 @@ function ensureStructure(){
 function render(){
   ensureStructure();
   const a=current();if(!a)return;
-  if(a.blocked)return;
+  if(a.blocked){
+    ['sunbotTotalOut','sunbotTotalTable','remaining','schoolLiveSunbot','schoolLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=id==='remaining'?'Chưa kết luận':'Phương án riêng'});
+    const body=$('payBody');if(body)body.innerHTML='';
+    const intro=$('payIntro');if(intro)intro.textContent=a.blockedReason||'Cần lập phương án riêng.';
+    const after=$('payAfter');if(after)after.textContent='';
+    const audit=$('paymentReconcileV29');if(audit)audit.textContent='';
+    const talk=$('talkTrack');if(talk)talk.textContent=a.blockedReason||'Cần lập phương án riêng.';
+    return;
+  }
 
   // Keep top-line metrics aligned with actual cash due through May.
   ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.totalDueCurrent)});
@@ -195,6 +203,11 @@ function render(){
       const remainX=revenueX-teacherX-totalX-a.externalEquipment-a.other;
       return `<tr><td>${x} tiết/tháng</td><td>${F(revenueX)}</td><td>${F(teacherX)}</td><td>${F(remainX)}</td></tr>`;
     }).join('');
+  }
+
+  const talk=$('talkTrack');
+  if(talk){
+    talk.innerHTML=`Với ${a.c.toLocaleString('vi-VN')} trẻ và ${a.classes} lớp, thu học phí dự kiến khoảng <b>${F(a.coreParentRevenue)}</b>. Thanh toán Sunbot đến hết tháng 5 khoảng <b>${F(a.totalDueCurrent)}</b>; nguồn còn lại dự kiến khoảng <b>${F(a.remain)}</b>.`;
   }
 
   window.SunbotPaymentEngineV35={...a,scheduleRows:rows,scheduleSum,reconcileDiff:diff,outstandingEquipment:outstanding};
