@@ -1,31 +1,31 @@
-// Role-scoped view switch for Deal Calculator.
-// Role only protects management economics; calculator workflow stays the same for Admin and Sales.
+// Role-scoped behavior for Máy tính phương án Sunbot — QC 07/10/2026
 (function(){
-  'use strict';
-  function setup(){
-    const workspace=new URLSearchParams(location.search).get('workspace')||'';
-    const internal=document.getElementById('internalView');    const school=document.getElementById('schoolView');
-    const switcher=document.querySelector('.viewSwitch');
-    if(!switcher)return;
+'use strict';
+function setup(){
+  const workspace=new URLSearchParams(location.search).get('workspace')||'';
+  const internal=document.getElementById('internalView');
+  const school=document.getElementById('schoolView');
+  if(!internal||!school)return;
 
-    // Everyone keeps the operational calculator views/actions.
-    if(sale){sale.style.display='';sale.textContent='Dành cho kinh doanh';}
-    if(school){school.style.display='';school.textContent='Trình nhà trường';}
+  internal.textContent='Tính phương án';
+  school.textContent='Trình nhà trường';
 
-    if(workspace==='sale'){
-      // Sales should not see management-only cost/margin controls.
-      if(internal)internal.style.display='none';
-      if(sale)sale.click();
-      const caption=document.getElementById('viewCaption');
-      if(caption)caption.textContent='Dành cho kinh doanh · máy tính phương án nhà trường';
-    }else if(workspace==='admin'){
-      if(internal){internal.style.display='';internal.textContent='Quản trị';internal.click();}
-      const caption=document.getElementById('viewCaption');
-      if(caption)caption.textContent='Quản trị nội bộ · máy tính phương án nhà trường';
-    }else{
-      // Standalone calculator: keep all three views. No role-specific feature stripping.
-      if(internal)internal.style.display='';
-    }
+  if(workspace==='sale'){
+    document.body.classList.add('sale-workspace');
+    internal.style.display='';
+    school.style.display='';
+    internal.click();
+    document.querySelectorAll('.internal-only').forEach(el=>el.style.display='none');
+    const caption=document.getElementById('viewCaption');
+    if(caption)caption.textContent='Dùng để lập phương án tư vấn triển khai tại trường';
+  }else{
+    document.body.classList.remove('sale-workspace');
+    document.querySelectorAll('.internal-only').forEach(el=>el.style.display='');
+    internal.style.display='';
+    school.style.display='';
+    internal.click();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(setup,120)});else setTimeout(setup,120);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(setup,120));
+else setTimeout(setup,120);
 })();
