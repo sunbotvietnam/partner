@@ -9,15 +9,6 @@ let raf=0;
 
 function forceSingleProgram(){
   try{programs=1}catch(e){}
-  try{if(typeof activate==='function')activate('#programButtons','programs',1)}catch(e){}
-  const box=$('programButtons')?.closest('.control');
-  if(box)box.style.display='none';
-  const val=$('programCountVal');if(val)val.textContent='1 chương trình';
-  document.querySelectorAll('.talk').forEach(el=>{
-    if(/Chương trình thứ hai bằng 70%/i.test(el.textContent||'')){
-      el.textContent='Phí chương trình được tính cho 1 chương trình theo quy mô trẻ, cường độ và số tháng chính khóa còn lại.';
-    }
-  });
 }
 
 function configureSupplementPolicy(){
