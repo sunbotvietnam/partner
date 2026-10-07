@@ -135,9 +135,8 @@
       const trainingDeliveryCost=(s.training+s.assessment)*nval('trainingCostPct')/100;
       const percentageBase=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee;
       const entryCost=percentageBase*nval('entryCostPct')/100;
-      const renewalCost=0;
       const salesCost=percentageBase*nval('salesCostPct')/100,relationshipCost=percentageBase*nval('relationshipCostPct')/100,opsCost=percentageBase*nval('opsCostPct')/100;
-      const internalCosts=serviceCOGS+s.equipmentSale+programDeliveryCost+trainingDeliveryCost+entryCost+renewalCost+salesCost+relationshipCost+opsCost;
+      const internalCosts=serviceCOGS+s.equipmentSale+programDeliveryCost+trainingDeliveryCost+entryCost+salesCost+relationshipCost+opsCost;
       const contribution=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee+s.equipmentSale+s.capitalMargin-internalCosts;
       const base=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee+s.capitalMargin;
       text('sunbotContributionOut',m(contribution));text('liveInternalCost',m(internalCosts));text('liveContribution',m(contribution));text('liveMargin',base?(contribution/base*100).toLocaleString('vi-VN',{maximumFractionDigits:1})+'%':'—');
