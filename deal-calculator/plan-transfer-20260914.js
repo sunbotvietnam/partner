@@ -25,10 +25,10 @@ function capture(){
     inputs:{
       children:N('children'),class_size:N('classSize',20),class_count:String($('classCountInput')?.value||'').trim(),campus_count:N('campusCount',1),
       fee:N('fee'),lessons:N('lessons',4),programs:1,start_month:N('startMonth',9),
-      service:Number(activeData('#serviceButtons','service',0)),teacher_rate:N('teacherRate'),training_teachers:N('trainingTeacherCount'),assessment_teachers:N('teacherCount'),
+      teacher_rate:N('teacherRate'),training_teachers:N('trainingTeacherCount'),assessment_teachers:N('teacherCount'),
       investment_mode:activeData('#investmentButtons','mode','own')==='provide'?'provide':'own',
       term:Number(activeData('#termButtons','term',24)),rollout_funding:'upfront',extra:activeData('#extraButtons','extra','no'),extra_amount:N('extraAmount',0),
-      contract_scope:activeData('#contractScopeButtons','scope','same_unit'),other_cost:N('otherCost'),
+      other_cost:N('otherCost'),
       program_cost_pct:N('programCostPct',20),training_cost_pct:N('trainingCostPct',50),entry_cost_pct:N('entryCostPct',3),sales_cost_pct:N('salesCostPct',5),relationship_cost_pct:N('relationshipCostPct',3),ops_cost_pct:N('opsCostPct',5)
     },
     reference:finalResult?{total:finalResult.totalDueCurrent??finalResult.total,remain:finalResult.remain,program_fee:finalResult.program??finalResult.pf,rooms:finalResult.rooms}:null
