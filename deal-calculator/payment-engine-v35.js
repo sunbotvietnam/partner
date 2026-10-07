@@ -102,10 +102,10 @@ function render(){
   if(a.blocked)return;
 
   // Keep top-line metrics aligned with actual cash due through May.
-  ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot','saleLiveSunbot'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.totalDueCurrent)});
-  ['annualRevenue','schoolLiveRevenue','saleLiveRevenue'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.coreParentRevenue)});
-  ['teacherCostOut','schoolLiveTeacher','saleLiveTeacher'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.teacherCost)});
-  ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
+  ['sunbotTotalOut','sunbotTotalTable','schoolLiveSunbot'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.totalDueCurrent)});
+  ['annualRevenue','schoolLiveRevenue'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.coreParentRevenue)});
+  ['teacherCostOut','schoolLiveTeacher'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.teacherCost)});
+  ['remaining','schoolLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
   const schoolInvestOut=$('schoolInvestOut');
   const cashflowNote=$('cashflowNote');
   const er=$('equipmentPlanRowsV29'),en=$('equipmentPlanNoteV29');
