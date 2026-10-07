@@ -97,7 +97,7 @@ function summaryV27(){
   const lines=[title];
   if(prepared)lines.push(`Người lập/phụ trách: ${prepared}`,'');
   lines.push(
-    `1. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${s.points} điểm triển khai; ${s.rooms} mô-đun tiêu chuẩn.`,
+    `1. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${s.points} điểm triển khai; ${s.rooms} bộ học cụ lõi.`,
     `2. Thời gian: bắt đầu ${(MONTH[s.start]||'').toLowerCase()}, còn ${s.months} tháng đến hết tháng 5.`,
     `3. Cường độ: ${s.l} tiết/lớp/tháng; 1 chương trình; mức thu dự kiến ${MONEY(s.f)}/trẻ/tiết.`,
     `4. Phí chương trình trong năm học này: ${M(s.pf)}.`,
