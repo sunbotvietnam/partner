@@ -108,14 +108,24 @@ function render(){
   ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
   const schoolInvestOut=$('schoolInvestOut');
   const cashflowNote=$('cashflowNote');
-  if(a.directEquipment>0){
+  const er=$('equipmentPlanRowsV29'),en=$('equipmentPlanNoteV29');
+  if(schoolInvestOut)schoolInvestOut.textContent=F(a.externalEquipment||0);
+  if(cashflowNote){
+    const coreText=`${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}.`;
+    cashflowNote.textContent=a.md==='provide'
+      ?coreText+' Sunbot bố trí vốn thiết bị; nhà trường hoàn trả theo kỳ hạn đã chọn.'
+      :coreText+(a.directEquipment>0?' Nhà trường mua trực tiếp bộ học cụ lõi từ Sunbot.':' Nhà trường tự trang bị theo cấu hình thống nhất.');
+  }
+  if(er){
+    if(a.equipmentTotal>0){
+      er.innerHTML=`<table class="table"><tbody><tr><td>Vốn thiết bị Sunbot bố trí</td><td><b>${F(a.financedCapital)}</b></td></tr><tr><td>Tổng giá trị hoàn trả</td><td><b>${F(a.equipmentTotal)}</b></td></tr><tr><td>Lịch hoàn trả</td><td><b>${a.installmentCount} kỳ · 6 tháng/kỳ</b></td></tr></tbody></table>`;
+    }else if(a.directEquipment>0){
       er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
-      if(en)en.textContent=`Phương án cần ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
     }else{
       er.innerHTML='<p class="sub">Nhà trường tự trang bị bộ học cụ lõi theo cấu hình thống nhất; không phát sinh khoản thanh toán học cụ lõi cho Sunbot.</p>';
-      if(en)en.textContent='';
     }
   }
+  if(en)en.textContent=`Phương án cần ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
 
   const parts=chunks(a.months),rows=[];let cur=a.start,offset=0;
   const pm=a.months?a.program/a.months:0,sm=a.months?a.site/a.months:0;
