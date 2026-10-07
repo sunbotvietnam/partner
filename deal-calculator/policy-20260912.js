@@ -67,9 +67,7 @@
     const manual=nval('classCountInput',0),classes=manual?Math.max(1,Math.round(manual)):Math.ceil(c/cs);
     const trainTeachers=nval('trainingTeacherCount',0),assessTeachers=nval('teacherCount',0);
     const rooms=typeof roomCount==='function'?roomCount(c):Math.max(c<=300?1:c<=800?2:3,points);
-    const existingKits=launch==='renew'?Math.max(0,Math.round(nval('existingCoreKits',rooms))):0;
-    const kitsToAdd=launch==='renew'?Math.max(0,rooms-existingKits):rooms;
-    const roomValue=kitsToAdd*31700000;
+    const roomValue=rooms*31700000;
     const sunbotShare=mode==='provide'?1:0;
     const schoolInvest=roomValue*(1-sunbotShare);
     const equipmentSale=mode!=='provide'?schoolInvest:0;
@@ -82,8 +80,8 @@
     const totalCapitalRecovery=capitalRecovery+extraCapitalRecovery;
     const capitalMargin=totalCapitalRecovery-principalRecovery;
     const programFee=typeof feeByScale==='function'?feeByScale(c,l,months):null;
-    const training=launch==='new'?trainingFee(trainTeachers):0;
-    const assessment=launch==='new'?assessTeachers*500000:0;
+    const training=trainingFee(trainTeachers);
+    const assessment=assessTeachers*500000;
     const qa=contractScope==='same_unit'?Math.max(points-1,0)*QA_PER_EXTRA_SITE*months/9:0;
     const lessonRevenue=c*f*l*months;
     const supplementRevenue=0;
@@ -97,14 +95,14 @@
     const receipts=blocked?null:programFee+training+assessment+qa+totalCapitalRecovery+sunbotServiceFee;
     const total=blocked?null:receipts+equipmentSale;
     const remain=blocked?null:totalParentRevenue-teacherCost-receipts-schoolInvest-other;
-    return {c,cs,f,l,months,tr,points,classes,trainTeachers,assessTeachers,rooms,existingKits,kitsToAdd,roomValue,sunbotShare,schoolInvest,equipmentSale,extraInvest,principalRecovery,capitalRecovery,extraCapitalRecovery,totalCapitalRecovery,capitalMargin,programFee,training,assessment,qa,totalParentRevenue,teacherCost,sunbotServiceFee,schoolServiceShare,other,blocked,blockedReason,receipts,total,remain};
+    return {c,cs,f,l,months,tr,points,classes,trainTeachers,assessTeachers,rooms,roomValue,sunbotShare,schoolInvest,equipmentSale,extraInvest,principalRecovery,capitalRecovery,extraCapitalRecovery,totalCapitalRecovery,capitalMargin,programFee,training,assessment,qa,totalParentRevenue,teacherCost,sunbotServiceFee,schoolServiceShare,other,blocked,blockedReason,receipts,total,remain};
   }
 
   function policyUpdate(){
     if(typeof rolloutFunding!=='undefined')rolloutFunding='upfront';
     const s=policyState();
     text('trainingTeacherCountVal',s.trainTeachers+' giáo viên');
-    const tc=document.getElementById('trainingTeacherCountControl');if(tc)tc.hidden=launch==='renew';
+    const tc=document.getElementById('trainingTeacherCountControl');if(tc)tc.hidden=false;
     text('qaSiteOut',contractScope==='multi_school'?'Không áp dụng':m(s.qa));
     text('trainingOut',s.training===null?'Phương án riêng':m(s.training));
     text('assessmentOut',m(s.assessment));
@@ -136,8 +134,8 @@
       const programDeliveryCost=(s.programFee||0)*nval('programCostPct')/100;
       const trainingDeliveryCost=(s.training+s.assessment)*nval('trainingCostPct')/100;
       const percentageBase=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee;
-      const entryCost=launch==='new'?percentageBase*nval('entryCostPct')/100:0;
-      const renewalCost=launch==='renew'?percentageBase*nval('renewalCostPct')/100:0;
+      const entryCost=percentageBase*nval('entryCostPct')/100;
+      const renewalCost=0;
       const salesCost=percentageBase*nval('salesCostPct')/100,relationshipCost=percentageBase*nval('relationshipCostPct')/100,opsCost=percentageBase*nval('opsCostPct')/100;
       const internalCosts=serviceCOGS+s.equipmentSale+programDeliveryCost+trainingDeliveryCost+entryCost+renewalCost+salesCost+relationshipCost+opsCost;
       const contribution=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee+s.equipmentSale+s.capitalMargin-internalCosts;
@@ -157,8 +155,8 @@
       `3. Phí chương trình: ${s.programFee===null?'phương án riêng':cash(s.programFee)}; tính theo tổng số trẻ cam kết của đơn vị ký hợp đồng.`,
       `4. Điểm triển khai và thiết bị: ${s.points} điểm; ${s.rooms} mô-đun × 31,7 triệu = ${cash(s.roomValue)}. Số bộ học cụ lõi = max(chuẩn theo quy mô trẻ, số điểm).`,
       `5. QA điểm bổ sung: ${contractScope==='same_unit'?cash(s.qa):'không áp dụng cách tính gộp'}; chuẩn 5 triệu/điểm/năm và quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị.`,
-      `6. Đào tạo: ${launch==='new'?(s.training===null?'trên 50 GV — phương án riêng':s.trainTeachers+' GV, '+cash(s.training)):'gia hạn — chưa tính tái đào tạo'}; tính tổng GV toàn đơn vị, không nhân theo điểm.`,
-      `7. Sát hạch: ${launch==='new'?s.assessTeachers+' GV × 1 chương trình = '+cash(s.assessment):'gia hạn — chưa tính sát hạch lại'}.`,
+      `6. Đào tạo: ${(s.training===null?'trên 50 GV — phương án riêng':s.trainTeachers+' GV, '+cash(s.training))}; tính tổng GV toàn đơn vị, không nhân theo điểm.`,
+      `7. Sát hạch: ${s.assessTeachers+' GV × 1 chương trình = '+cash(s.assessment)}.`,
       `8. Đầu tư thiết bị: ${inv}. Hệ số thu hồi vốn thiết bị 1,30; QA/đào tạo/sát hạch thu trực tiếp.`,
       `9. Tổng nhà trường thanh toán Sunbot năm đầu: ${s.blocked?'phương án riêng — '+s.blockedReason:cash(s.total)}.`,
       '10. Khảo sát, lắp đặt và vận chuyển tiêu chuẩn không tách phí; công tác hoặc điều kiện đặc biệt báo giá riêng và duyệt trước.'
