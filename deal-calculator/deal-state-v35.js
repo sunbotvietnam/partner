@@ -7,7 +7,6 @@ const MONTH_NAME={9:'Tháng 9',10:'Tháng 10',11:'Tháng 11',12:'Tháng 12',1:'T
 const N=(id,d=0)=>Number(document.getElementById(id)?.value||d);
 const M=n=>typeof mil==='function'?mil(n):(n/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu';
 const MONEY=n=>typeof money==='function'?money(n):new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
-const scope=()=>document.querySelector('#contractScopeButtons .btn.active')?.dataset.scope||'same_unit';
 function trainingFee(t){t=Math.max(0,Math.round(t||0));if(!t)return 0;if(t>50)return null;const blocks=Math.ceil(Math.max(t-20,0)/10);return 11000000+blocks*4000000}
 function chunks(n){return ({9:[2,2,2,3],8:[2,2,2,2],7:[2,2,3],6:[2,2,2],5:[3,2],4:[2,2],3:[3],2:[2],1:[1]})[n]||[n]}
 function nextMonth(m){return m===12?1:m+1}
@@ -15,7 +14,7 @@ function periodLabel(start,n){let end=start;for(let i=1;i<n;i++)end=nextMonth(en
 function current(){
   const start=Number(document.getElementById('startMonth')?.value||9), months=MONTHS_LEFT[start]||9;
   const c=N('children'),cs=N('classSize',20),f=N('fee'),l=N('lessons',4),tr=N('teacherRate'),points=N('campusCount',1);
-  const p=1, md=(typeof mode!=='undefined'&&mode==='provide')?'provide':'own', tm=typeof term==='undefined'?24:Number(term)||24, sv=typeof service==='undefined'?0:Number(service)||0;
+  const p=1, md=(typeof mode!=='undefined'&&mode==='provide')?'provide':'own', tm=typeof term==='undefined'?24:Number(term)||24;
   const manual=N('classCountInput'), classes=manual?Math.max(1,Math.round(manual)):Math.ceil(c/cs);
   const trainTeachers=N('trainingTeacherCount'), assessTeachers=N('teacherCount');
   const rooms=typeof roomCount==='function'?roomCount(c):Math.max(c<=300?1:c<=800?2:3,points), roomValue=rooms*MOD, totalCoreValue=roomValue;
@@ -24,18 +23,17 @@ function current(){
   const extraInvest=md!=='own'&&typeof extra!=='undefined'&&extra?Math.max(0,N('extraAmount',0)):0;
   const pf=typeof feeByScale==='function'?feeByScale(c,l,months):null;
   const training=trainingFee(trainTeachers), assessment=assessTeachers*500000;
-  const site=scope()==='same_unit'?Math.max(points-1,0)*ANNUAL_SITE*months/9:0;
-  const serviceMonthly=0, serviceFee=0;
+  const site=Math.max(points-1,0)*ANNUAL_SITE*months/9;
   const recoveryMonthly=(roomValue*share+extraInvest)*1.3/tm, recovery=recoveryMonthly*months;
   const parent=c*f*l*months, teacher=classes*l*months*tr, other=N('otherCost');
-  const blockedReason=scope()==='multi_school'?'Nhiều trường độc lập cần báo giá riêng từng trường hoặc hợp đồng nhiều trường do CEO duyệt.':c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
+  const blockedReason=c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
   const blocked=Boolean(blockedReason);
-  const receipts=blocked?null:pf+training+assessment+site+recovery+serviceFee;
+  const receipts=blocked?null:pf+training+assessment+site+recovery;
   const total=blocked?null:receipts+equipmentSale;
   const remain=blocked?null:parent-teacher-receipts-schoolInvest-other;
   const rows=[];let cur=start;
-  if(!blocked){const pm=pf/months, sm=site/months;chunks(months).forEach((n,i)=>{const program=pm*n,sitePart=sm*n,servicePart=serviceMonthly*n,recoveryPart=recoveryMonthly*n,once=i===0?training+assessment+equipmentSale:0,totalRow=program+sitePart+servicePart+recoveryPart+once;rows.push({i:i+1,n,label:periodLabel(cur,n),program,site:sitePart,service:servicePart,recovery:recoveryPart,once,total:totalRow});for(let k=0;k<n;k++)cur=nextMonth(cur)})}
-  return {start,months,c,cs,f,l,tr,points,p,md,tm,sv,classes,trainTeachers,assessTeachers,rooms,roomValue,totalCoreValue,share,schoolInvest,equipmentSale,extraInvest,pf,training,assessment,site,serviceMonthly,serviceFee,recoveryMonthly,recovery,parent,teacher,other,blocked,blockedReason,receipts,total,remain,rows,remainingRecoveryMonths:share>0||extraInvest>0?Math.max(tm-months,0):0};
+  if(!blocked){const pm=pf/months, sm=site/months;chunks(months).forEach((n,i)=>{const program=pm*n,sitePart=sm*n,recoveryPart=recoveryMonthly*n,once=i===0?training+assessment+equipmentSale:0,totalRow=program+sitePart+recoveryPart+once;rows.push({i:i+1,n,label:periodLabel(cur,n),program,site:sitePart,recovery:recoveryPart,once,total:totalRow});for(let k=0;k<n;k++)cur=nextMonth(cur)})}
+  return {start,months,c,cs,f,l,tr,points,p,md,tm,classes,trainTeachers,assessTeachers,rooms,roomValue,totalCoreValue,share,schoolInvest,equipmentSale,extraInvest,pf,training,assessment,site,recoveryMonthly,recovery,parent,teacher,other,blocked,blockedReason,receipts,total,remain,rows,remainingRecoveryMonths:share>0||extraInvest>0?Math.max(tm-months,0):0};
 }
 
 window.SunbotDealCurrent=current;
