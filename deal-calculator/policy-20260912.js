@@ -30,7 +30,7 @@
     const programRow=document.getElementById('programFeeOut')?.closest('tr');
     if(programRow&&!document.getElementById('qaSiteRow')){
       const tr=document.createElement('tr');tr.id='qaSiteRow';
-      tr.innerHTML='<td>QA điểm triển khai bổ sung (từ điểm thứ 2)</td><td id="qaSiteOut">0 triệu</td>';
+      tr.innerHTML='<td>Phí đồng hành điểm triển khai bổ sung (từ điểm thứ 2)</td><td id="qaSiteOut">0 triệu</td>';
       programRow.insertAdjacentElement('afterend',tr);
     }
 
@@ -122,7 +122,7 @@
       text('sunbotContributionOut',m(contribution));text('liveInternalCost',m(internalCosts));text('liveContribution',m(contribution));text('liveMargin',base?(contribution/base*100).toLocaleString('vi-VN',{maximumFractionDigits:1})+'%':'—');
     }
 
-    const talk=document.getElementById('talkTrack');if(talk)talk.innerHTML=s.blocked?s.blockedReason:`Với ${s.c.toLocaleString('vi-VN')} trẻ, ${s.points} điểm triển khai và ${s.rooms} mô-đun, khoản trường thanh toán Sunbot năm đầu là <b>${m(s.total)}</b>, trong đó QA điểm bổ sung là <b>${m(s.qa)}</b>. Sau các khoản đang tính, trường còn khoảng <b>${m(s.remain)}</b> để trang trải quản lý, thuế và các chi phí khác.`;
+    const talk=document.getElementById('talkTrack');if(talk)talk.innerHTML=s.blocked?s.blockedReason:`Với ${s.c.toLocaleString('vi-VN')} trẻ, ${s.points} điểm triển khai và ${s.rooms} mô-đun, khoản trường thanh toán Sunbot năm đầu là <b>${m(s.total)}</b>, trong đó Phí đồng hành điểm bổ sung là <b>${m(s.qa)}</b>. Sau các khoản đang tính, trường còn khoảng <b>${m(s.remain)}</b> để trang trải quản lý, thuế và các chi phí khác.`;
   }
 
   function correctedPlanText(){
