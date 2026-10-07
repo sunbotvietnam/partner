@@ -106,7 +106,7 @@
 
     // Cập nhật so sánh 4/6/8 theo cùng logic thương mại.
     const body=document.getElementById('compareBody');
-    if(body){body.innerHTML=[4,6,8].map(x=>{const revenue=s.c*s.f*x*s.months+s.c*service*1000*s.months,teacher=s.classes*x*s.months*s.tr,p=typeof feeByScale==='function'?feeByScale(s.c,x,s.months):null;if(s.blocked||p===null)return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>Phương án riêng</td></tr>`;const receipts=p+s.training+s.assessment+s.qa+s.totalCapitalRecovery,rm=revenue-teacher-receipts-s.schoolInvest-s.other;return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>${m(rm)}</td></tr>`}).join('')}
+    if(body){body.innerHTML=[4,6,8].map(x=>{const revenue=s.c*s.f*x*s.months,teacher=s.classes*x*s.months*s.tr,p=typeof feeByScale==='function'?feeByScale(s.c,x,s.months):null;if(s.blocked||p===null)return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>Phương án riêng</td></tr>`;const receipts=p+s.training+s.assessment+s.qa+s.totalCapitalRecovery,rm=revenue-teacher-receipts-s.schoolInvest-s.other;return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>${m(rm)}</td></tr>`}).join('')}
 
     // Chỉ số nội bộ được tính lại để không bị lệch khi thay đổi training/QA.
     if(!s.blocked){
