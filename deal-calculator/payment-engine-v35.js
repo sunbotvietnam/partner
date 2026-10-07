@@ -132,7 +132,7 @@ function render(){
   if(er){
     if(a.usesExistingEquipment){
       er.innerHTML='<p class="sub"><b>Gia hạn:</b> sử dụng thiết bị hiện hữu; không phát sinh mua mới, vốn mới hoặc nghĩa vụ hoàn trả thiết bị mới trong phương án này.</p>';
-      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng mô-đun, chuyển lựa chọn “Thiết bị khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
+      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng bộ học cụ lõi, chuyển lựa chọn “Thiết bị khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
     }else if(a.equipmentTotal>0){
       const installment=a.installments[0]?.amount||0;
       er.innerHTML=`<table class="table"><tbody>
@@ -238,7 +238,7 @@ function summary(){
   if(prepared)lines.push(`Người lập/phụ trách: ${prepared}`,'');
   if(a.blocked){lines.push(`Trạng thái: ${a.blockedReason}`);return lines.join('\n')}
   lines.push(
-    `1. Quy mô: ${a.c.toLocaleString('vi-VN')} trẻ; ${a.classes} lớp; ${a.points} điểm triển khai; ${a.rooms} mô-đun tiêu chuẩn.`,
+    `1. Quy mô: ${a.c.toLocaleString('vi-VN')} trẻ; ${a.classes} lớp; ${a.points} điểm triển khai; ${a.rooms} bộ học cụ lõi.`,
     `2. Thời gian: bắt đầu ${(MONTH[a.start]||'').toLowerCase()}, còn ${a.months} tháng đến hết tháng 5.`,
     `3. Cường độ: ${a.l} tiết/lớp/tháng; 1 chương trình; mức thu dự kiến ${MONEY(a.f)}/trẻ/tiết.`,
     `4. Chi phí triển khai năm học: chương trình ${F(a.program)}; đồng hành điểm bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
