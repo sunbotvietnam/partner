@@ -3,15 +3,7 @@
 (function(){
 'use strict';
 
-function hideRenewal(){
-  if(typeof launch!=='undefined')launch='new';
-  const group=document.getElementById('launchButtons');
-  if(group){
-    group.style.display='none';
-    group.querySelectorAll('.btn').forEach(b=>b.classList.toggle('active',b.dataset.launch==='new'));
-  }
-  const renewal=document.getElementById('renewalCostControl');if(renewal)renewal.hidden=true;
-  const entry=document.getElementById('entryCostControl');if(entry)entry.hidden=false;
+function hideRenewal(){  }  const entry=document.getElementById('entryCostControl');if(entry)entry.hidden=false;
 }
 
 function hideDerivedMonths(){
