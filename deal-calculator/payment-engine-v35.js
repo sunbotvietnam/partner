@@ -16,10 +16,9 @@ function current(){
   const s=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;
   if(!s)return null;
   const source=equipmentSource();
-  const isNew=(typeof launch==='undefined'?true:launch==='new');
-  const renewalEquipment=(typeof window.SunbotRenewalEquipmentMode==='function'?window.SunbotRenewalEquipmentMode():'existing');
-  const usesExistingEquipment=!isNew&&renewalEquipment!=='add';
-  const program=Number(s.pf||0),site=Number(s.site||0),training=isNew?Number(s.training||0):0,assessment=isNew?Number(s.assessment||0):0;
+  const isNew=true;
+  const usesExistingEquipment=false;
+  const program=Number(s.pf||0),site=Number(s.site||0),training=Number(s.training||0),assessment=Number(s.assessment||0);
   const directEquipment=usesExistingEquipment?0:((s.md!=='provide'&&source==='sunbot')?Number(s.schoolInvest||0):0);
   const externalEquipment=usesExistingEquipment?0:((s.md!=='provide'&&source!=='sunbot')?Number(s.schoolInvest||0):0);
   const financedCapital=usesExistingEquipment?0:Math.max(0,Number(s.roomValue||0)*Number(s.share||0)+Number(s.extraInvest||0));
@@ -44,7 +43,7 @@ function current(){
   const teacherCost=Number(s.classes||0)*Number(s.l||0)*Number(s.months||0)*Number(s.tr||0);
   const remain=coreParentRevenue-teacherCost-totalDueCurrent-externalEquipment-Number(s.other||0);
 
-  return {...s,source,isNew,renewalEquipment,usesExistingEquipment,program,site,training,assessment,directEquipment,externalEquipment,financedCapital,term,equipmentTotal,installmentCount,installments,currentYearInstallments,equipmentDueCurrent,serviceYearTotal,totalDueCurrent,coreParentRevenue,teacherCost,remain};
+  return {...s,source,isNew,usesExistingEquipment,program,site,training,assessment,directEquipment,externalEquipment,financedCapital,term,equipmentTotal,installmentCount,installments,currentYearInstallments,equipmentDueCurrent,serviceYearTotal,totalDueCurrent,coreParentRevenue,teacherCost,remain};
 }
 
 function ensureStructure(){
@@ -109,43 +108,9 @@ function render(){
   ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
   const schoolInvestOut=$('schoolInvestOut');
   const cashflowNote=$('cashflowNote');
-  if(a.usesExistingEquipment){
-    if(schoolInvestOut)schoolInvestOut.textContent=F(0);
-    if(cashflowNote)cashflowNote.textContent='Gia hạn sử dụng bộ học cụ lõi hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';
-  }else{
-    if(schoolInvestOut)schoolInvestOut.textContent=F(a.schoolInvest);
-    if(cashflowNote){
-      const coreText=a.isNew?`${a.rooms} bộ học cụ lõi cần triển khai × 31,7 triệu = ${F(a.roomValue)}.`:`Phương án cần ${a.rooms} bộ học cụ lõi; trường hiện có ${a.existingKits||0} bộ; cần bổ sung ${a.kitsToAdd||0} bộ = ${F(a.roomValue)}.`;
-      if(a.md==='own')cashflowNote.textContent=coreText+' Nhà trường đầu tư toàn bộ bộ học cụ lõi này.';
-      else if(a.md==='provide')cashflowNote.textContent=coreText+' Sunbot bố trí toàn bộ vốn thiết bị; nhà trường hoàn trả theo kỳ hạn đã chọn.';
-      else cashflowNote.textContent=coreText+` Nhà trường đầu tư ${F(a.schoolInvest)}; phần còn lại do Sunbot bố trí theo tỷ lệ vốn đã chọn.`;
-    }
-  }
-
-  const sr=$('schoolYearServiceRowsV29');
-  if(sr){
-    const rows=[['Phí chương trình',a.program],['Phí đồng hành điểm triển khai bổ sung',a.site],['Đào tạo giáo viên',a.training],['Sát hạch giáo viên',a.assessment]].filter(x=>x[1]>0);
-    sr.innerHTML=`<table class="table"><tbody>${rows.map(([n,v])=>`<tr><td>${n}</td><td><b>${F(v)}</b></td></tr>`).join('')}<tr><td><b>Tổng chi phí triển khai năm học</b></td><td><b>${F(a.serviceYearTotal)}</b></td></tr></tbody></table>`;
-  }
-
-  const er=$('equipmentPlanRowsV29'),en=$('equipmentPlanNoteV29');
-  if(er){
-    if(a.usesExistingEquipment){
-      er.innerHTML='<p class="sub"><b>Gia hạn:</b> sử dụng thiết bị hiện hữu; không phát sinh mua mới, vốn mới hoặc nghĩa vụ hoàn trả thiết bị mới trong phương án này.</p>';
-      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng bộ học cụ lõi, chuyển lựa chọn “Bộ học cụ khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
-    }else if(a.equipmentTotal>0){
-      const installment=a.installments[0]?.amount||0;
-      er.innerHTML=`<table class="table"><tbody>
-        <tr><td>Vốn thiết bị Sunbot bố trí</td><td><b>${F(a.financedCapital)}</b></td></tr>
-        <tr><td>Tổng giá trị hoàn trả</td><td><b>${F(a.equipmentTotal)}</b></td></tr>
-        <tr><td>Kỳ hạn tính</td><td><b>${a.term} tháng</b></td></tr>
-        <tr><td>Lịch thanh toán</td><td><b>${a.installmentCount} kỳ · 6 tháng/kỳ</b></td></tr>
-        <tr><td>Giá trị mỗi kỳ</td><td><b>${F(installment)}</b></td></tr>
-      </tbody></table>`;
-      if(en){const due=a.installments.map(x=>`${MONTH[x.month]}: ${F(x.amount)}`).join(' · ');en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau đúng 6 tháng. Lịch thiết bị: ${due}. Kỳ hạn tính ${a.term} tháng. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;}
-    }else if(a.directEquipment>0){
+  if(a.directEquipment>0){
       er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
-      if(en)en.textContent=a.isNew?`Phương án cần ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`:`Gia hạn: phương án cần ${a.rooms} bộ; hiện có ${a.existingKits||0} bộ; bổ sung ${a.kitsToAdd||0} bộ = ${F(a.roomValue)}. Mức này chưa gồm các hạng mục hoàn thiện không gian.`;
+      if(en)en.textContent=`Phương án cần ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
     }else{
       er.innerHTML='<p class="sub">Nhà trường tự trang bị bộ học cụ lõi theo cấu hình thống nhất; không phát sinh khoản thanh toán học cụ lõi cho Sunbot.</p>';
       if(en)en.textContent='';
@@ -241,11 +206,9 @@ function summary(){
     `1. Quy mô: ${a.c.toLocaleString('vi-VN')} trẻ; ${a.classes} lớp; ${a.points} điểm triển khai; ${a.rooms} bộ học cụ lõi.`,
     `2. Thời gian: bắt đầu ${(MONTH[a.start]||'').toLowerCase()}, còn ${a.months} tháng đến hết tháng 5.`,
     `3. Cường độ: ${a.l} tiết/lớp/tháng; 1 chương trình; mức thu dự kiến ${MONEY(a.f)}/trẻ/tiết.`,
-    `4. Chi phí triển khai năm học: chương trình ${F(a.program)}; đồng hành điểm bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
+    `4. Chi phí triển khai: chương trình ${F(a.program)}; đồng hành điểm bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
   );
-  if(a.usesExistingEquipment){
-    lines.push('5. Thiết bị: gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới.');
-  }else if(a.equipmentTotal>0){
+  if(a.equipmentTotal>0){
     lines.push(`5. Thiết bị: Sunbot bố trí vốn ${F(a.financedCapital)}; tổng giá trị hoàn trả ${F(a.equipmentTotal)} trong ${a.term} tháng, thanh toán ${a.installmentCount} kỳ, mỗi kỳ 6 tháng; kỳ đầu khi bàn giao.`);
     lines.push(`6. Các kỳ thiết bị đến hạn trước hết tháng 5: ${a.currentYearInstallments.map(x=>`${MONTH[x.month]} ${F(x.amount)}`).join('; ')}. Tổng ${F(a.equipmentDueCurrent)}.`);
   }else if(a.directEquipment>0)lines.push(`5. Bộ học cụ lõi: nhà trường mua trực tiếp từ Sunbot ${F(a.directEquipment)}, thanh toán ở kỳ đầu.`);
