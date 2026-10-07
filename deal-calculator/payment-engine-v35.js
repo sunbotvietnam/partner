@@ -90,7 +90,7 @@ function ensureStructure(){
   let equip=$('equipmentPlanV29');
   if(!equip){
     equip=document.createElement('div');equip.id='equipmentPlanV29';equip.className='summary';equip.style.marginTop='10px';
-    equip.innerHTML='<h4>B. Phương án thiết bị</h4><div id="equipmentPlanRowsV29"></div><p class="sub" id="equipmentPlanNoteV29"></p>';
+    equip.innerHTML='<h4>B. Bộ học cụ lõi và hạng mục hoàn thiện</h4><div id="equipmentPlanRowsV29"></div><p class="sub" id="equipmentPlanNoteV29"></p>';
     service.insertAdjacentElement('afterend',equip);
   }
   const h=schedule.querySelector('h4');if(h)h.textContent='C. Lịch thanh toán tổng hợp dự kiến';
@@ -111,12 +111,12 @@ function render(){
   const cashflowNote=$('cashflowNote');
   if(a.usesExistingEquipment){
     if(schoolInvestOut)schoolInvestOut.textContent=F(0);
-    if(cashflowNote)cashflowNote.textContent='Gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';
+    if(cashflowNote)cashflowNote.textContent='Gia hạn sử dụng bộ học cụ lõi hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';
   }else{
     if(schoolInvestOut)schoolInvestOut.textContent=F(a.schoolInvest);
     if(cashflowNote){
       const coreText=`${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ học cụ lõi; tổng số bộ đồng thời không thấp hơn chuẩn theo quy mô trẻ.`;
-      if(a.md==='own')cashflowNote.textContent=coreText+' Nhà trường đầu tư toàn bộ cấu hình này.';
+      if(a.md==='own')cashflowNote.textContent=coreText+' Nhà trường đầu tư toàn bộ bộ học cụ lõi này.';
       else if(a.md==='provide')cashflowNote.textContent=coreText+' Sunbot bố trí toàn bộ vốn thiết bị; nhà trường hoàn trả theo kỳ hạn đã chọn.';
       else cashflowNote.textContent=coreText+` Nhà trường đầu tư ${F(a.schoolInvest)}; phần còn lại do Sunbot bố trí theo tỷ lệ vốn đã chọn.`;
     }
@@ -132,7 +132,7 @@ function render(){
   if(er){
     if(a.usesExistingEquipment){
       er.innerHTML='<p class="sub"><b>Gia hạn:</b> sử dụng thiết bị hiện hữu; không phát sinh mua mới, vốn mới hoặc nghĩa vụ hoàn trả thiết bị mới trong phương án này.</p>';
-      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng bộ học cụ lõi, chuyển lựa chọn “Thiết bị khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
+      if(en)en.textContent='Nếu cần bổ sung, thay thế hoặc mở rộng bộ học cụ lõi, chuyển lựa chọn “Bộ học cụ khi gia hạn” sang “Bổ sung / thay thế thiết bị”.';
     }else if(a.equipmentTotal>0){
       const installment=a.installments[0]?.amount||0;
       er.innerHTML=`<table class="table"><tbody>
@@ -144,10 +144,10 @@ function render(){
       </tbody></table>`;
       if(en){const due=a.installments.map(x=>`${MONTH[x.month]}: ${F(x.amount)}`).join(' · ');en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau đúng 6 tháng. Lịch thiết bị: ${due}. Kỳ hạn tính ${a.term} tháng. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;}
     }else if(a.directEquipment>0){
-      er.innerHTML=`<table class="table"><tbody><tr><td>Thiết bị nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
+      er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
       if(en)en.textContent=`Phương án đang tính ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
     }else{
-      er.innerHTML='<p class="sub">Nhà trường tự trang bị thiết bị theo cấu hình thống nhất; không phát sinh khoản thanh toán thiết bị cho Sunbot.</p>';
+      er.innerHTML='<p class="sub">Nhà trường tự trang bị bộ học cụ lõi theo cấu hình thống nhất; không phát sinh khoản thanh toán học cụ lõi cho Sunbot.</p>';
       if(en)en.textContent='';
     }
   }
@@ -248,7 +248,7 @@ function summary(){
   }else if(a.equipmentTotal>0){
     lines.push(`5. Thiết bị: Sunbot bố trí vốn ${F(a.financedCapital)}; tổng giá trị hoàn trả ${F(a.equipmentTotal)} trong ${a.term} tháng, thanh toán ${a.installmentCount} kỳ, mỗi kỳ 6 tháng; kỳ đầu khi bàn giao.`);
     lines.push(`6. Các kỳ thiết bị đến hạn trước hết tháng 5: ${a.currentYearInstallments.map(x=>`${MONTH[x.month]} ${F(x.amount)}`).join('; ')}. Tổng ${F(a.equipmentDueCurrent)}.`);
-  }else if(a.directEquipment>0)lines.push(`5. Thiết bị: nhà trường mua trực tiếp từ Sunbot ${F(a.directEquipment)}, thanh toán ở kỳ đầu.`);
+  }else if(a.directEquipment>0)lines.push(`5. Bộ học cụ lõi: nhà trường mua trực tiếp từ Sunbot ${F(a.directEquipment)}, thanh toán ở kỳ đầu.`);
   else lines.push('5. Thiết bị: nhà trường tự trang bị; không tính vào khoản thanh toán Sunbot.');
   lines.push(
     `7. Tổng thanh toán Sunbot đến hết tháng 5 theo lịch dự kiến: ${F(a.totalDueCurrent)}.`,
