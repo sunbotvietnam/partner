@@ -61,6 +61,15 @@ function ensureStructure(){
     months.min='1';months.max='9';months.disabled=true;
     const sub=monthsBox.querySelector('.sub');if(sub)sub.textContent='Tự động tính từ tháng bắt đầu; không nhập tay.';
   }
+  if(!$('coreEquipmentScopeV36')){
+    const anchor=$('investmentButtons')?.closest('.required')||$('investmentButtons')?.parentElement;
+    if(anchor){
+      const note=document.createElement('div');
+      note.id='coreEquipmentScopeV36';note.className='warning';note.style.marginTop='10px';
+      note.innerHTML='<b>Phạm vi bộ học cụ lõi 31,7 triệu/điểm:</b> mỗi điểm triển khai cần tối thiểu 1 bộ lõi. Cấu hình lõi gồm robot, bản đồ, bộ chướng ngại, bộ thẻ, Android Box và bộ nhận diện tiêu chuẩn. <b>Chưa bao gồm</b> màn hình TV/máy chiếu hoặc thiết bị hiển thị, điều hòa, bàn ghế, giá kệ và nội thất mầm non, cùng các hạng mục cải tạo điện, mạng, trần, sàn, tường.';
+      anchor.insertAdjacentElement('afterend',note);
+    }
+  }
   let schedule=$('paymentScheduleBox');
   if(!schedule){
     const cmp=$('compareBody')?.closest('table');
@@ -98,7 +107,20 @@ function render(){
   ['annualRevenue','schoolLiveRevenue','saleLiveRevenue'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.coreParentRevenue)});
   ['teacherCostOut','schoolLiveTeacher','saleLiveTeacher'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.teacherCost)});
   ['remaining','schoolLiveRemaining','saleLiveRemaining'].forEach(id=>{const e=$(id);if(e)e.textContent=F(a.remain)});
-  if(a.usesExistingEquipment){const e=$('schoolInvestOut');if(e)e.textContent=F(0);const n=$('cashflowNote');if(n)n.textContent='Gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';}
+  const schoolInvestOut=$('schoolInvestOut');
+  const cashflowNote=$('cashflowNote');
+  if(a.usesExistingEquipment){
+    if(schoolInvestOut)schoolInvestOut.textContent=F(0);
+    if(cashflowNote)cashflowNote.textContent='Gia hạn sử dụng thiết bị hiện hữu; không phát sinh đầu tư thiết bị mới trong phương án này.';
+  }else{
+    if(schoolInvestOut)schoolInvestOut.textContent=F(a.schoolInvest);
+    if(cashflowNote){
+      const coreText=`${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ học cụ lõi; tổng số bộ đồng thời không thấp hơn chuẩn theo quy mô trẻ.`;
+      if(a.md==='own')cashflowNote.textContent=coreText+' Nhà trường đầu tư toàn bộ cấu hình này.';
+      else if(a.md==='provide')cashflowNote.textContent=coreText+' Sunbot bố trí toàn bộ vốn thiết bị; nhà trường hoàn trả theo kỳ hạn đã chọn.';
+      else cashflowNote.textContent=coreText+` Nhà trường đầu tư ${F(a.schoolInvest)}; phần còn lại do Sunbot bố trí theo tỷ lệ vốn đã chọn.`;
+    }
+  }
 
   const sr=$('schoolYearServiceRowsV29');
   if(sr){
@@ -123,7 +145,7 @@ function render(){
       if(en){const due=a.installments.map(x=>`${MONTH[x.month]}: ${F(x.amount)}`).join(' · ');en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau đúng 6 tháng. Lịch thiết bị: ${due}. Kỳ hạn tính ${a.term} tháng. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;}
     }else if(a.directEquipment>0){
       er.innerHTML=`<table class="table"><tbody><tr><td>Thiết bị nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
-      if(en)en.textContent='Không phát sinh nghĩa vụ hoàn trả thiết bị sau khi khoản mua trực tiếp đã được thanh toán.';
+      if(en)en.textContent=`Phương án đang tính ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
     }else{
       er.innerHTML='<p class="sub">Nhà trường tự trang bị thiết bị theo cấu hình thống nhất; không phát sinh khoản thanh toán thiết bị cho Sunbot.</p>';
       if(en)en.textContent='';
