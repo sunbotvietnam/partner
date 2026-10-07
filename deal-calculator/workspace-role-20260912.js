@@ -4,9 +4,7 @@
   'use strict';
   function setup(){
     const workspace=new URLSearchParams(location.search).get('workspace')||'';
-    const internal=document.getElementById('internalView');
-    const sale=document.getElementById('saleView');
-    const school=document.getElementById('schoolView');
+    const internal=document.getElementById('internalView');    const school=document.getElementById('schoolView');
     const switcher=document.querySelector('.viewSwitch');
     if(!switcher)return;
 
