@@ -2,7 +2,6 @@
 // Keeps the approved UI intact and adds only the agreed commercial logic.
 (function(){
   'use strict';
-  let contractScope='same_unit';
   const QA_PER_EXTRA_SITE=5000000;
 
   function m(n){return typeof mil==='function'?mil(n):(n/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+' triệu'}
@@ -19,22 +18,6 @@
   }
 
   function addControls(){
-    const campus=document.getElementById('campusCount');
-    const campusControl=campus&&campus.closest('.control');
-    if(campusControl&&!document.getElementById('contractScopeControl')){
-      const d=document.createElement('div');
-      d.className='control';d.id='contractScopeControl';
-      d.innerHTML='<div class="head"><label>Phạm vi đơn vị ký hợp đồng</label><span class="value" id="contractScopeVal">Một đơn vị / nhiều điểm</span></div><div class="buttons two" id="contractScopeButtons"><button class="btn active" data-scope="same_unit">Cùng một trường / đơn vị</button><button class="btn" data-scope="multi_school">Nhiều trường độc lập</button></div><div class="sub" id="contractScopeNote">Cùng pháp nhân/ban giám hiệu/hợp đồng/tài chính: cộng tổng trẻ; mỗi điểm có tối thiểu 1 bộ học cụ lõi; từ điểm thứ hai thu QA điểm bổ sung.</div>';
-      campusControl.insertAdjacentElement('afterend',d);
-      d.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',()=>{
-        contractScope=b.dataset.scope;
-        d.querySelectorAll('.btn').forEach(x=>x.classList.toggle('active',x===b));
-        text('contractScopeVal',contractScope==='same_unit'?'Một đơn vị / nhiều điểm':'Nhiều trường độc lập');
-        text('contractScopeNote',contractScope==='same_unit'?'Cùng pháp nhân/ban giám hiệu/hợp đồng/tài chính: cộng tổng trẻ; mỗi điểm có tối thiểu 1 bộ học cụ lõi; từ điểm thứ hai thu QA điểm bổ sung.':'Không được coi các trường độc lập là “điểm” để dùng chung một quyền chương trình. Mỗi trường có phí chương trình riêng hoặc hợp đồng multi-school do CEO duyệt.');
-        setTimeout(policyUpdate,0);
-      }));
-    }
-
     const assess=document.getElementById('teacherCountControl');
     if(assess&&!document.getElementById('trainingTeacherCountControl')){
       const d=document.createElement('div');
@@ -54,7 +37,7 @@
     const table=document.getElementById('sunbotTotalTable')?.closest('table');
     if(table&&!document.getElementById('multiSitePolicyNote')){
       const d=document.createElement('div');d.id='multiSitePolicyNote';d.className='sub';d.style.marginTop='8px';
-      d.textContent='QA điểm bổ sung: 5 triệu/điểm/năm, là phí dịch vụ thường niên và không đưa vào vốn thiết bị. Khảo sát, lắp đặt và vận chuyển tiêu chuẩn không tách phí; điều kiện đặc biệt báo giá riêng.';
+      d.textContent='Phí đồng hành điểm triển khai bổ sung: 5 triệu/điểm/năm, quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị. Máy tính này áp dụng cho một đơn vị ký hợp đồng có thể có nhiều điểm triển khai.';
       table.insertAdjacentElement('afterend',d);
     }
 
@@ -82,20 +65,17 @@
     const programFee=typeof feeByScale==='function'?feeByScale(c,l,months):null;
     const training=trainingFee(trainTeachers);
     const assessment=assessTeachers*500000;
-    const qa=contractScope==='same_unit'?Math.max(points-1,0)*QA_PER_EXTRA_SITE*months/9:0;
+    const qa=Math.max(points-1,0)*QA_PER_EXTRA_SITE*months/9;
     const lessonRevenue=c*f*l*months;
-    const supplementRevenue=0;
     const totalParentRevenue=lessonRevenue;
     const teacherCost=classes*l*months*tr;
-    const sunbotServiceFee=0;
-    const schoolServiceShare=0;
     const other=nval('otherCost',0);
-    const blockedReason=contractScope==='multi_school'?'Nhiều trường độc lập cần tách phí chương trình hoặc hợp đồng multi-school do CEO duyệt.':c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
+    const blockedReason=c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
     const blocked=Boolean(blockedReason);
-    const receipts=blocked?null:programFee+training+assessment+qa+totalCapitalRecovery+sunbotServiceFee;
+    const receipts=blocked?null:programFee+training+assessment+qa+totalCapitalRecovery;
     const total=blocked?null:receipts+equipmentSale;
     const remain=blocked?null:totalParentRevenue-teacherCost-receipts-schoolInvest-other;
-    return {c,cs,f,l,months,tr,points,classes,trainTeachers,assessTeachers,rooms,roomValue,sunbotShare,schoolInvest,equipmentSale,extraInvest,principalRecovery,capitalRecovery,extraCapitalRecovery,totalCapitalRecovery,capitalMargin,programFee,training,assessment,qa,totalParentRevenue,teacherCost,sunbotServiceFee,schoolServiceShare,other,blocked,blockedReason,receipts,total,remain};
+    return {c,cs,f,l,months,tr,points,classes,trainTeachers,assessTeachers,rooms,roomValue,sunbotShare,schoolInvest,equipmentSale,extraInvest,principalRecovery,capitalRecovery,extraCapitalRecovery,totalCapitalRecovery,capitalMargin,programFee,training,assessment,qa,totalParentRevenue,teacherCost,other,blocked,blockedReason,receipts,total,remain};
   }
 
   function policyUpdate(){
@@ -103,14 +83,14 @@
     const s=policyState();
     text('trainingTeacherCountVal',s.trainTeachers+' giáo viên');
     const tc=document.getElementById('trainingTeacherCountControl');if(tc)tc.hidden=false;
-    text('qaSiteOut',contractScope==='multi_school'?'Không áp dụng':m(s.qa));
+    text('qaSiteOut',m(s.qa));
     text('trainingOut',s.training===null?'Phương án riêng':m(s.training));
     text('assessmentOut',m(s.assessment));
     text('rolloutRecoveryOut',m(0));
     const rr=document.getElementById('rolloutRecoveryRow');if(rr)rr.hidden=true;
     const tl=document.getElementById('trainingLabel');if(tl)tl.textContent='Đào tạo khởi tạo theo tổng giáo viên toàn đơn vị';
     const note=document.querySelector('#sunbotTotalTable')?.closest('table')?.nextElementSibling;
-    if(note&&note.id==='multiSitePolicyNote')note.textContent=contractScope==='same_unit'?`Phí chương trình tính một lần theo tổng ${s.c.toLocaleString('vi-VN')} trẻ của đơn vị ký hợp đồng. ${s.points} điểm triển khai → ${s.rooms} bộ học cụ lõi; QA điểm bổ sung ${m(s.qa)} cho thời gian triển khai còn lại. QA là dịch vụ thường niên, không đưa vào vốn thiết bị. Khảo sát/lắp đặt/vận chuyển tiêu chuẩn không tách phí; điều kiện đặc biệt báo giá riêng.`:'Nhiều trường độc lập không được gộp thành các “điểm” để dùng chung một quyền chương trình. Cần báo giá từng trường hoặc hợp đồng multi-school có phạm vi quyền và sản lượng do CEO duyệt.';
+    if(note&&note.id==='multiSitePolicyNote')note.textContent=`Phí chương trình tính một lần theo tổng ${s.c.toLocaleString('vi-VN')} trẻ của đơn vị ký hợp đồng. ${s.points} điểm triển khai → ${s.rooms} bộ học cụ lõi; phí đồng hành điểm bổ sung ${m(s.qa)} cho thời gian triển khai còn lại.`;
 
     if(s.blocked){
       text('sunbotTotalOut','Phương án riêng');text('sunbotTotalTable','Phương án riêng');text('remaining','Chưa kết luận');text('schoolLiveSunbot','Đang xây dựng');text('schoolLiveRemaining','Đang xây dựng');
@@ -126,19 +106,19 @@
 
     // Cập nhật so sánh 4/6/8 theo cùng logic thương mại.
     const body=document.getElementById('compareBody');
-    if(body){body.innerHTML=[4,6,8].map(x=>{const revenue=s.c*s.f*x*s.months+s.c*service*1000*s.months,teacher=s.classes*x*s.months*s.tr,p=typeof feeByScale==='function'?feeByScale(s.c,x,s.months):null;if(s.blocked||p===null)return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>Phương án riêng</td></tr>`;const receipts=p+s.training+s.assessment+s.qa+s.totalCapitalRecovery+s.sunbotServiceFee,rm=revenue-teacher-receipts-s.schoolInvest-s.other;return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>${m(rm)}</td></tr>`}).join('')}
+    if(body){body.innerHTML=[4,6,8].map(x=>{const revenue=s.c*s.f*x*s.months+s.c*service*1000*s.months,teacher=s.classes*x*s.months*s.tr,p=typeof feeByScale==='function'?feeByScale(s.c,x,s.months):null;if(s.blocked||p===null)return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>Phương án riêng</td></tr>`;const receipts=p+s.training+s.assessment+s.qa+s.totalCapitalRecovery,rm=revenue-teacher-receipts-s.schoolInvest-s.other;return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>${m(rm)}</td></tr>`}).join('')}
 
     // Chỉ số nội bộ được tính lại để không bị lệch khi thay đổi training/QA.
     if(!s.blocked){
-      const serviceCOGS=s.c*servicePlans[service].costYear*s.months/9;
+      const serviceCOGS=0;
       const programDeliveryCost=(s.programFee||0)*nval('programCostPct')/100;
       const trainingDeliveryCost=(s.training+s.assessment)*nval('trainingCostPct')/100;
-      const percentageBase=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee;
+      const percentageBase=(s.programFee||0)+s.training+s.assessment+s.qa;
       const entryCost=percentageBase*nval('entryCostPct')/100;
       const salesCost=percentageBase*nval('salesCostPct')/100,relationshipCost=percentageBase*nval('relationshipCostPct')/100,opsCost=percentageBase*nval('opsCostPct')/100;
       const internalCosts=serviceCOGS+s.equipmentSale+programDeliveryCost+trainingDeliveryCost+entryCost+salesCost+relationshipCost+opsCost;
-      const contribution=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee+s.equipmentSale+s.capitalMargin-internalCosts;
-      const base=(s.programFee||0)+s.training+s.assessment+s.qa+s.sunbotServiceFee+s.capitalMargin;
+      const contribution=(s.programFee||0)+s.training+s.assessment+s.qa+s.equipmentSale+s.capitalMargin-internalCosts;
+      const base=(s.programFee||0)+s.training+s.assessment+s.qa+s.capitalMargin;
       text('sunbotContributionOut',m(contribution));text('liveInternalCost',m(internalCosts));text('liveContribution',m(contribution));text('liveMargin',base?(contribution/base*100).toLocaleString('vi-VN',{maximumFractionDigits:1})+'%':'—');
     }
 
@@ -149,15 +129,15 @@
     const s=policyState();
     const inv=mode==='provide'?`Sunbot đầu tư bộ học cụ cần bổ sung; hoàn trả phần vốn thiết bị trong ${term} tháng`:`Nhà trường đầu tư bộ học cụ cần bổ sung; thanh toán ban đầu ${cash(s.schoolInvest)}`;
     return ['TÓM TẮT PHƯƠNG ÁN TRIỂN KHAI SUNBOT',
-      `1. Phạm vi hợp đồng: ${contractScope==='same_unit'?'một đơn vị ký hợp đồng, '+s.points+' điểm triển khai':'nhiều trường độc lập — cần hợp đồng multi-school/CEO duyệt'}.`,
+      `1. Phạm vi: một đơn vị ký hợp đồng, ${s.points} điểm triển khai.`,
       `2. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${programs} chương trình; ${s.l} tiết/lớp/tháng trong ${s.months} tháng.`,
       `3. Phí chương trình: ${s.programFee===null?'phương án riêng':cash(s.programFee)}; tính theo tổng số trẻ cam kết của đơn vị ký hợp đồng.`,
       `4. Điểm triển khai và thiết bị: ${s.points} điểm; ${s.rooms} mô-đun × 31,7 triệu = ${cash(s.roomValue)}. Số bộ học cụ lõi = max(chuẩn theo quy mô trẻ, số điểm).`,
-      `5. QA điểm bổ sung: ${contractScope==='same_unit'?cash(s.qa):'không áp dụng cách tính gộp'}; chuẩn 5 triệu/điểm/năm và quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị.`,
+      `5. Phí đồng hành điểm bổ sung: ${cash(s.qa)}; chuẩn 5 triệu/điểm/năm và quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị.`,
       `6. Đào tạo: ${(s.training===null?'trên 50 GV — phương án riêng':s.trainTeachers+' GV, '+cash(s.training))}; tính tổng GV toàn đơn vị, không nhân theo điểm.`,
       `7. Sát hạch: ${s.assessTeachers+' GV × 1 chương trình = '+cash(s.assessment)}.`,
       `8. Đầu tư thiết bị: ${inv}. Hệ số thu hồi vốn thiết bị 1,30; QA/đào tạo/sát hạch thu trực tiếp.`,
-      `9. Tổng nhà trường thanh toán Sunbot năm đầu: ${s.blocked?'phương án riêng — '+s.blockedReason:cash(s.total)}.`,
+      `9. Thanh toán Sunbot trong năm học: ${s.blocked?'phương án riêng — '+s.blockedReason:cash(s.total)}.`,
       '10. Khảo sát, lắp đặt và vận chuyển tiêu chuẩn không tách phí; công tác hoặc điều kiện đặc biệt báo giá riêng và duyệt trước.'
     ].join('\n');
   }
