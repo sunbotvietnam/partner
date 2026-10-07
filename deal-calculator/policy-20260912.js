@@ -93,36 +93,16 @@
     if(note&&note.id==='multiSitePolicyNote')note.textContent=`${s.points} điểm triển khai → ${s.rooms} bộ học cụ lõi; phí điểm bổ sung ${m(s.qa)}.`;
 
     if(s.blocked){
-      text('sunbotTotalOut','Phương án riêng');text('sunbotTotalTable','Phương án riêng');text('remaining','Chưa kết luận');text('schoolLiveSunbot','Đang xây dựng');text('schoolLiveRemaining','Đang xây dựng');
+      text('sunbotTotalOut','Phương án riêng');
+      text('sunbotTotalTable','Phương án riêng');
+      text('remaining','Chưa kết luận');
+      text('schoolLiveSunbot','Đang xây dựng');
+      text('schoolLiveRemaining','Đang xây dựng');
       const rb=document.getElementById('ratioBadge');if(rb){rb.className='badge bad';rb.textContent='Cần duyệt'}
       text('ratioNote',s.blockedReason);
-    }else{
-      text('sunbotTotalOut',m(s.total));text('sunbotTotalTable',m(s.total));text('remaining',m(s.remain));text('schoolLiveSunbot',m(s.total));text('schoolLiveRemaining',m(s.remain));
-      const ratio=s.totalParentRevenue?s.receipts/s.totalParentRevenue:0,rb=document.getElementById('ratioBadge'),bar=document.getElementById('ratioBar');
-      if(rb){rb.className='badge';if(ratio<=.10){rb.textContent='Dễ giải thích';rb.classList.add('good')}else if(ratio<=.18){rb.textContent='Cần giải thích rõ';rb.classList.add('mid')}else{rb.textContent='Cần xem lại';rb.classList.add('bad')}}
-      if(bar)bar.style.width=Math.min(100,ratio/.30*100)+'%';
-      text('ratioNote',ratio<=.10?'Tổng khoản Sunbot thu không vượt 10% doanh thu dự kiến.':ratio<=.18?'Khoản Sunbot chiếm 10–18%; sale cần bóc tách phí chương trình, QA điểm, đào tạo và phần vốn.':'Trên 18%; cần rà lại mức thu, quy mô lớp, thời hạn thu hồi vốn hoặc phạm vi trước khi trình trường.');
+      const talk=document.getElementById('talkTrack');if(talk)talk.textContent=s.blockedReason;
     }
 
-    // Cập nhật so sánh 4/6/8 theo cùng logic thương mại.
-    const body=document.getElementById('compareBody');
-    if(body){body.innerHTML=[4,6,8].map(x=>{const revenue=s.c*s.f*x*s.months,teacher=s.classes*x*s.months*s.tr,p=typeof feeByScale==='function'?feeByScale(s.c,x,s.months):null;if(s.blocked||p===null)return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>Phương án riêng</td></tr>`;const receipts=p+s.training+s.assessment+s.qa+s.totalCapitalRecovery,rm=revenue-teacher-receipts-s.schoolInvest-s.other;return `<tr><td>${x} tiết/tháng</td><td>${m(revenue)}</td><td>${m(teacher)}</td><td>${m(rm)}</td></tr>`}).join('')}
-
-    // Chỉ số nội bộ được tính lại để không bị lệch khi thay đổi training/QA.
-    if(!s.blocked){
-      const serviceCOGS=0;
-      const programDeliveryCost=(s.programFee||0)*nval('programCostPct')/100;
-      const trainingDeliveryCost=(s.training+s.assessment)*nval('trainingCostPct')/100;
-      const percentageBase=(s.programFee||0)+s.training+s.assessment+s.qa;
-      const entryCost=percentageBase*nval('entryCostPct')/100;
-      const salesCost=percentageBase*nval('salesCostPct')/100,relationshipCost=percentageBase*nval('relationshipCostPct')/100,opsCost=percentageBase*nval('opsCostPct')/100;
-      const internalCosts=serviceCOGS+s.equipmentSale+programDeliveryCost+trainingDeliveryCost+entryCost+salesCost+relationshipCost+opsCost;
-      const contribution=(s.programFee||0)+s.training+s.assessment+s.qa+s.equipmentSale+s.capitalMargin-internalCosts;
-      const base=(s.programFee||0)+s.training+s.assessment+s.qa+s.capitalMargin;
-      text('sunbotContributionOut',m(contribution));text('liveInternalCost',m(internalCosts));text('liveContribution',m(contribution));text('liveMargin',base?(contribution/base*100).toLocaleString('vi-VN',{maximumFractionDigits:1})+'%':'—');
-    }
-
-    const talk=document.getElementById('talkTrack');if(talk)talk.innerHTML=s.blocked?s.blockedReason:`Với ${s.c.toLocaleString('vi-VN')} trẻ, ${s.points} điểm triển khai và ${s.rooms} mô-đun, khoản trường thanh toán Sunbot năm đầu là <b>${m(s.total)}</b>, trong đó Phí đồng hành điểm bổ sung là <b>${m(s.qa)}</b>. Sau các khoản đang tính, trường còn khoảng <b>${m(s.remain)}</b> để trang trải quản lý, thuế và các chi phí khác.`;
   }
 
   function correctedPlanText(){
