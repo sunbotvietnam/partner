@@ -15,7 +15,7 @@ function toast(msg,bad){
   t.style.background=bad?'#991b1b':'#17323a';t.textContent=msg;t.style.opacity='1';t.style.transform='none';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)'},3000);
 }
 function activeData(group,attr,fallback){const b=document.querySelector(`${group} .btn.active`);return b&&b.dataset[attr]!==undefined?b.dataset[attr]:fallback;}
-function viewName(){if(document.body.classList.contains('school-view'))return'school';if(document.body.classList.contains('sale-view'))return'sale';return'internal';}
+function viewName(){return document.body.classList.contains('school-view')?'school':'internal';}
 function meta(){return{school_name:String($('planSchoolName')?.value||'').trim(),prepared_by:String($('planPreparedBy')?.value||'').trim()};}
 function capture(){
   const current=typeof window.SunbotDealCurrent==='function'?window.SunbotDealCurrent():null;
