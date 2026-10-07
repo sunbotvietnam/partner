@@ -24,10 +24,10 @@ function capture(){
     schema:VERSION,engine_version:ENGINE_VERSION,created_at:new Date().toISOString(),view:viewName(),meta:meta(),
     inputs:{
       children:N('children'),class_size:N('classSize',20),class_count:String($('classCountInput')?.value||'').trim(),campus_count:N('campusCount',1),
-      fee:N('fee'),lessons:N('lessons',4),programs:Number(activeData('#programButtons','programs',1)),start_month:N('startMonth',9),
+      fee:N('fee'),lessons:N('lessons',4),programs:1,start_month:N('startMonth',9),
       service:Number(activeData('#serviceButtons','service',0)),teacher_rate:N('teacherRate'),training_teachers:N('trainingTeacherCount'),assessment_teachers:N('teacherCount'),
       launch:activeData('#launchButtons','launch','new'),renewal_equipment:(typeof window.SunbotRenewalEquipmentMode==='function'?window.SunbotRenewalEquipmentMode():'existing'),investment_mode:activeData('#investmentButtons','mode','own'),capital_share:N('capitalShare',50),
-      term:Number(activeData('#termButtons','term',24)),rollout_funding:activeData('#rolloutFundingButtons','rollout','upfront'),extra:activeData('#extraButtons','extra','no'),extra_pct:N('extraPct',10),
+      term:Number(activeData('#termButtons','term',24)),rollout_funding:'upfront',extra:activeData('#extraButtons','extra','no'),extra_amount:N('extraAmount',0),
       contract_scope:activeData('#contractScopeButtons','scope','same_unit'),other_cost:N('otherCost'),
       program_cost_pct:N('programCostPct',20),training_cost_pct:N('trainingCostPct',50),entry_cost_pct:N('entryCostPct',3),renewal_cost_pct:N('renewalCostPct',2),sales_cost_pct:N('salesCostPct',5),relationship_cost_pct:N('relationshipCostPct',3),ops_cost_pct:N('opsCostPct',5)
     },
@@ -52,10 +52,10 @@ function apply(snapshot){
   const i=snapshot.inputs,m=snapshot.meta||{};
   if($('planSchoolName'))$('planSchoolName').value=m.school_name||'';if($('planPreparedBy'))$('planPreparedBy').value=m.prepared_by||'';
   setInput('children',i.children);setInput('classSize',i.class_size);setInput('classCountInput',i.class_count,true);setInput('campusCount',i.campus_count);setInput('fee',i.fee);setInput('lessons',i.lessons);
-  clickData('#programButtons','programs',i.programs);if($('startMonth'))setInput('startMonth',i.start_month);clickData('#serviceButtons','service',i.service);
+  if($('startMonth'))setInput('startMonth',i.start_month);clickData('#serviceButtons','service',i.service);
   setInput('teacherRate',i.teacher_rate);setInput('trainingTeacherCount',i.training_teachers);setInput('teacherCount',i.assessment_teachers);clickData('#launchButtons','launch',i.launch);
   if(typeof window.SunbotSetRenewalEquipmentMode==='function')window.SunbotSetRenewalEquipmentMode(i.renewal_equipment||'existing');
-  clickData('#investmentButtons','mode',i.investment_mode);setInput('capitalShare',i.capital_share);clickData('#termButtons','term',i.term);clickData('#rolloutFundingButtons','rollout',i.rollout_funding);clickData('#extraButtons','extra',i.extra);setInput('extraPct',i.extra_pct);clickData('#contractScopeButtons','scope',i.contract_scope);
+  clickData('#investmentButtons','mode',i.investment_mode);setInput('capitalShare',i.capital_share);clickData('#termButtons','term',i.term);clickData('#extraButtons','extra',i.extra);const legacyPct=Number(i.extra_pct||0),children=Number(i.children||0),points=Math.max(1,Number(i.campus_count||1)),rooms=Math.max(children<=300?1:children<=800?2:3,points),legacyAmount=rooms*31700000*legacyPct/100;setInput('extraAmount',i.extra_amount!==undefined?i.extra_amount:legacyAmount);clickData('#contractScopeButtons','scope',i.contract_scope);
   setInput('otherCost',i.other_cost);setInput('programCostPct',i.program_cost_pct);setInput('trainingCostPct',i.training_cost_pct);setInput('entryCostPct',i.entry_cost_pct);setInput('renewalCostPct',i.renewal_cost_pct);setInput('salesCostPct',i.sales_cost_pct);setInput('relationshipCostPct',i.relationship_cost_pct);setInput('opsCostPct',i.ops_cost_pct);
   const visible=$('childrenInput');if(visible)visible.value=String(i.children||'');
   setTimeout(()=>{if(typeof window.SunbotDealFastRefresh==='function')window.SunbotDealFastRefresh();toast(`Đã nạp phương án${m.school_name?' · '+m.school_name:''}. Có thể chỉnh sửa ngay.`)},30);
