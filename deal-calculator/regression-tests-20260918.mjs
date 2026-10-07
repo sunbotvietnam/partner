@@ -1,10 +1,8 @@
-// Sunbot Deal Calculator regression tests — commercial oracle, 18/09/2026
-// Not loaded by production UI. Run with: node deal-calculator/regression-tests-20260918.mjs
+// Sunbot Deal Calculator regression tests — V43 QC, 07/10/2026
 import assert from 'node:assert/strict';
 
 const MONTHS_LEFT={9:9,10:8,11:7,12:6,1:5,2:4,3:3,4:2,5:1};
-const MOD=31_700_000;
-const SITE=5_000_000;
+const MOD=31_700_000, SITE=5_000_000;
 
 function programFee(c,l,m){
   if(c>800)return null;
@@ -25,114 +23,92 @@ function calculate(x){
   const classes=x.classCount||Math.ceil(x.children/x.classSize);
   const rooms=Math.max(x.children<=300?1:x.children<=800?2:3,x.points);
   const roomValue=rooms*MOD;
-  const share=x.mode==='own'?0:x.mode==='provide'?1:x.share/100;
-  const schoolInvest=roomValue*(1-share);
-  const extraInvest=x.mode!=='own'&&x.extra?roomValue*x.extraPct/100:0;
   const pf=programFee(x.children,x.lessons,months);
-  const training=x.launch==='new'?trainingFee(x.trainingTeachers):0;
-  const assessment=x.launch==='new'?x.assessmentTeachers*500000:0;
+  const training=trainingFee(x.trainingTeachers);
+  const assessment=x.assessmentTeachers*500000;
   const site=x.scope==='same_unit'?Math.max(x.points-1,0)*SITE*months/9:null;
   const blocked=x.scope!=='same_unit'||x.children>800||training===null;
   if(blocked)return {blocked:true};
 
-  const usesExistingEquipment=x.launch==='renew'&&(x.renewalEquipment||'existing')!=='add';
-  const directEquipment=usesExistingEquipment?0:(x.mode!=='provide'&&x.source==='sunbot'?schoolInvest:0);
-  const externalEquipment=usesExistingEquipment?0:(x.mode!=='provide'&&x.source!=='sunbot'?schoolInvest:0);
-  const financedCapital=usesExistingEquipment?0:(roomValue*share+extraInvest);
+  const share=x.mode==='provide'?1:0;
+  const schoolInvest=roomValue*(1-share);
+  const directEquipment=x.mode==='own'?schoolInvest:0;
+  const financedCapital=x.mode==='provide'?roomValue+Math.max(0,x.extraAmount||0):0;
   const equipmentTotal=Math.round(financedCapital*1.30);
   const installmentCount=equipmentTotal?x.term/6:0;
   const installments=[];
   if(installmentCount){
     const base=Math.floor(equipmentTotal/installmentCount);
     for(let i=0;i<installmentCount;i++){
-      installments.push(i===installmentCount-1?equipmentTotal-base*(installmentCount-1):base);
+      installments.push({offset:i*6,amount:i===installmentCount-1?equipmentTotal-base*(installmentCount-1):base});
     }
   }
-  const equipmentDueCurrent=installments.reduce((sum,v,i)=>sum+(i*6<months?v:0),0);
+  const equipmentDueCurrent=installments.filter(v=>v.offset<months).reduce((s,v)=>s+v.amount,0);
   const serviceYearTotal=pf+site+training+assessment;
   const totalDueCurrent=serviceYearTotal+directEquipment+equipmentDueCurrent;
   const revenue=x.children*x.fee*x.lessons*months;
   const teacherCost=classes*x.lessons*months*x.teacherRate;
-  const remain=revenue-teacherCost-totalDueCurrent-externalEquipment-x.other;
-  return {blocked:false,months,classes,rooms,roomValue,share,schoolInvest,usesExistingEquipment,pf,site,training,assessment,
-    directEquipment,externalEquipment,financedCapital,equipmentTotal,installmentCount,installments,
-    equipmentDueCurrent,serviceYearTotal,totalDueCurrent,revenue,teacherCost,remain};
+  const remain=revenue-teacherCost-totalDueCurrent-x.other;
+  return {blocked:false,months,classes,rooms,roomValue,pf,training,assessment,site,share,schoolInvest,directEquipment,
+    financedCapital,equipmentTotal,installmentCount,installments,equipmentDueCurrent,serviceYearTotal,totalDueCurrent,revenue,teacherCost,remain};
 }
-const D={children:300,classSize:25,classCount:0,points:1,fee:25000,lessons:4,start:9,
-  teacherRate:120000,trainingTeachers:10,assessmentTeachers:10,launch:'new',
-  mode:'own',share:50,term:24,source:'sunbot',extra:false,extraPct:10,scope:'same_unit',other:0,renewalEquipment:'existing'};
 
-const vinh=calculate({...D,children:450,points:2,lessons:8,mode:'provide',term:36});
-assert.equal(vinh.pf,96_700_000);
-assert.equal(vinh.roomValue,63_400_000);
-assert.equal(vinh.equipmentTotal,82_420_000);
-assert.equal(vinh.installmentCount,6);
-assert.equal(vinh.equipmentDueCurrent,27_473_332);
-assert.equal(vinh.totalDueCurrent,145_173_332);
-assert.equal(vinh.revenue,810_000_000);
-assert.equal(vinh.teacherCost,155_520_000);
-assert.equal(vinh.remain,509_306_668);
-
-const renew=calculate({...D,children:300,launch:'renew'});
-assert.equal(renew.training,0);
-assert.equal(renew.assessment,0);
-assert.equal(renew.usesExistingEquipment,true);
-assert.equal(renew.directEquipment,0);
-assert.equal(renew.externalEquipment,0);
-assert.equal(renew.equipmentTotal,0);
-assert.equal(renew.totalDueCurrent,48_600_000);
-const renewAdd=calculate({...D,children:300,launch:'renew',renewalEquipment:'add'});
-assert.equal(renewAdd.usesExistingEquipment,false);
-assert.equal(renewAdd.directEquipment,31_700_000);
-assert.equal(renewAdd.totalDueCurrent,80_300_000);
-
-const renewLargeTeam=calculate({...D,children:300,launch:'renew',trainingTeachers:60,assessmentTeachers:60});
-assert.equal(renewLargeTeam.blocked,false);
-assert.equal(renewLargeTeam.training,0);
-assert.equal(renewLargeTeam.assessment,0);
-
-const oct=calculate({...D,children:450,points:2,lessons:4,start:10});
-assert.equal(oct.months,8);
-assert.equal(oct.site,5_000_000*8/9);
-
-const dec36=calculate({...D,children:450,points:2,lessons:8,start:12,mode:'provide',term:36});
-assert.equal(dec36.months,6);
-assert.equal(dec36.equipmentDueCurrent,dec36.installments[0]);
+const D={children:300,classSize:25,classCount:0,points:1,fee:27500,lessons:4,start:9,
+  teacherRate:120000,trainingTeachers:10,assessmentTeachers:10,mode:'own',term:24,
+  extraAmount:0,scope:'same_unit',other:0};
 
 assert.equal(calculate({...D,children:150}).pf,27_000_000);
 assert.equal(calculate({...D,children:151}).pf,27_144_000);
 assert.equal(calculate({...D,children:300}).pf,48_600_000);
 assert.equal(calculate({...D,children:301}).pf,48_708_000);
-assert.equal(calculate({...D,children:450,points:3}).rooms,3);
+assert.equal(calculate({...D,children:500}).rooms,2);
+assert.equal(calculate({...D,children:300,points:3}).rooms,3);
 assert.equal(calculate({...D,children:801}).blocked,true);
 
-const custom=calculate({...D,children:450,points:2,mode:'custom',share:50,term:36});
-assert.equal(custom.financedCapital,31_700_000);
-assert.equal(custom.schoolInvest,31_700_000);
-assert.equal(custom.equipmentTotal,41_210_000);
+const jan3=calculate({...D,points:3,start:1});
+assert.equal(jan3.months,5);
+assert.equal(Math.round(jan3.site),5_555_556);
 
-// Broad invariant matrix: 10,368 scenarios.
+const own=calculate({...D,children:300,mode:'own'});
+assert.equal(own.schoolInvest,31_700_000);
+assert.equal(own.directEquipment,31_700_000);
+assert.equal(own.equipmentTotal,0);
+
+const provide24=calculate({...D,children:300,mode:'provide',term:24});
+assert.equal(provide24.schoolInvest,0);
+assert.equal(provide24.financedCapital,31_700_000);
+assert.equal(provide24.equipmentTotal,41_210_000);
+assert.equal(provide24.installmentCount,4);
+assert.equal(provide24.equipmentDueCurrent,20_605_000);
+
+const provide36Jan=calculate({...D,children:300,mode:'provide',term:36,start:1,extraAmount:20_000_000});
+assert.equal(provide36Jan.financedCapital,51_700_000);
+assert.equal(provide36Jan.equipmentTotal,67_210_000);
+assert.equal(provide36Jan.installmentCount,6);
+assert.equal(provide36Jan.equipmentDueCurrent,provide36Jan.installments[0].amount);
+
+assert.equal(calculate({...D,trainingTeachers:20}).training,11_000_000);
+assert.equal(calculate({...D,trainingTeachers:21}).training,15_000_000);
+assert.equal(calculate({...D,trainingTeachers:31}).training,19_000_000);
+assert.equal(calculate({...D,trainingTeachers:51}).blocked,true);
+
 let count=0;
 for(const children of [80,150,151,300,301,450,800,801])
 for(const lessons of [4,6,8])
 for(const start of [9,10,11,12,1,2,3,4,5])
-for(const mode of ['own','provide','custom'])
+for(const mode of ['own','provide'])
 for(const term of [24,36])
-for(const points of [1,2,3])
-for(const launch of ['new','renew'])
-for(const source of ['sunbot','school'])
-for(const renewalEquipment of ['existing','add']){
-  const r=calculate({...D,children,lessons,start,mode,term,points,launch,source,renewalEquipment});
+for(const points of [1,2,3,5]){
+  const x=calculate({...D,children,lessons,start,mode,term,points});
   count++;
-  if(children>800){assert.equal(r.blocked,true);continue;}
-  assert.equal(r.blocked,false);
-  assert.equal(r.rooms,Math.max(children<=300?1:2,points));
-  if(launch==='renew'){assert.equal(r.training,0);assert.equal(r.assessment,0);}
-  if(launch==='renew'&&renewalEquipment==='existing'){assert.equal(r.usesExistingEquipment,true);assert.equal(r.directEquipment,0);assert.equal(r.externalEquipment,0);assert.equal(r.equipmentTotal,0);}
-  if(mode==='provide'){assert.equal(r.schoolInvest,0);assert.equal(r.directEquipment,0);assert.equal(r.externalEquipment,0);}
-  if(mode==='own')assert.equal(r.equipmentTotal,0);
-  assert.equal(r.totalDueCurrent,r.pf+r.site+r.training+r.assessment+r.directEquipment+r.equipmentDueCurrent);
-  assert.equal(r.remain,r.revenue-r.teacherCost-r.totalDueCurrent-r.externalEquipment);
+  if(children>800){assert.equal(x.blocked,true);continue;}
+  assert.equal(x.blocked,false);
+  assert.equal(x.rooms,Math.max(children<=300?1:2,points));
+  assert.equal(x.site,Math.max(points-1,0)*SITE*x.months/9);
+  assert.equal(x.totalDueCurrent,x.serviceYearTotal+x.directEquipment+x.equipmentDueCurrent);
+  assert.equal(x.remain,x.revenue-x.teacherCost-x.totalDueCurrent);
+  if(mode==='own'){assert.equal(x.equipmentTotal,0);assert.equal(x.schoolInvest,x.roomValue);}
+  if(mode==='provide'){assert.equal(x.schoolInvest,0);assert.equal(x.directEquipment,0);}
 }
-assert.equal(count,31104);
-console.log('PASS',count,'matrix scenarios + golden cases');
+assert.equal(count,3456);
+console.log('PASS',count,'V43 matrix scenarios + golden cases');
