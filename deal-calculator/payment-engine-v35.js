@@ -58,6 +58,7 @@ function ensureStructure(){
     monthsBox.before(d);
     const lab=monthsBox.querySelector('label');if(lab)lab.textContent='Số tháng triển khai còn lại trong năm học';
     months.min='1';months.max='9';months.disabled=true;
+    monthsBox.style.display='none';
     const sub=monthsBox.querySelector('.sub');if(sub)sub.textContent='Tự động tính từ tháng bắt đầu; không nhập tay.';
   }
   if(!$('coreEquipmentScopeV36')){
@@ -196,12 +197,6 @@ function render(){
     }).join('');
   }
 
-  // Supplementary experience remains advisory and must not alter revenue/remain.
-  const note=$('supplementPolicyV27');
-  if(note){
-    note.innerHTML='<h4>Khuyến nghị để trải nghiệm của trẻ đầy đủ hơn</h4><p>Đây là <b>ngân sách trải nghiệm bổ sung, không bắt buộc</b>, tách khỏi phép tính thu – chi cốt lõi của phương án. Sunbot cung cấp tiêu chuẩn gợi ý; nhà trường có thể tự tổ chức hoặc đặt mua từng hạng mục phù hợp như kit mang về, chứng nhận cứng, thi đua – khen thưởng, mini-project và sự kiện.</p>';
-  }
-
   window.SunbotPaymentEngineV35={...a,scheduleRows:rows,scheduleSum,reconcileDiff:diff,outstandingEquipment:outstanding};
   window.SunbotPaymentV29=window.SunbotPaymentEngineV35;
 }
@@ -216,7 +211,7 @@ function summary(){
     `1. Quy mô: ${a.c.toLocaleString('vi-VN')} trẻ; ${a.classes} lớp; ${a.points} điểm triển khai; ${a.rooms} bộ học cụ lõi.`,
     `2. Thời gian: bắt đầu ${(MONTH[a.start]||'').toLowerCase()}, còn ${a.months} tháng đến hết tháng 5.`,
     `3. Cường độ: ${a.l} tiết/lớp/tháng; 1 chương trình; mức thu dự kiến ${MONEY(a.f)}/trẻ/tiết.`,
-    `4. Chi phí triển khai: chương trình ${F(a.program)}; đồng hành điểm bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
+    `4. Chi phí triển khai: chương trình ${F(a.program)}; đồng hành điểm triển khai bổ sung ${F(a.site)}; đào tạo ${F(a.training)}; sát hạch ${F(a.assessment)}. Tổng ${F(a.serviceYearTotal)}.`
   );
   if(a.equipmentTotal>0){
     lines.push(`5. Thiết bị: Sunbot bố trí vốn ${F(a.financedCapital)}; tổng giá trị hoàn trả ${F(a.equipmentTotal)} trong ${a.term} tháng, thanh toán ${a.installmentCount} kỳ, mỗi kỳ 6 tháng; kỳ đầu khi bàn giao.`);
@@ -226,12 +221,11 @@ function summary(){
   lines.push(
     `7. Tổng thanh toán Sunbot đến hết tháng 5 theo lịch dự kiến: ${F(a.totalDueCurrent)}.`,
     `8. Nguồn thu học phí cốt lõi dự kiến: ${F(a.coreParentRevenue)}; chi phí giáo viên dự kiến ${F(a.teacherCost)}; nguồn còn lại sau các khoản đang tính ${F(a.remain)}.`,
-    '9. Ngân sách trải nghiệm bổ sung là khuyến nghị riêng, không tự động cộng vào doanh thu, chi phí hay khoản thanh toán Sunbot.',
-    '10. Lịch thanh toán: các khoản chương trình/đồng hành được chia theo kỳ trong năm học; đào tạo, sát hạch và thiết bị mua trực tiếp (nếu có) ở kỳ đầu; kỳ hoàn trả thiết bị 6 tháng được gộp vào kỳ tương ứng.'
+    '9. Lịch thanh toán: các khoản chương trình/đồng hành được chia theo kỳ trong năm học; đào tạo, sát hạch và thiết bị mua trực tiếp (nếu có) ở kỳ đầu; kỳ hoàn trả thiết bị 6 tháng được gộp vào kỳ tương ứng.'
   );
   if(a.equipmentTotal>0){
     const future=a.installments.filter(x=>x.offset>=a.months),outstanding=Math.max(0,a.equipmentTotal-a.equipmentDueCurrent);
-    lines.push(`11. Sau tháng 5 còn ${F(outstanding)} thiết bị, tương ứng ${future.length} kỳ 6 tháng. Không thu lẻ từng tháng hè; nếu dừng Sunbot trước hạn, phần chưa hoàn trả vẫn tiếp tục thanh toán hoặc tất toán theo thỏa thuận.`);
+    lines.push(`10. Sau tháng 5 còn ${F(outstanding)} thiết bị, tương ứng ${future.length} kỳ 6 tháng. Không thu lẻ từng tháng hè; nếu dừng Sunbot trước hạn, phần chưa hoàn trả vẫn tiếp tục thanh toán hoặc tất toán theo thỏa thuận.`);
   }
   return lines.join('\n');
 }
