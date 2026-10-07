@@ -26,10 +26,10 @@ function capture(){
       children:N('children'),class_size:N('classSize',20),class_count:String($('classCountInput')?.value||'').trim(),campus_count:N('campusCount',1),
       fee:N('fee'),lessons:N('lessons',4),programs:1,start_month:N('startMonth',9),
       service:Number(activeData('#serviceButtons','service',0)),teacher_rate:N('teacherRate'),training_teachers:N('trainingTeacherCount'),assessment_teachers:N('teacherCount'),
-      launch:activeData('#launchButtons','launch','new'),investment_mode:activeData('#investmentButtons','mode','own')==='provide'?'provide':'own',
+      investment_mode:activeData('#investmentButtons','mode','own')==='provide'?'provide':'own',
       term:Number(activeData('#termButtons','term',24)),rollout_funding:'upfront',extra:activeData('#extraButtons','extra','no'),extra_amount:N('extraAmount',0),
       contract_scope:activeData('#contractScopeButtons','scope','same_unit'),other_cost:N('otherCost'),
-      program_cost_pct:N('programCostPct',20),training_cost_pct:N('trainingCostPct',50),entry_cost_pct:N('entryCostPct',3),renewal_cost_pct:N('renewalCostPct',2),sales_cost_pct:N('salesCostPct',5),relationship_cost_pct:N('relationshipCostPct',3),ops_cost_pct:N('opsCostPct',5)
+      program_cost_pct:N('programCostPct',20),training_cost_pct:N('trainingCostPct',50),entry_cost_pct:N('entryCostPct',3),sales_cost_pct:N('salesCostPct',5),relationship_cost_pct:N('relationshipCostPct',3),ops_cost_pct:N('opsCostPct',5)
     },
     reference:finalResult?{total:finalResult.totalDueCurrent??finalResult.total,remain:finalResult.remain,program_fee:finalResult.program??finalResult.pf,rooms:finalResult.rooms}:null
   };
@@ -53,10 +53,8 @@ function apply(snapshot){
   if($('planSchoolName'))$('planSchoolName').value=m.school_name||'';if($('planPreparedBy'))$('planPreparedBy').value=m.prepared_by||'';
   setInput('children',i.children);setInput('classSize',i.class_size);setInput('classCountInput',i.class_count,true);setInput('campusCount',i.campus_count);setInput('fee',i.fee);setInput('lessons',i.lessons);
   if($('startMonth'))setInput('startMonth',i.start_month);clickData('#serviceButtons','service',i.service);
-  setInput('teacherRate',i.teacher_rate);setInput('trainingTeacherCount',i.training_teachers);setInput('teacherCount',i.assessment_teachers);
-  if(typeof window.SunbotSetRenewalEquipmentMode==='function')window.SunbotSetRenewalEquipmentMode(i.renewal_equipment||'existing');
-  clickData('#investmentButtons','mode',i.investment_mode==='provide'?'provide':'own');clickData('#termButtons','term',i.term);clickData('#extraButtons','extra',i.extra);const legacyPct=Number(i.extra_pct||0),children=Number(i.children||0),points=Math.max(1,Number(i.campus_count||1)),rooms=Math.max(children<=300?1:children<=800?2:3,points),legacyAmount=rooms*31700000*legacyPct/100;setInput('extraAmount',i.extra_amount!==undefined?i.extra_amount:legacyAmount);setInput('existingCoreKits',i.existing_core_kits!==undefined?i.existing_core_kits:rooms);clickData('#contractScopeButtons','scope',i.contract_scope);
-  setInput('otherCost',i.other_cost);setInput('programCostPct',i.program_cost_pct);setInput('trainingCostPct',i.training_cost_pct);setInput('entryCostPct',i.entry_cost_pct);setInput('renewalCostPct',i.renewal_cost_pct);setInput('salesCostPct',i.sales_cost_pct);setInput('relationshipCostPct',i.relationship_cost_pct);setInput('opsCostPct',i.ops_cost_pct);
+  setInput('teacherRate',i.teacher_rate);setInput('trainingTeacherCount',i.training_teachers);setInput('teacherCount',i.assessment_teachers);  clickData('#investmentButtons','mode',i.investment_mode==='provide'?'provide':'own');clickData('#termButtons','term',i.term);clickData('#extraButtons','extra',i.extra);const legacyPct=Number(i.extra_pct||0),children=Number(i.children||0),points=Math.max(1,Number(i.campus_count||1)),rooms=Math.max(children<=300?1:children<=800?2:3,points),legacyAmount=rooms*31700000*legacyPct/100;setInput('extraAmount',i.extra_amount!==undefined?i.extra_amount:legacyAmount);clickData('#contractScopeButtons','scope',i.contract_scope);
+  setInput('otherCost',i.other_cost);setInput('programCostPct',i.program_cost_pct);setInput('trainingCostPct',i.training_cost_pct);setInput('entryCostPct',i.entry_cost_pct);setInput('salesCostPct',i.sales_cost_pct);setInput('relationshipCostPct',i.relationship_cost_pct);setInput('opsCostPct',i.ops_cost_pct);
   const visible=$('childrenInput');if(visible)visible.value=String(i.children||'');
   setTimeout(()=>{if(typeof window.SunbotDealFastRefresh==='function')window.SunbotDealFastRefresh();toast(`Đã nạp phương án${m.school_name?' · '+m.school_name:''}. Có thể chỉnh sửa ngay.`)},30);
 }
