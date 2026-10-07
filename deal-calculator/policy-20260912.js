@@ -37,7 +37,7 @@
     const table=document.getElementById('sunbotTotalTable')?.closest('table');
     if(table&&!document.getElementById('multiSitePolicyNote')){
       const d=document.createElement('div');d.id='multiSitePolicyNote';d.className='sub';d.style.marginTop='8px';
-      d.textContent='Phí đồng hành điểm triển khai bổ sung: 5 triệu/điểm/năm, quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị. Máy tính này áp dụng cho một đơn vị ký hợp đồng có thể có nhiều điểm triển khai.';
+      d.textContent='Điểm thứ 2 trở đi: 5 triệu/điểm/năm, tính theo số tháng triển khai còn lại.';
       table.insertAdjacentElement('afterend',d);
     }
 
@@ -88,9 +88,9 @@
     text('assessmentOut',m(s.assessment));
     text('rolloutRecoveryOut',m(0));
     const rr=document.getElementById('rolloutRecoveryRow');if(rr)rr.hidden=true;
-    const tl=document.getElementById('trainingLabel');if(tl)tl.textContent='Đào tạo khởi tạo theo tổng giáo viên toàn đơn vị';
+    const tl=document.getElementById('trainingLabel');if(tl)tl.textContent='Đào tạo giáo viên';
     const note=document.querySelector('#sunbotTotalTable')?.closest('table')?.nextElementSibling;
-    if(note&&note.id==='multiSitePolicyNote')note.textContent=`Phí chương trình tính một lần theo tổng ${s.c.toLocaleString('vi-VN')} trẻ của đơn vị ký hợp đồng. ${s.points} điểm triển khai → ${s.rooms} bộ học cụ lõi; phí đồng hành điểm bổ sung ${m(s.qa)} cho thời gian triển khai còn lại.`;
+    if(note&&note.id==='multiSitePolicyNote')note.textContent=`${s.points} điểm triển khai → ${s.rooms} bộ học cụ lõi; phí điểm bổ sung ${m(s.qa)}.`;
 
     if(s.blocked){
       text('sunbotTotalOut','Phương án riêng');text('sunbotTotalTable','Phương án riêng');text('remaining','Chưa kết luận');text('schoolLiveSunbot','Đang xây dựng');text('schoolLiveRemaining','Đang xây dựng');
