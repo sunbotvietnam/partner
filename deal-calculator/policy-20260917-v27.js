@@ -97,7 +97,7 @@ function summaryV27(){
   );
   if(s.md==='provide')lines.push(`7. Thiết bị: ${repaymentText(s)}`);
   else if(s.md==='own')lines.push(`7. Thiết bị: Nhà trường đầu tư cấu hình thiết bị ${M(s.schoolInvest)} theo phương án đã thống nhất.`);
-  else lines.push(`7. Thiết bị: Hai bên cùng đầu tư; phần Sunbot bố trí vốn thực hiện theo kỳ hạn ${s.tm} tháng liên tục từ bàn giao.`);
+  else lines.push(`7. Bộ học cụ lõi: phương án đầu tư không hợp lệ đã được quy về mô hình hiện hành; cần chọn Nhà trường đầu tư hoặc Sunbot đầu tư.`);
   lines.push(
     `8. Phần hoàn trả thiết bị tính trong năm học này: ${M(s.recovery)}${s.recoveryMonthly>0?`, tương đương khoảng ${M(s.recoveryMonthly)}/tháng`:''}.`,
     `9. Tổng nhà trường thanh toán Sunbot trong năm học này: ${M(s.total)}.`,
