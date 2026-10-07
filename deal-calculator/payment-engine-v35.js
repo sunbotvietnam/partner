@@ -115,7 +115,7 @@ function render(){
   }else{
     if(schoolInvestOut)schoolInvestOut.textContent=F(a.schoolInvest);
     if(cashflowNote){
-      const coreText=`${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ học cụ lõi; tổng số bộ đồng thời không thấp hơn chuẩn theo quy mô trẻ.`;
+      const coreText=a.isNew?`${a.rooms} bộ học cụ lõi cần triển khai × 31,7 triệu = ${F(a.roomValue)}.`:`Phương án cần ${a.rooms} bộ học cụ lõi; trường hiện có ${a.existingKits||0} bộ; cần bổ sung ${a.kitsToAdd||0} bộ = ${F(a.roomValue)}.`;
       if(a.md==='own')cashflowNote.textContent=coreText+' Nhà trường đầu tư toàn bộ bộ học cụ lõi này.';
       else if(a.md==='provide')cashflowNote.textContent=coreText+' Sunbot bố trí toàn bộ vốn thiết bị; nhà trường hoàn trả theo kỳ hạn đã chọn.';
       else cashflowNote.textContent=coreText+` Nhà trường đầu tư ${F(a.schoolInvest)}; phần còn lại do Sunbot bố trí theo tỷ lệ vốn đã chọn.`;
@@ -145,7 +145,7 @@ function render(){
       if(en){const due=a.installments.map(x=>`${MONTH[x.month]}: ${F(x.amount)}`).join(' · ');en.textContent=`Kỳ 1 thanh toán khi bàn giao; các kỳ tiếp theo cách nhau đúng 6 tháng. Lịch thiết bị: ${due}. Kỳ hạn tính ${a.term} tháng. Nếu dừng chương trình trước hạn, phần thiết bị chưa hoàn trả vẫn tiếp tục thanh toán hoặc được tất toán theo thỏa thuận.`;}
     }else if(a.directEquipment>0){
       er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
-      if(en)en.textContent=`Phương án đang tính ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`;
+      if(en)en.textContent=a.isNew?`Phương án cần ${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}. Mỗi điểm triển khai tối thiểu 1 bộ. Mức này chưa gồm TV/máy chiếu, điều hòa, bàn ghế, giá kệ, nội thất mầm non và cải tạo phòng.`:`Gia hạn: phương án cần ${a.rooms} bộ; hiện có ${a.existingKits||0} bộ; bổ sung ${a.kitsToAdd||0} bộ = ${F(a.roomValue)}. Mức này chưa gồm các hạng mục hoàn thiện không gian.`;
     }else{
       er.innerHTML='<p class="sub">Nhà trường tự trang bị bộ học cụ lõi theo cấu hình thống nhất; không phát sinh khoản thanh toán học cụ lõi cho Sunbot.</p>';
       if(en)en.textContent='';
