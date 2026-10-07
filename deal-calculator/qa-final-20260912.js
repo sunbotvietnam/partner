@@ -14,12 +14,11 @@ function render(){
     text('ratioNote',s.blockedReason||'Cần lập phương án riêng.');
     return;
   }
-  const servicePlan=(typeof servicePlans!=='undefined'&&servicePlans[s.sv])?servicePlans[s.sv]:{costYear:0};
-  const serviceCOGS=s.c*servicePlan.costYear*s.months/9;
+  const serviceCOGS=0;
   const equipmentCost=s.equipmentSale;
   const programDeliveryCost=(s.pf||0)*N('programCostPct')/100;
   const trainingDeliveryCost=(s.training+s.assessment)*N('trainingCostPct')/100;
-  const percentageBase=(s.pf||0)+s.training+s.assessment+s.site+s.serviceFee;
+  const percentageBase=(s.pf||0)+s.training+s.assessment+s.site;
   const entryCost=percentageBase*N('entryCostPct')/100;
   const salesCost=percentageBase*N('salesCostPct')/100;
   const relationshipCost=percentageBase*N('relationshipCostPct')/100;
@@ -30,8 +29,6 @@ function render(){
   const contribution=(s.pf||0)+s.training+s.assessment+s.site+s.serviceFee+s.equipmentSale+capitalMargin-internalCosts;
   const contributionBase=(s.pf||0)+s.training+s.assessment+s.site+s.serviceFee+capitalMargin;
   const margin=contributionBase?contribution/contributionBase:0;
-  const serviceGross=s.serviceFee-serviceCOGS;
-  text('serviceGrossOut',M(serviceGross));
   text('sunbotContributionOut',M(contribution));
   text('liveInternalCost',M(internalCosts));
   text('liveContribution',M(contribution));
@@ -42,7 +39,7 @@ function render(){
   const ratio=pay&&pay.coreParentRevenue?pay.totalDueCurrent/pay.coreParentRevenue:(s.parent?s.receipts/s.parent:0),rb=document.getElementById('ratioBadge'),bar=document.getElementById('ratioBar');
   if(rb){rb.className='badge';if(ratio<=.10){rb.textContent='Dễ giải thích';rb.classList.add('good')}else if(ratio<=.18){rb.textContent='Cần giải thích rõ';rb.classList.add('mid')}else{rb.textContent='Cần xem lại';rb.classList.add('bad')}}
   if(bar)bar.style.width=Math.min(100,ratio/.30*100)+'%';
-  text('ratioNote',ratio<=.10?'Tổng khoản Sunbot thu không vượt 10% doanh thu dự kiến.':ratio<=.18?'Khoản Sunbot chiếm 10–18%; sale cần bóc tách phí chương trình, phí đồng hành điểm, đào tạo và phần vốn.':'Trên 18%; cần rà lại mức thu, quy mô lớp, thời hạn thu hồi vốn hoặc phạm vi trước khi trình trường.');
+  text('ratioNote',ratio<=.10?'Tổng khoản Sunbot thu không vượt 10% doanh thu dự kiến.':ratio<=.18?'Khoản Sunbot chiếm 10–18%; sale cần bóc tách phí chương trình, phí đồng hành điểm, đào tạo, sát hạch và phần vốn.':'Trên 18%; cần rà lại mức thu, quy mô lớp, thời hạn thu hồi vốn hoặc phạm vi trước khi trình trường.');
 }
 let timer;function queue(){clearTimeout(timer);timer=setTimeout(render,230)}
 document.addEventListener('input',queue,true);document.addEventListener('change',queue,true);document.addEventListener('click',queue,true);
