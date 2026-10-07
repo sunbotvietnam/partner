@@ -26,8 +26,8 @@ function render(){
   const internalCosts=serviceCOGS+equipmentCost+programDeliveryCost+trainingDeliveryCost+entryCost+salesCost+relationshipCost+opsCost;
   const principalCurrent=(s.roomValue*s.share+s.extraInvest)*s.months/s.tm;
   const capitalMargin=s.recovery-principalCurrent;
-  const contribution=(s.pf||0)+s.training+s.assessment+s.site+s.serviceFee+s.equipmentSale+capitalMargin-internalCosts;
-  const contributionBase=(s.pf||0)+s.training+s.assessment+s.site+s.serviceFee+capitalMargin;
+  const contribution=(s.pf||0)+s.training+s.assessment+s.site+s.equipmentSale+capitalMargin-internalCosts;
+  const contributionBase=(s.pf||0)+s.training+s.assessment+s.site+capitalMargin;
   const margin=contributionBase?contribution/contributionBase:0;
   text('sunbotContributionOut',M(contribution));
   text('liveInternalCost',M(internalCosts));
