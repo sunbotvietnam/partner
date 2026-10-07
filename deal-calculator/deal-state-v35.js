@@ -15,19 +15,19 @@ function periodLabel(start,n){let end=start;for(let i=1;i<n;i++)end=nextMonth(en
 function current(){
   const start=Number(document.getElementById('startMonth')?.value||9), months=MONTHS_LEFT[start]||9;
   const c=N('children'),cs=N('classSize',20),f=N('fee'),l=N('lessons',4),tr=N('teacherRate'),points=N('campusCount',1);
-  const p=1, md=typeof mode==='undefined'?'own':mode, ln=typeof launch==='undefined'?'new':launch, tm=typeof term==='undefined'?24:Number(term)||24, sv=typeof service==='undefined'?0:Number(service)||0;
+  const p=1, md=(typeof mode!=='undefined'&&mode==='provide')?'provide':'own', ln=typeof launch==='undefined'?'new':launch, tm=typeof term==='undefined'?24:Number(term)||24, sv=typeof service==='undefined'?0:Number(service)||0;
   const manual=N('classCountInput'), classes=manual?Math.max(1,Math.round(manual)):Math.ceil(c/cs);
   const trainTeachers=N('trainingTeacherCount'), assessTeachers=N('teacherCount');
-  const rooms=typeof roomCount==='function'?roomCount(c):Math.max(c<=300?1:c<=800?2:3,points), roomValue=rooms*MOD;
-  const share=md==='own'?0:md==='provide'?1:N('capitalShare',50)/100;
+  const rooms=typeof roomCount==='function'?roomCount(c):Math.max(c<=300?1:c<=800?2:3,points), existingKits=ln==='renew'?Math.max(0,Math.round(N('existingCoreKits',rooms))):0, kitsToAdd=ln==='renew'?Math.max(0,rooms-existingKits):rooms, roomValue=kitsToAdd*MOD, totalCoreValue=rooms*MOD;
+  const share=md==='provide'?1:0;
   const schoolInvest=roomValue*(1-share), equipmentSale=md!=='provide'?schoolInvest:0;
   const extraInvest=md!=='own'&&typeof extra!=='undefined'&&extra?Math.max(0,N('extraAmount',0)):0;
   const pf=typeof feeByScale==='function'?feeByScale(c,l,months):null;
   const training=ln==='new'?trainingFee(trainTeachers):0, assessment=ln==='new'?assessTeachers*500000:0;
   const site=scope()==='same_unit'?Math.max(points-1,0)*ANNUAL_SITE*months/9:0;
-  const serviceMonthly=typeof servicePlans!=='undefined'&&servicePlans[sv]?c*servicePlans[sv].sunbotFeeMonthly:0, serviceFee=serviceMonthly*months;
+  const serviceMonthly=0, serviceFee=0;
   const recoveryMonthly=(roomValue*share+extraInvest)*1.3/tm, recovery=recoveryMonthly*months;
-  const parent=c*f*l*months+c*sv*1000*months, teacher=classes*l*months*tr, other=N('otherCost');
+  const parent=c*f*l*months, teacher=classes*l*months*tr, other=N('otherCost');
   const blockedReason=scope()==='multi_school'?'Nhiều trường độc lập cần báo giá riêng từng trường hoặc hợp đồng nhiều trường do CEO duyệt.':c>800?'Quy mô trên 800 trẻ cần phương án riêng do CEO duyệt.':training===null?'Trên 50 giáo viên cần phương án đào tạo riêng.':'';
   const blocked=Boolean(blockedReason);
   const receipts=blocked?null:pf+training+assessment+site+recovery+serviceFee;
@@ -35,7 +35,7 @@ function current(){
   const remain=blocked?null:parent-teacher-receipts-schoolInvest-other;
   const rows=[];let cur=start;
   if(!blocked){const pm=pf/months, sm=site/months;chunks(months).forEach((n,i)=>{const program=pm*n,sitePart=sm*n,servicePart=serviceMonthly*n,recoveryPart=recoveryMonthly*n,once=i===0?training+assessment+equipmentSale:0,totalRow=program+sitePart+servicePart+recoveryPart+once;rows.push({i:i+1,n,label:periodLabel(cur,n),program,site:sitePart,service:servicePart,recovery:recoveryPart,once,total:totalRow});for(let k=0;k<n;k++)cur=nextMonth(cur)})}
-  return {start,months,c,cs,f,l,tr,points,p,md,ln,tm,sv,classes,trainTeachers,assessTeachers,rooms,roomValue,share,schoolInvest,equipmentSale,extraInvest,pf,training,assessment,site,serviceMonthly,serviceFee,recoveryMonthly,recovery,parent,teacher,other,blocked,blockedReason,receipts,total,remain,rows,remainingRecoveryMonths:share>0||extraInvest>0?Math.max(tm-months,0):0};
+  return {start,months,c,cs,f,l,tr,points,p,md,ln,tm,sv,classes,trainTeachers,assessTeachers,rooms,existingKits,kitsToAdd,roomValue,totalCoreValue,share,schoolInvest,equipmentSale,extraInvest,pf,training,assessment,site,serviceMonthly,serviceFee,recoveryMonthly,recovery,parent,teacher,other,blocked,blockedReason,receipts,total,remain,rows,remainingRecoveryMonths:share>0||extraInvest>0?Math.max(tm-months,0):0};
 }
 
 window.SunbotDealCurrent=current;
