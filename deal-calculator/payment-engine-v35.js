@@ -76,7 +76,7 @@ function ensureStructure(){
     if(cmp){
       schedule=document.createElement('div');
       schedule.id='paymentScheduleBox';schedule.className='summary';
-      schedule.innerHTML='<h4>C. Lịch thanh toán tổng hợp dự kiến</h4><p id="payIntro"></p><table class="table"><thead><tr><th>Kỳ</th><th>Thời gian</th><th>Thanh toán Sunbot</th></tr></thead><tbody id="payBody"></tbody></table><p id="payAfter" class="sub"></p>';
+      schedule.innerHTML='<h4>C. Lịch thanh toán</h4><p id="payIntro"></p><table class="table"><thead><tr><th>Kỳ</th><th>Thời gian</th><th>Thanh toán Sunbot</th></tr></thead><tbody id="payBody"></tbody></table><p id="payAfter" class="sub"></p>';
       cmp.before(schedule);
     }
   }
@@ -84,16 +84,16 @@ function ensureStructure(){
   let service=$('schoolYearServiceV29');
   if(!service){
     service=document.createElement('div');service.id='schoolYearServiceV29';service.className='summary';service.style.marginTop='10px';
-    service.innerHTML='<h4>A. Chi phí triển khai trong năm học</h4><div id="schoolYearServiceRowsV29"></div><p class="sub">Các khoản này gắn với hoạt động triển khai năm học và kết thúc theo phạm vi năm học đã tính.</p>';
+    service.innerHTML='<h4>A. Chi phí năm học</h4><div id="schoolYearServiceRowsV29"></div><p class="sub">Các khoản này tính theo thời gian triển khai trong năm học.</p>';
     schedule.insertAdjacentElement('beforebegin',service);
   }
   let equip=$('equipmentPlanV29');
   if(!equip){
     equip=document.createElement('div');equip.id='equipmentPlanV29';equip.className='summary';equip.style.marginTop='10px';
-    equip.innerHTML='<h4>B. Bộ học cụ lõi và hạng mục hoàn thiện</h4><div id="equipmentPlanRowsV29"></div><p class="sub" id="equipmentPlanNoteV29"></p>';
+    equip.innerHTML='<h4>B. Học cụ & hoàn thiện lớp</h4><div id="equipmentPlanRowsV29"></div><p class="sub" id="equipmentPlanNoteV29"></p>';
     service.insertAdjacentElement('afterend',equip);
   }
-  const h=schedule.querySelector('h4');if(h)h.textContent='C. Lịch thanh toán tổng hợp dự kiến';
+  const h=schedule.querySelector('h4');if(h)h.textContent='C. Lịch thanh toán';
   const old=$('sunbotPaymentBreakdownV28');if(old)old.remove();
 }
 
@@ -119,9 +119,9 @@ function render(){
   }
   if(er){
     if(a.equipmentTotal>0){
-      er.innerHTML=`<table class="table"><tbody><tr><td>Vốn thiết bị Sunbot bố trí</td><td><b>${F(a.financedCapital)}</b></td></tr><tr><td>Tổng giá trị hoàn trả</td><td><b>${F(a.equipmentTotal)}</b></td></tr><tr><td>Lịch hoàn trả</td><td><b>${a.installmentCount} kỳ · 6 tháng/kỳ</b></td></tr></tbody></table>`;
+      er.innerHTML=`<table class="table"><tbody><tr><td>Vốn Sunbot đầu tư</td><td><b>${F(a.financedCapital)}</b></td></tr><tr><td>Tổng hoàn trả</td><td><b>${F(a.equipmentTotal)}</b></td></tr><tr><td>Kỳ hạn</td><td><b>${a.installmentCount} kỳ · 6 tháng/kỳ</b></td></tr></tbody></table>`;
     }else if(a.directEquipment>0){
-      er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi nhà trường mua trực tiếp từ Sunbot</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
+      er.innerHTML=`<table class="table"><tbody><tr><td>Bộ học cụ lõi</td><td><b>${F(a.directEquipment)}</b></td></tr><tr><td>Thanh toán</td><td><b>Kỳ đầu</b></td></tr></tbody></table>`;
     }else{
       er.innerHTML='<p class="sub">Nhà trường tự trang bị bộ học cụ lõi theo cấu hình thống nhất; không phát sinh khoản thanh toán học cụ lõi cho Sunbot.</p>';
     }
@@ -160,7 +160,7 @@ function render(){
     if(a.equipmentTotal>0){
       const future=a.installments.filter(x=>x.offset>=a.months);
       after.innerHTML=`<b>Sau tháng 5:</b> không phát sinh phí chương trình của năm học này. Phần thiết bị còn ${F(outstanding)}, tương ứng ${future.length} kỳ 6 tháng theo lịch đã ký. Không thu lẻ từng tháng hè.${diff!==0?` <b style="color:#b42318">Cảnh báo đối soát: lịch đang lệch ${MONEY(diff)}.</b>`:''}`;
-    }else after.textContent=diff===0?'Lịch thanh toán đã đối soát đủ với tổng khoản phải thanh toán Sunbot.':`Cảnh báo đối soát: lịch đang lệch ${MONEY(diff)}.`;
+    }else after.textContent=diff===0?'Lịch thanh toán đã khớp tổng phải trả Sunbot.':`Cảnh báo đối soát: lịch đang lệch ${MONEY(diff)}.`;
   }
 
   // Add a compact reconciliation line so Admin/Sales can detect any future formula regression.
@@ -174,7 +174,7 @@ function render(){
 
   // Hide monthly-recovery wording left by older layers.
   const capital=$('capitalRecoveryOut');if(capital)capital.textContent=a.equipmentTotal>0?F(a.equipmentDueCurrent):F(0);
-  const capitalRow=$('capitalRecoveryRow');if(capitalRow){const td=capitalRow.querySelector('td');if(td)td.textContent='Kỳ hoàn trả thiết bị đến hạn đến hết tháng 5';}
+  const capitalRow=$('capitalRecoveryRow');if(capitalRow){const td=capitalRow.querySelector('td');if(td)td.textContent='Hoàn trả thiết bị đến hết tháng 5';}
   document.querySelectorAll('body *').forEach(el=>{
     if(el.children.length)return;
     const t=String(el.textContent||'');
