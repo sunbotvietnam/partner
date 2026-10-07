@@ -65,7 +65,7 @@ function ensureStructure(){
     if(anchor){
       const note=document.createElement('div');
       note.id='coreEquipmentScopeV36';note.className='warning';note.style.marginTop='10px';
-      note.innerHTML='<b>Phạm vi bộ học cụ lõi 31,7 triệu/điểm:</b> mỗi điểm triển khai cần tối thiểu 1 bộ lõi. Cấu hình lõi gồm robot, bản đồ, bộ chướng ngại, bộ thẻ, Android Box và bộ nhận diện tiêu chuẩn. <b>Chưa bao gồm</b> màn hình TV/máy chiếu hoặc thiết bị hiển thị, điều hòa, bàn ghế, giá kệ và nội thất mầm non, cùng các hạng mục cải tạo điện, mạng, trần, sàn, tường.';
+      note.innerHTML='<b>Phạm vi bộ học cụ lõi 31,7 triệu/bộ:</b> mỗi điểm triển khai cần tối thiểu 1 bộ lõi. Cấu hình lõi gồm robot, bản đồ, bộ chướng ngại, bộ thẻ, Android Box và bộ nhận diện tiêu chuẩn. <b>Chưa bao gồm</b> màn hình TV/máy chiếu hoặc thiết bị hiển thị, điều hòa, bàn ghế, giá kệ và nội thất mầm non, cùng các hạng mục cải tạo điện, mạng, trần, sàn, tường.';
       anchor.insertAdjacentElement('afterend',note);
     }
   }
@@ -109,7 +109,7 @@ function render(){
   const schoolInvestOut=$('schoolInvestOut');
   const cashflowNote=$('cashflowNote');
   const er=$('equipmentPlanRowsV29'),en=$('equipmentPlanNoteV29');
-  if(schoolInvestOut)schoolInvestOut.textContent=F(a.externalEquipment||0);
+  if(schoolInvestOut)schoolInvestOut.textContent=F(a.schoolInvest||0);
   if(cashflowNote){
     const coreText=`${a.rooms} bộ học cụ lõi × 31,7 triệu = ${F(a.roomValue)}.`;
     cashflowNote.textContent=a.md==='provide'
