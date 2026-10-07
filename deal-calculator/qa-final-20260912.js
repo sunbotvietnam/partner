@@ -9,7 +9,7 @@ function render(){
   const s=window.SunbotDealCurrent();
   if(!s)return;
   if(s.blocked){
-    ['sunbotContributionOut','liveContribution','liveInternalCost','liveMargin','serviceGrossOut'].forEach(id=>text(id,'Chưa kết luận'));
+    ['sunbotContributionOut','liveContribution','liveInternalCost','liveMargin'].forEach(id=>text(id,'Chưa kết luận'));
     const rb=document.getElementById('ratioBadge');if(rb){rb.className='badge bad';rb.textContent='Cần duyệt'}
     text('ratioNote',s.blockedReason||'Cần lập phương án riêng.');
     return;
