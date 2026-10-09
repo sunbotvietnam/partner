@@ -110,7 +110,8 @@
     const inv=mode==='provide'?`Sunbot đầu tư bộ học cụ cần bổ sung; hoàn trả phần vốn thiết bị trong ${term} tháng`:`Nhà trường đầu tư bộ học cụ cần bổ sung; thanh toán ban đầu ${cash(s.schoolInvest)}`;
     return ['TÓM TẮT PHƯƠNG ÁN TRIỂN KHAI SUNBOT',
       `1. Phạm vi: một đơn vị ký hợp đồng, ${s.points} điểm triển khai.`,
-      `2. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${programs} chương trình; ${s.l} tiết/lớp/tháng trong ${s.months} tháng.`,
+      `2. Quy mô: ${s.c.toLocaleString('vi-VN')} trẻ; ${s.classes} lớp; ${programs} nhóm nội dung/chương trình; cường độ ${s.l} hoạt động/lớp/tháng trong ${s.months} tháng.`,
+      `Lưu ý chuyên môn: phương án này không mặc định hình thành một môn STEM/robotics riêng; Nhà trường tổ chức hoạt động giáo dục tích hợp, sử dụng chương trình, học cụ và công nghệ Sunbot.`,
       `3. Phí chương trình: ${s.programFee===null?'phương án riêng':cash(s.programFee)}; tính theo tổng số trẻ cam kết của đơn vị ký hợp đồng.`,
       `4. Điểm triển khai và thiết bị: ${s.points} điểm; ${s.rooms} mô-đun × 31,7 triệu = ${cash(s.roomValue)}. Số bộ học cụ lõi = max(chuẩn theo quy mô trẻ, số điểm).`,
       `5. Phí đồng hành điểm bổ sung: ${cash(s.qa)}; chuẩn 5 triệu/điểm/năm và quy đổi theo số tháng triển khai còn lại; không đưa vào vốn thiết bị.`,
